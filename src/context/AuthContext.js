@@ -68,7 +68,7 @@ export const AuthContextProvider = ({ children }) => {
 
       unsubscribe();
     });
-  }, []);
+  }, [state]);
 
   return (
     <AuthContext.Provider value={{ ...state, dispatch }}>

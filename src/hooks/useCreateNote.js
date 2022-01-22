@@ -1,4 +1,3 @@
-import { useEffect, useState } from "react";
 import Header from "@editorjs/header";
 import Quote from "@editorjs/quote";
 import InlineCode from "@editorjs/inline-code";

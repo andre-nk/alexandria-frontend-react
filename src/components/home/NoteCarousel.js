@@ -9,6 +9,8 @@ export default function NotesCarousel({
   setSwiperActiveIndex,
   setIsSwiperEnded,
 }) {
+  const mockNotes = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10];
+
   return (
     <Swiper
       spaceBetween={32}
@@ -24,78 +26,18 @@ export default function NotesCarousel({
         setSwiperActiveIndex(swiper.activeIndex);
       }}
     >
-      <SwiperSlide>
-        <NoteCard
-          key="1"
-          title={"Flutter: loop in build() method"}
-          author={"Andreas Notokusumo"}
-          isStarred={true}
-          tags={["flutter", "mobile"]}
-        />
-      </SwiperSlide>
-      <SwiperSlide>
-        <NoteCard
-          key="2"
-          title={"Flutter: loop in build() method"}
-          author={"Andreas Notokusumo"}
-          isStarred={false}
-          tags={["flutter", "mobile"]}
-        />
-      </SwiperSlide>
-      <SwiperSlide>
-        <NoteCard
-          key="3"
-          title={"Flutter: loop in build() method"}
-          author={"Andreas Notokusumo"}
-          isStarred={false}
-          tags={["flutter", "mobile"]}
-        />
-      </SwiperSlide>
-      <SwiperSlide>
-        <NoteCard
-          key="4"
-          title={"Flutter: loop in build() method"}
-          author={"Andreas Notokusumo"}
-          isStarred={false}
-          tags={["flutter", "mobile"]}
-        />
-      </SwiperSlide>
-      <SwiperSlide>
-        <NoteCard
-          key="5"
-          title={"Flutter: loop in build() method"}
-          author={"Andreas Notokusumo"}
-          isStarred={true}
-          tags={["flutter", "mobile"]}
-        />
-      </SwiperSlide>
-      <SwiperSlide>
-        <NoteCard
-          key="6"
-          title={"Flutter: loop in build() method"}
-          author={"Andreas Notokusumo"}
-          isStarred={false}
-          tags={["flutter", "mobile"]}
-        />
-      </SwiperSlide>
-      <SwiperSlide>
-        <NoteCard
-          key="7"
-          title={"Flutter: loop in build() method"}
-          author={"Andreas Notokusumo"}
-          isStarred={false}
-          tags={["flutter", "mobile"]}
-        />
-      </SwiperSlide>
-      <SwiperSlide>
-        <NoteCard
-          key="8"
-          title={"Flutter: loop in build() method"}
-          author={"Andreas Notokusumo"}
-          isStarred={false}
-          tags={["flutter", "mobile"]}
-        />
-      </SwiperSlide>
+      {mockNotes.map((note) => {
+        return (
+          <SwiperSlide key={note}>
+            <NoteCard
+              title={"Flutter: loop in build() method"}
+              author={"Andreas Notokusumo"}
+              isStarred={false}
+              tags={["flutter", "mobile"]}
+            />
+          </SwiperSlide>
+        );
+      })}
     </Swiper>
   );
 }

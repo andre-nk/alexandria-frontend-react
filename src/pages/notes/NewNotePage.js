@@ -1,7 +1,6 @@
-import { useState, useEffect, useRef, useCallback } from "react";
+import { useState, useEffect, useRef } from "react";
 import { useParams } from "react-router-dom";
 
-import CustomNoteEditor from "../../components/note/CustomNoteEditor";
 import { useCreateNote } from "../../hooks/useCreateNote";
 
 export default function NewNotePage() {
@@ -23,7 +22,7 @@ export default function NewNotePage() {
     };
 
     createNote();
-  }, [params]);
+  }, [params, createNoteInstance, noteInstance]);
 
   const handleSave = () => {
     if(noteInstance){

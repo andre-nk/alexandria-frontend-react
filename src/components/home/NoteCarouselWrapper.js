@@ -8,8 +8,6 @@ export default function NotesCarouselWrapper({ headline, link }) {
   const [swiperActiveIndex, setSwiperActiveIndex] = useState(0);
   const [isSwiperEnded, setIsSwiperEnded] = useState(false);
 
-  console.log(swiperActiveIndex);
-
   return (
     <div>
       <div className="w-full flex justify-between px-10">
