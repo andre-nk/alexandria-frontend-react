@@ -23,11 +23,12 @@ const SignupSchema = Yup.object().shape({
 });
 
 export default function RegisterPage() {
+  const [isValidImage, setIsValidImage] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
   const [profilePicture, setProfilePicture] = useState(null);
   const [profilePictureUrl, setProfilePictureUrl] = useState(null);
-  const [isValidImage, setIsValidImage] = useState(false);
-  const { error, registerWithEmail, registerWithGithub, registerWithGoogle } = useAuth();
+  const { error, registerWithEmail, registerWithGithub, registerWithGoogle } =
+    useAuth();
   const { formatAuthError } = useFormatError();
   const { user } = useAuthContext();
   const navigate = useNavigate();
@@ -64,13 +65,12 @@ export default function RegisterPage() {
   };
 
   return (
-    <div className="min-w-full min-h-screen flex justify-center align-center p-8">
+    <div className="min-w-full min-h-screen relative flex justify-center align-center p-8">
       {/* <Head>
         <meta name="Alexandria - Register" content="" />
         <title>Alexandria - Register</title>
       </Head> */}
-      <img alt="background" src="/ornament.svg" layout="fill" className="z-0 object-cover" />
-      <div className="max-w-sm lg:max-w-none px-8 flex flex-col align-center self-center shadow-2xl rounded-2xl bg-primary-white z-10 py-12 lg:px-12">
+      <div className="max-w-sm lg:w-4/12 px-8 flex flex-col align-center self-center shadow-2xl rounded-2xl bg-primary-white z-10 py-12 lg:px-12">
         <div className="flex flex-col justify-center items-center space-y-4 pb-6">
           <div className="self-center flex w-full justify-center items-center space-x-2">
             <img
@@ -100,7 +100,9 @@ export default function RegisterPage() {
                   ) : (
                     <IoImageOutline
                       size={24}
-                      className="text-gray-400 cursor-pointer"
+                      className={`${
+                        isValidImage ? "text-gray-400 " : "text-red-400 "
+                      } cursor-pointer`}
                     />
                   )}
                 </div>
@@ -114,7 +116,7 @@ export default function RegisterPage() {
               </div>
             </div>
           </div>
-          <h3 className="font-mono text-sm lg:text-md text-center tracking-wide text-major-text">
+          <h3 className="font-mono text-md text-center tracking-wide text-major-text">
             <span>
               Create your{" "}
               <strong className="font-medium text-primary-black">
@@ -235,6 +237,12 @@ export default function RegisterPage() {
           </a>
         </span>
       </div>
+      <img
+        alt="background"
+        src="/ornament.svg"
+        layout="fill"
+        className="z-0 object-cover absolute"
+      />
     </div>
   );
 }

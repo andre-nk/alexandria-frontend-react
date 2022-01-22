@@ -19,7 +19,8 @@ const SignupSchema = Yup.object().shape({
 });
 
 export default function LoginPage() {
-  const { error, signInWithEmail, registerWithGithub, registerWithGoogle } = useAuth();
+  const { error, signInWithEmail, registerWithGithub, registerWithGoogle } =
+    useAuth();
   const [showPassword, setShowPassword] = useState(false);
   const { formatAuthError } = useFormatError();
   const { user } = useAuthContext();
@@ -30,23 +31,24 @@ export default function LoginPage() {
   }
 
   return (
-    <div className="min-w-full min-h-screen flex justify-center align-center p-8">
+    <div className="min-w-full min-h-screen relative flex justify-center align-center p-8">
       {/* <Head>
         <meta name="Alexandria - Register" content="" />
         <title>Alexandria - Log in</title>
       </Head> */}
-      <img alt="background" src="/ornament.svg" layout="fill" className="z-0 object-cover" />
-      <div className="max-w-sm px-8 lg:max-w-none flex flex-col align-center self-center shadow-2xl rounded-2xl bg-primary-white z-10 py-12 lg:px-12">
+
+      <div className="max-w-sm px-8 lg:w-4/12 flex flex-col align-center self-center shadow-2xl rounded-2xl bg-primary-white z-10 py-12 lg:px-12">
         <div className="flex flex-col justify-center items-center space-y-4 pb-6">
           <div className="self-center flex w-full justify-center items-center space-x-2">
             <img
+              alt="logo"
               src="/logo.png"
               height="60"
               width="60"
               className="aspect-square"
             />
           </div>
-          <h3 className="font-mono text-sm lg:text-md text-center tracking-wide text-major-text">
+          <h3 className="font-mono text-md text-center tracking-wide text-major-text">
             <span>
               Log in to{" "}
               <strong className="font-medium text-primary-black">
@@ -157,6 +159,12 @@ export default function LoginPage() {
           </span>
         </div>
       </div>
+      <img
+        alt="background"
+        src="/ornament.svg"
+        layout="fill"
+        className="z-0 object-cover absolute"
+      />
     </div>
   );
 }

@@ -1,4 +1,4 @@
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { VscTerminalLinux } from "react-icons/vsc";
 import { BsWindows, BsApple } from "react-icons/bs";
 import { Fragment, useEffect, useState } from "react";
@@ -8,7 +8,6 @@ import { useAuthContext } from "../../hooks/useAuthContext";
 import NavLink from "./NavLink";
 import AccountMenu from "./AccountMenu";
 import ActivityMenu from "./ActivityMenu";
-
 
 export default function Navbar({ isDynamic, setIsOpen }) {
   const { user } = useAuthContext();
@@ -88,23 +87,25 @@ export default function Navbar({ isDynamic, setIsOpen }) {
           <div className="flex w-full justify-between items-center">
             <button
               onClick={setIsOpen}
-              className="h-8 w-8 flex justify-center items-center rounded-md bg-primary-white hover:bg-gray-100 duration-200 border-2 border-primary-border">
+              className="h-8 w-8 flex justify-center items-center rounded-md bg-primary-white hover:bg-gray-100 duration-200 border-2 border-primary-border"
+            >
               <IoMenuOutline size={18} />
             </button>
-            <a href="/">
-              <a href="">
-                <img alt="logo" src="/logo.png" width={40} height={40} />
-              </a>
-            </a>
+            <Link to="/">
+              <img alt="logo" src="/logo.png" width={40} height={40} />
+            </Link>
             <div className="h-9 w-9 rounded-full bg-primary-border overflow-clip">
-              <img alt="profilePicture" src={user.photoURL} width={36} height={36} />
+              <img
+                alt="profilePicture"
+                src={user.photoURL}
+                width={36}
+                height={36}
+              />
             </div>
           </div>
         ) : (
           <div className="flex space-x-10 z-20 w-full justify-between items-center">
-            <a href="/">
-              <img alt="logo" src="/logo.png" width={40} height={40} />
-            </a>
+            <img alt="logo" src="/logo.png" width={40} height={40} />
             <button
               onClick={() => {
                 navigate("/auth/register");
@@ -121,9 +122,9 @@ export default function Navbar({ isDynamic, setIsOpen }) {
       <nav className="hidden lg:flex z-30 w-full justify-between items-center bg-white border-b border-primary-border h-[4.5rem] px-8">
         <div
           onClick={() => {
-            if(currentAppCount === 0){
+            if (currentAppCount === 0) {
               navigate("/");
-            } else { 
+            } else {
               navigate("/app");
             }
           }}

@@ -20,24 +20,24 @@ export default function Footer() {
               </h2>
               <nav className="list-none flex flex-col space-y-2.5">
                 <li>
-                  <a className="text-major-text cursor-pointer hover:underline hover:text-primary-blue duration-200">
+                  <p className="text-major-text cursor-pointer hover:underline hover:text-primary-blue duration-200">
                     Create a note
-                  </a>
+                  </p>
                 </li>
                 <li>
-                  <a className="text-major-text cursor-pointer hover:underline hover:text-primary-blue duration-200">
+                  <p className="text-major-text cursor-pointer hover:underline hover:text-primary-blue duration-200">
                     Your notes
-                  </a>
+                  </p>
                 </li>
                 <li>
-                  <a className="text-major-text cursor-pointer hover:underline hover:text-primary-blue duration-200">
+                  <p className="text-major-text cursor-pointer hover:underline hover:text-primary-blue duration-200">
                     Get our apps
-                  </a>
+                  </p>
                 </li>
                 <li>
-                  <a className="text-major-text cursor-pointer hover:underline hover:text-primary-blue duration-200">
+                  <p className="text-major-text cursor-pointer hover:underline hover:text-primary-blue duration-200">
                     Get help
-                  </a>
+                  </p>
                 </li>
               </nav>
             </div>
@@ -47,24 +47,24 @@ export default function Footer() {
               </h2>
               <nav className="list-none flex flex-col space-y-2.5">
                 <li>
-                  <a className="text-major-text cursor-pointer hover:underline hover:text-primary-blue duration-200">
+                  <p className="text-major-text cursor-pointer hover:underline hover:text-primary-blue duration-200">
                     Feedback
-                  </a>
+                  </p>
                 </li>
                 <li>
-                  <a className="text-major-text cursor-pointer hover:underline hover:text-primary-blue duration-200">
+                  <p className="text-major-text cursor-pointer hover:underline hover:text-primary-blue duration-200">
                     Developer contact
-                  </a>
+                  </p>
                 </li>
                 <li>
-                  <a className="text-major-text cursor-pointer hover:underline hover:text-primary-blue duration-200">
+                  <p className="text-major-text cursor-pointer hover:underline hover:text-primary-blue duration-200">
                     Repository
-                  </a>
+                  </p>
                 </li>
                 <li>
-                  <a className="text-major-text cursor-pointer hover:underline hover:text-primary-blue duration-200">
+                  <p className="text-major-text cursor-pointer hover:underline hover:text-primary-blue duration-200">
                     Licenses
-                  </a>
+                  </p>
                 </li>
               </nav>
             </div>

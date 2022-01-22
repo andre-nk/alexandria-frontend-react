@@ -1,4 +1,4 @@
-export default function ProfileDetail() {
+export default function ProfileDetailPage() {
     return (
         <div>
             <p>ProfileDetail</p>

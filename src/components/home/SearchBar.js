@@ -20,7 +20,7 @@ export default function SearchBar() {
     >
       {({ errors, touched }) => {
         return (
-          <Form className="flex flex-col">
+          <Form className="flex flex-col w-full">
             <div className="w-full h-14 bg-primary-white border border-minor-text rounded-xl flex align-middle px-4 mb-6">
               <IoSearch className="self-center mr-4" size={18} />
               <Field
