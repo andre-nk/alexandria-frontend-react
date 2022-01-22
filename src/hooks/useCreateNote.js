@@ -11,10 +11,7 @@ import CodeBox from "@bomdi/codebox";
 import CodexEditor from "@editorjs/editorjs";
 
 export const useCreateNote = () => {
-  const [editor, setEditor] = useState(null);
-  const [saver, setSaver] = useState(null);
-
-  useEffect(() => {
+  const createNoteInstance = () => {
     let editor = new CodexEditor({
       tools: {
         header: Header,
@@ -37,11 +34,8 @@ export const useCreateNote = () => {
       },
     });
 
-    console.log(editor);
+    return editor
+  };
 
-    setEditor(editor);
-    setSaver(editor.saver)
-  }, []);
-
-  return { editor, saver };
+  return { createNoteInstance};
 };
