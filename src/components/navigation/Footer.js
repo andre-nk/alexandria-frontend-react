@@ -11,9 +11,9 @@ const SubscribeSchema = Yup.object().shape({
 export default function Footer() {
   return (
     <footer className="text-gray-600 body-font z-40">
-      <div className="py-24 px-20">
-        <div className="flex justify-between items-center">
-          <div className="md:w-2/3 flex">
+      <div className="py-20 px-16 lg:px-20">
+        <div className="flex flex-col-reverse lg:space-y-0 lg:flex justify-between items-center">
+          <div className="w-full pt-16 md:w-2/3 flex">
             <div className="md:w-1/3 w-full">
               <h2 className="title-font font-semibold text-gray-900 tracking-widest text-md mb-4">
                 FEATURES
@@ -69,7 +69,7 @@ export default function Footer() {
               </nav>
             </div>
           </div>
-          <div className="md:w-1/3">
+          <div className="w-full md:w-1/3">
             <h2 className="title-font font-semibold text-gray-900 tracking-widest text-md mb-4">
               SUBSCRIBE 📨
             </h2>

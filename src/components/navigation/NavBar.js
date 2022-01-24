@@ -85,39 +85,56 @@ export default function Navbar({ isDynamic, setIsOpen }) {
   return (
     <Fragment>
       {/* MOBILE */}
-      <nav className="flex lg:hidden justify-between items-center h-[4.5rem] px-5 border-b bg-white border-primary-border">
-        {user != null ? (
-          <div className="flex w-full justify-between items-center">
-            <button
-              onClick={setIsOpen}
-              className="h-8 w-8 flex justify-center items-center rounded-md bg-primary-white hover:bg-gray-100 duration-200 border-2 border-primary-border"
-            >
-              <IoMenuOutline size={18} />
-            </button>
-            <Link to="/">
-              <img alt="logo" src="/logo.png" width={40} height={40} />
-            </Link>
-            <div className="h-9 w-9 rounded-full bg-primary-border overflow-clip">
-              <img
-                alt="profilePicture"
-                src={user.photoURL}
-                width={36}
-                height={36}
-              />
+      <nav className="flex lg:hidden justify-between items-center h-[4.5rem] pl-10 pr-9 border-b bg-white border-primary-border">
+        {authIsReady ? (
+          user != null ? (
+            <div className="flex w-full justify-between items-center">
+              <button
+                onClick={setIsOpen}
+                className="h-8 w-8 flex justify-center items-center rounded-md bg-primary-white hover:bg-gray-100 duration-200 border-2 border-primary-border"
+              >
+                <IoMenuOutline size={18} />
+              </button>
+              <Link to="/">
+                <img alt="logo" src="/logo.png" width={40} height={40} />
+              </Link>
+              <div className="h-9 w-9 rounded-full bg-primary-border overflow-clip">
+                <img
+                  alt="profilePicture"
+                  src={user.photoURL}
+                  width={36}
+                  height={36}
+                />
+              </div>
             </div>
-          </div>
+          ) : (
+            <div className="flex space-x-10 z-20 w-full justify-between items-center">
+              <img alt="logo" src="/logo.png" width={40} height={40} />
+              <button
+                onClick={() => {
+                  navigate("/auth/register");
+                }}
+                className="bg-primary-blue hover:bg-active-blue duration-200 rounded-md px-5 py-2.5 text-sm font-regular text-primary-white"
+              >
+                Get started
+              </button>
+            </div>
+          )
         ) : (
-          <div className="flex space-x-10 z-20 w-full justify-between items-center">
-            <img alt="logo" src="/logo.png" width={40} height={40} />
-            <button
-              onClick={() => {
-                navigate("/auth/register");
-              }}
-              className="bg-primary-blue hover:bg-active-blue duration-200 rounded-md px-5 py-2.5 text-sm font-regular text-primary-white"
-            >
-              Get started
-            </button>
-          </div>
+          <ContentLoader
+            rtl
+            speed={1}
+            width={476}
+            height={40}
+            viewBox="0 0 476 40"
+            backgroundColor="#f3f3f3"
+            foregroundColor="#ecebeb"
+            className="w-full flex justify-between"
+          >
+            <rect x="120" y="8" rx="3" ry="3" width="24" height="24" />
+            <rect x="74" y="8" rx="3" ry="3" width="24" height="24" />
+            <circle cx="20" cy="20" r="20" />
+          </ContentLoader>
         )}
       </nav>
 
@@ -145,9 +162,14 @@ export default function Navbar({ isDynamic, setIsOpen }) {
               <div className="flex justify-between items-center space-x-6">
                 <div className="flex justify-between items-center space-x-4">
                   <ActivityMenu />
-                  <div className="h-8 w-8 flex justify-center items-center rounded-md bg-primary-white hover:bg-gray-100 duration-200 border-2 border-primary-border">
+                  <button
+                    onClick={() => {
+                      navigate("/notes/new/Untitled%20Note");
+                    }}
+                    className="h-8 w-8 flex justify-center items-center rounded-md bg-primary-white hover:bg-gray-100 duration-200 border-2 border-primary-border"
+                  >
                     <IoAddOutline size={18} />
-                  </div>
+                  </button>
                 </div>
                 <AccountMenu photoURL={user.photoURL} />
               </div>
