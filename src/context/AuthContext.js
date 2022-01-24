@@ -14,7 +14,7 @@ export const authReducer = (state, action) => {
     case "LOGOUT":
       return {
         ...state,
-        user: null
+        user: null,
       };
     case "AUTH_IS_READY":
       return {
@@ -35,7 +35,7 @@ export const AuthContextProvider = ({ children }) => {
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(projectAuth, async (user) => {
       //CALL NATIVE API AND FORM A DESIRED USER STRUCT THEN PASS IT AS A PAYLOAD
-      if (user != null) {
+      if (user !== null) {
         try {
           const response = await fetch(
             `http://localhost:8080/api/v1/users/${user.uid}`,
@@ -64,11 +64,15 @@ export const AuthContextProvider = ({ children }) => {
         } catch (error) {
           dispatch({ type: "AUTH_IS_READY", payload: user });
         }
+      } else {
+        dispatch({ type: "AUTH_IS_READY", payload: null });
       }
 
       unsubscribe();
     });
-  }, [state]);
+  }, []);
+
+  console.log(state);
 
   return (
     <AuthContext.Provider value={{ ...state, dispatch }}>

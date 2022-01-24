@@ -15,37 +15,12 @@ import NewNotePage from "../../pages/notes/NewNotePage";
 import NoteDetailPage from "../../pages/notes/NoteDetailPage";
 import ProfilePage from "../../pages/profile/ProfilePage";
 import ProfileDetailPage from "../../pages/profile/ProfileDetailPage";
-import { useAuthContext } from "../../hooks/useAuthContext";
+import NotFoundPage from "../../pages/NotFoundPage";
+import ProtectedRoute from "../router/ProtectedRoute";
 
 export default function Layout() {
-  const { user, authIsReady } = useAuthContext();
   const [isDrawerOpen, setDrawerIsOpen] = useState(false);
   const location = useLocation();
-
-  if (authIsReady && user === null) {
-    return (
-      <Fragment>
-        <Drawer isOpen={isDrawerOpen} setIsOpen={setDrawerIsOpen} />
-        {location.pathname.indexOf("auth") < 1 && (
-          <Navbar
-            isDynamic={
-              location.pathname === "/" || location.pathname === "/app"
-            }
-            setIsOpen={setDrawerIsOpen}
-          />
-        )}
-        <Routes>
-          <Route path="/" element={<Home />} />
-          <Route path="/auth/forgot" element={<ForgotPasswordPage />} />
-          <Route path="/auth/login" element={<LoginPage />} />
-          <Route path="/auth/register" element={<RegisterPage />} />
-          <Route path="/about" element={<AboutPage />} />
-          <Route path="/app" element={<AppPage />} />
-        </Routes>
-        {location.pathname.indexOf("auth") < 1 && <Footer />}
-      </Fragment>
-    );
-  }
 
   return (
     <Fragment>
@@ -63,11 +38,47 @@ export default function Layout() {
         <Route path="/auth/register" element={<RegisterPage />} />
         <Route path="/about" element={<AboutPage />} />
         <Route path="/app" element={<AppPage />} />
-        <Route path="/notes" element={<NoteCollectionPage />} />
-        <Route path="/notes/new/:title" element={<NewNotePage />} />
-        <Route path="/notes/:id" element={<NoteDetailPage />} />
-        <Route path="/profile" element={<ProfilePage />} />
-        <Route path="/profile/:id" element={<ProfileDetailPage />} />
+        <Route
+          path="/notes"
+          element={
+            <ProtectedRoute>
+              <NoteCollectionPage />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/notes/new/:title"
+          element={
+            <ProtectedRoute>
+              <NewNotePage />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/notes/:id"
+          element={
+            <ProtectedRoute>
+              <NoteDetailPage />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/profile"
+          element={
+            <ProtectedRoute>
+              <ProfilePage />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/profile/:id"
+          element={
+            <ProtectedRoute>
+              <ProfileDetailPage />
+            </ProtectedRoute>
+          }
+        />
+        <Route path="*" element={<NotFoundPage />} />
       </Routes>
       {location.pathname.indexOf("auth") < 1 && <Footer />}
     </Fragment>
