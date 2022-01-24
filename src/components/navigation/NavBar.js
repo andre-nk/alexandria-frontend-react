@@ -3,6 +3,7 @@ import { VscTerminalLinux } from "react-icons/vsc";
 import { BsWindows, BsApple } from "react-icons/bs";
 import { Fragment, useEffect, useState } from "react";
 import { IoAddOutline, IoLogoAndroid, IoMenuOutline } from "react-icons/io5";
+import ContentLoader from "react-content-loader";
 
 import { useAuthContext } from "../../hooks/useAuthContext";
 import NavLink from "./NavLink";
@@ -10,7 +11,7 @@ import AccountMenu from "./AccountMenu";
 import ActivityMenu from "./ActivityMenu";
 
 export default function Navbar({ isDynamic, setIsOpen }) {
-  const { user } = useAuthContext();
+  const { user, authIsReady } = useAuthContext();
   const [currentAppCount, setCurrentAppCount] = useState(0);
   const navigate = useNavigate();
 
@@ -73,6 +74,8 @@ export default function Navbar({ isDynamic, setIsOpen }) {
         } else {
           setCurrentAppCount(currentAppCount + 1);
         }
+      } else {
+        setCurrentAppCount(0);
       }
     }, 5000);
 
@@ -133,34 +136,53 @@ export default function Navbar({ isDynamic, setIsOpen }) {
           {appsList[currentAppCount].src}
           {appsList[currentAppCount].title}
         </div>
-        {user != null ? (
-          <div className="flex space-x-12 items-center">
-            <NavLink pathname="/" title="Home" />
-            <NavLink pathname="/about" title="About" />
-            <NavLink pathname="/notes" title="Collection" />
-            <div className="flex justify-between items-center space-x-6">
-              <div className="flex justify-between items-center space-x-4">
-                <ActivityMenu />
-                <div className="h-8 w-8 flex justify-center items-center rounded-md bg-primary-white hover:bg-gray-100 duration-200 border-2 border-primary-border">
-                  <IoAddOutline size={18} />
+        {authIsReady ? (
+          user != null ? (
+            <div className="flex space-x-12 items-center">
+              <NavLink pathname="/" title="Home" />
+              <NavLink pathname="/about" title="About" />
+              <NavLink pathname="/notes" title="Collection" />
+              <div className="flex justify-between items-center space-x-6">
+                <div className="flex justify-between items-center space-x-4">
+                  <ActivityMenu />
+                  <div className="h-8 w-8 flex justify-center items-center rounded-md bg-primary-white hover:bg-gray-100 duration-200 border-2 border-primary-border">
+                    <IoAddOutline size={18} />
+                  </div>
                 </div>
+                <AccountMenu photoURL={user.photoURL} />
               </div>
-              <AccountMenu photoURL={user.photoURL} />
             </div>
-          </div>
+          ) : (
+            <div className="flex space-x-10 items-center">
+              <NavLink pathname="/" title="Home" />
+              <NavLink pathname="/about" title="About" />
+              <button
+                onClick={() => {
+                  navigate("/auth/register");
+                }}
+                className="bg-primary-blue hover:bg-active-blue duration-200 rounded-md px-5 py-2.5 text-sm font-regular text-primary-white"
+              >
+                Get started
+              </button>
+            </div>
+          )
         ) : (
-          <div className="flex space-x-10 items-center">
-            <NavLink pathname="/" title="Home" />
-            <NavLink pathname="/about" title="About" />
-            <button
-              onClick={() => {
-                navigate("/auth/register");
-              }}
-              className="bg-primary-blue hover:bg-active-blue duration-200 rounded-md px-5 py-2.5 text-sm font-regular text-primary-white"
-            >
-              Get started
-            </button>
-          </div>
+          <ContentLoader
+            rtl
+            speed={1}
+            width={476}
+            height={40}
+            viewBox="0 0 476 40"
+            backgroundColor="#f3f3f3"
+            foregroundColor="#ecebeb"
+          >
+            <rect x="400" y="16" rx="3" ry="3" width="88" height="6" />
+            <rect x="290" y="16" rx="3" ry="3" width="88" height="6" />
+            <rect x="180" y="16" rx="3" ry="3" width="88" height="6" />
+            <rect x="120" y="8" rx="3" ry="3" width="24" height="24" />
+            <rect x="74" y="8" rx="3" ry="3" width="24" height="24" />
+            <circle cx="20" cy="20" r="20" />
+          </ContentLoader>
         )}
       </nav>
     </Fragment>

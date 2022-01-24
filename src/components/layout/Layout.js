@@ -80,7 +80,7 @@ export default function Layout() {
         />
         <Route path="*" element={<NotFoundPage />} />
       </Routes>
-      {location.pathname.indexOf("auth") < 1 && <Footer />}
+      {(location.pathname.indexOf("auth") < 1) && <Footer />}
     </Fragment>
   );
 }
