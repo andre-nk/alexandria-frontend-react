@@ -1,7 +1,9 @@
+import AboutPoints from "../../components/about/AboutPoints";
+
 export default function AboutPage() {
     return (
-        <div>
-            <p>about</p>
+        <div className="my-24">
+            <AboutPoints />
         </div>
     )
 }
