@@ -10,10 +10,18 @@ import NavLink from "./NavLink";
 import AccountMenu from "./AccountMenu";
 import ActivityMenu from "./ActivityMenu";
 
-export default function Navbar({ isDynamic, setIsOpen }) {
+export default function Navbar({ isDynamic, setIsOpen, aboutSectionRef }) {
   const { user, authIsReady } = useAuthContext();
   const [currentAppCount, setCurrentAppCount] = useState(0);
   const navigate = useNavigate();
+
+  const scrollToBottom = () => {
+    if (aboutSectionRef.current !== null) {
+      aboutSectionRef.current.scrollIntoView({ behavior: "smooth" });
+    } else {
+      console.log("Ref is null:", aboutSectionRef);
+    }
+  };
 
   const appsList = [
     {
@@ -177,7 +185,9 @@ export default function Navbar({ isDynamic, setIsOpen }) {
           ) : (
             <div className="flex space-x-10 items-center">
               <NavLink pathname="/" title="Home" />
-              <NavLink pathname="/about" title="About" />
+              <button onClick={scrollToBottom}>
+                <p>About</p>
+              </button>
               <button
                 onClick={() => {
                   navigate("/auth/register");

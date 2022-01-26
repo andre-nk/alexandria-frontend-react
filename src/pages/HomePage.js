@@ -6,7 +6,7 @@ import SearchBar from "../components/home/SearchBar";
 import CTASection from "../components/home/CTASection";
 import AboutPoints from "../components/about/AboutPoints";
 
-export default function Home() {
+export default function Home({aboutSectionRef}) {
   const { user } = useAuthContext();
 
   return (
@@ -35,7 +35,7 @@ export default function Home() {
         </div>
       )}
       {!user && (
-        <div className="py-16 w-full bg-white">
+        <div className="py-16 w-full bg-white" ref={aboutSectionRef}>
           <AboutPoints />
           <CTASection />
         </div>

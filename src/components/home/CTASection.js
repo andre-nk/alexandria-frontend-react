@@ -4,7 +4,7 @@ export default function CTASection() {
   const navigate = useNavigate();
 
   return (
-    <div className="w-full px-20 flex flex-col justify-center items-center">
+    <div className="w-full px-20 mt-24 flex flex-col justify-center items-center">
       <div className="h-20 w-20">
         <img src="/logo.png" alt="logo" className="object-cover" />
       </div>

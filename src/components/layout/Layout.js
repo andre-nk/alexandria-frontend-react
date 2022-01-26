@@ -1,4 +1,4 @@
-import { Fragment, useState } from "react";
+import { Fragment, useState, useRef } from "react";
 import { Routes, Route, useLocation } from "react-router-dom";
 
 import Navbar from "../navigation/NavBar";
@@ -20,6 +20,7 @@ import ProtectedRoute from "../router/ProtectedRoute";
 
 export default function Layout() {
   const [isDrawerOpen, setDrawerIsOpen] = useState(false);
+  const notLoggedInAboutSectionRef = useRef()
   const location = useLocation();
 
   return (
@@ -29,10 +30,11 @@ export default function Layout() {
         <Navbar
           isDynamic={location.pathname === "/" || location.pathname === "/app"}
           setIsOpen={setDrawerIsOpen}
+          aboutSectionRef={notLoggedInAboutSectionRef}
         />
       )}
       <Routes>
-        <Route path="/" element={<Home />} />
+        <Route path="/" element={<Home aboutSectionRef={notLoggedInAboutSectionRef} />} />
         <Route path="/auth/forgot" element={<ForgotPasswordPage />} />
         <Route path="/auth/login" element={<LoginPage />} />
         <Route path="/auth/register" element={<RegisterPage />} />
