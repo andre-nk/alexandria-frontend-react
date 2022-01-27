@@ -165,6 +165,7 @@ export default function Navbar({ isDynamic, setIsOpen, aboutSectionRef }) {
           user != null ? (
             <div className="flex space-x-12 items-center">
               <NavLink pathname="/" title="Home" />
+              <NavLink pathname="/app" title="Apps" />
               <NavLink pathname="/about" title="About" />
               <NavLink pathname="/notes" title="Collection" />
               <div className="flex justify-between items-center space-x-6">
@@ -185,6 +186,7 @@ export default function Navbar({ isDynamic, setIsOpen, aboutSectionRef }) {
           ) : (
             <div className="flex space-x-10 items-center">
               <NavLink pathname="/" title="Home" />
+              <NavLink pathname="/app" title="Apps" />
               <button onClick={scrollToBottom}>
                 <p>About</p>
               </button>
