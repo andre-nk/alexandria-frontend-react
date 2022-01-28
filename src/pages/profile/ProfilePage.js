@@ -1,4 +1,5 @@
 import * as Yup from "yup";
+import Helmet from "react-helmet";
 import { Formik, Field, Form } from "formik";
 import { useNavigate } from "react-router-dom";
 import { useSnackbar } from "react-simple-snackbar";
@@ -11,7 +12,7 @@ import { useEffect } from "react";
 export default function ProfilePage() {
   const navigate = useNavigate();
   const { user } = useAuthContext();
-  const [openSnackbar, closeSnackbar] = useSnackbar();
+  const [openSnackbar] = useSnackbar();
   const { updateProfileAPI, error, success } = useAuth();
 
   const UpdateProfileSchema = Yup.object().shape({
@@ -64,10 +65,17 @@ export default function ProfilePage() {
         },
       });
     }
-  }, [error, success]);
+  }, [error, success, openSnackbar]);
 
   return (
     <div className="px-20 py-8">
+      <Helmet>
+        <title>Your profile - Alexandria</title>
+        <meta
+          name="Your profile"
+          content="Personalize your public profile here!"
+        />
+      </Helmet>
       <div className="w-full flex justify-between items-center">
         <button
           onClick={() => {

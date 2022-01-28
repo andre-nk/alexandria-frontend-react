@@ -1,4 +1,5 @@
 import * as Yup from "yup";
+import Helmet from "react-helmet";
 import { Formik, Field, Form } from "formik";
 
 import { useAuth } from "../../hooks/useAuth";
@@ -24,10 +25,9 @@ export default function ForgotPasswordPage() {
 
   return (
     <div className="min-w-full min-h-screen flex relative justify-center align-center p-8">
-      {/* <Head>
-        <meta name="Alexandria - Register" content="" />
-        <title>Alexandria - Reset Password</title>
-      </Head> */}
+      <Helmet>
+        <title>Forgot password - Alexandria</title>
+      </Helmet>
       <div className="flex flex-col align-center self-center shadow-2xl max-w-sm rounded-2xl bg-primary-white z-10 py-12 px-12">
         <div className="flex flex-col justify-center items-center space-y-4 pb-6">
           <div className="self-center flex w-full justify-center items-center space-x-2">

@@ -1,4 +1,5 @@
 import { Fragment } from "react";
+import Helmet from "react-helmet";
 
 import { useAuthContext } from "../hooks/useAuthContext";
 import NotesCarouselWrapper from "../components/home/NoteCarouselWrapper";
@@ -6,11 +7,18 @@ import SearchBar from "../components/home/SearchBar";
 import CTASection from "../components/home/CTASection";
 import AboutPoints from "../components/about/AboutPoints";
 
-export default function Home({aboutSectionRef}) {
+export default function Home({ aboutSectionRef }) {
   const { user } = useAuthContext();
 
   return (
     <Fragment>
+      <Helmet>
+        <title>Alexandria</title>
+        <meta
+          name="Homepage"
+          content="We are a dead-simple notetaking app for your programming-related otes, but way more than that."
+        />
+      </Helmet>
       <div className="flex flex-col justify-center items-center w-full relative h-[90vh] bg-white overflow-clip">
         <div className=" flex flex-col mb-6 justify-center items-center h-full z-10 lg:w-7/12">
           <div className="pb-6">

@@ -1,3 +1,4 @@
+import Helmet from "react-helmet";
 import { useParams } from "react-router-dom";
 import { IoEllipsisVerticalSharp } from "react-icons/io5";
 import { useState, useEffect, useRef } from "react";
@@ -30,16 +31,19 @@ export default function NewNotePage() {
     createNote();
   }, [createNoteInstance, noteInstance]);
 
-  const handleSave = () => {
-    if (noteInstance) {
-      noteInstance.saver.save().then((savedData) => {
-        console.log(savedData);
-      });
-    }
-  };
+  // const handleSave = () => {
+  //   if (noteInstance) {
+  //     noteInstance.saver.save().then((savedData) => {
+  //       console.log(savedData);
+  //     });
+  //   }
+  // };
 
   return (
     <div>
+      <Helmet>
+        <title>{noteTitle ?? "Untitled note"} - Alexandria</title>
+      </Helmet>
       <NoteDrawer
         isOpen={isDrawerOpen}
         setIsOpen={setDrawerIsOpen}

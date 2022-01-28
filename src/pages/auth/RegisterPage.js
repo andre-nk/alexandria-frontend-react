@@ -1,7 +1,8 @@
 import * as Yup from "yup";
+import { useState } from "react";
+import Helmet from "react-helmet";
 import { Formik, Field, Form } from "formik";
 import { IoImageOutline } from "react-icons/io5";
-import { useEffect, useState } from "react";
 import { AiOutlineEye, AiOutlineEyeInvisible } from "react-icons/ai";
 
 import { useAuth } from "../../hooks/useAuth";
@@ -9,6 +10,7 @@ import { useFormatError } from "../../hooks/useFormatError";
 import { useAuthContext } from "../../hooks/useAuthContext";
 import SocialAuthComponent from "../../components/auth/SocialAuth";
 import { useNavigate } from "react-router-dom";
+import { useImageURL } from "../../hooks/useImageURL";
 
 const SignupSchema = Yup.object().shape({
   name: Yup.string()
@@ -23,53 +25,32 @@ const SignupSchema = Yup.object().shape({
 });
 
 export default function RegisterPage() {
-  const [isValidImage, setIsValidImage] = useState(false);
+  const navigate = useNavigate();
+  const { user } = useAuthContext();
+  const { formatAuthError } = useFormatError();
   const [showPassword, setShowPassword] = useState(false);
-  const [profilePicture, setProfilePicture] = useState(null);
-  const [profilePictureUrl, setProfilePictureUrl] = useState(null);
+  const { isValidImage, profilePicture, profilePictureUrl, imageToURL } =
+    useImageURL();
   const { error, registerWithEmail, registerWithGithub, registerWithGoogle } =
     useAuth();
-  const { formatAuthError } = useFormatError();
-  const { user } = useAuthContext();
-  const navigate = useNavigate();
 
   if (user !== null) {
     navigate("/");
   }
 
-  //profile picture methods
-  useEffect(() => {
-    if (!profilePicture) {
-      return;
-    }
-    const fileReader = new FileReader();
-    fileReader.onload = () => {
-      setProfilePictureUrl(fileReader.result);
-    };
-    fileReader.readAsDataURL(profilePicture);
-  }, [profilePicture]);
-
   const pickImage = () => {
     document.getElementById("profilePicturePicker").click();
   };
 
-  const pickedImageHandler = (event) => {
-    let pickedFile;
-    if (event.target.files && event.target.files.length === 1) {
-      pickedFile = event.target.files[0];
-      setProfilePicture(pickedFile);
-      setIsValidImage(true);
-    } else {
-      setIsValidImage(false);
-    }
-  };
-
   return (
     <div className="min-w-full min-h-screen relative flex justify-center align-center p-8">
-      {/* <Head>
-        <meta name="Alexandria - Register" content="" />
-        <title>Alexandria - Register</title>
-      </Head> */}
+      <Helmet>
+        <title>Register - Alexandria</title>
+        <meta
+          name="Register"
+          content="Create your Alexandria account and start your notetaking voyage!"
+        />
+      </Helmet>
       <div className="max-w-sm lg:w-4/12 px-8 flex flex-col align-center self-center shadow-2xl rounded-2xl bg-primary-white z-10 py-12 lg:px-12">
         <div className="flex flex-col justify-center items-center space-y-4 pb-6">
           <div className="self-center flex w-full justify-center items-center space-x-2">
@@ -88,20 +69,24 @@ export default function RegisterPage() {
               onClick={pickImage}
             >
               <div className="flex flex-col justify-center items-center group border-2 w-full h-full rounded-[0.9rem] border-dashed hover:bg-gray-100 hover:border-primary-blue duration-200">
-                <div className="flex flex-col items-center space-y-2 justify-center text-gray-400 group-hover:text-primary-blue object-cover overflow-clip">
+                <div className="flex flex-col items-center space-y-2 justify-center text-gray-400 group-hover:text-primary-blue object-cover overflow-hidden">
                   {profilePictureUrl ? (
-                    <img
-                      alt="profilePicture"
-                      src={profilePictureUrl}
-                      height="55"
-                      width="55"
-                      className="object-cover rounded-[0.8rem]"
-                    />
+                    <div className="w-full rounded-[0.8rem]">
+                      <img
+                        alt="profilePicture"
+                        src={profilePictureUrl}
+                        height="55"
+                        width="55"
+                        className="object-cover "
+                      />
+                    </div>
                   ) : (
                     <IoImageOutline
                       size={24}
                       className={`${
-                        isValidImage ? "text-gray-400 " : "text-red-400 "
+                        isValidImage || !profilePicture
+                          ? "text-gray-400 "
+                          : "text-red-400"
                       } cursor-pointer`}
                     />
                   )}
@@ -111,7 +96,7 @@ export default function RegisterPage() {
                   type="file"
                   accept="image/*"
                   className="hidden"
-                  onChange={pickedImageHandler}
+                  onChange={imageToURL}
                 />
               </div>
             </div>

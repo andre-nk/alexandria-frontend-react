@@ -1,3 +1,4 @@
+import Helmet from "react-helmet";
 import { Tab } from "@headlessui/react";
 import ReactTooltip from "react-tooltip";
 import { IoPeople, IoCloudOffline, IoPencilSharp } from "react-icons/io5";
@@ -188,6 +189,13 @@ export default function AppPage() {
 
   return (
     <div>
+      <Helmet>
+        <title>Download Apps - Alexandria</title>
+        <meta
+          name="Get our apps"
+          content="Alexandria is widely available for many platforms and definitely will enhance your experience and allows even easier access ⚡️!"
+        />
+      </Helmet>
       <div className="w-full bg-primary-bg flex justify-between">
         <div className="w-4/12 flex pl-20 py-24 flex-col space-y-5">
           <h2 className="text-4xl font-semibold">Get the apps!</h2>
@@ -244,15 +252,21 @@ export default function AppPage() {
                             className="p-2.5 rounded-md bg-gray-100"
                           >
                             <p data-tip={feature.title}>{feature.icon}</p>
-                            <ReactTooltip place="bottom" type="dark" effect="solid" className="p-0"/>
+                            <ReactTooltip
+                              place="bottom"
+                              type="dark"
+                              effect="solid"
+                              className="p-0"
+                            />
                           </div>
                         ))}
                       </div>
                       <button
                         onClick={() => {
-                          window.open(posts.downloadLink)
+                          window.open(posts.downloadLink);
                         }}
-                        className="mt-12 rounded-md bg-primary-blue text-white px-6 py-2.5">
+                        className="mt-12 rounded-md bg-primary-blue text-white px-6 py-2.5"
+                      >
                         Download
                       </button>
                     </div>

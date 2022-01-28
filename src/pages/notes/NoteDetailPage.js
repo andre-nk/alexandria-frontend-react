@@ -1,7 +1,12 @@
+import Helmet from "react-helmet";
+
 export default function NoteDetailPage() {
-    return (
-        <div>
-            <p>NoteDetail</p>
-        </div>
-    )
+  return (
+    <div>
+      <Helmet>
+        <title>Note Title TODO - Alexandria</title>
+      </Helmet>
+      <p>NoteDetail</p>
+    </div>
+  );
 }
