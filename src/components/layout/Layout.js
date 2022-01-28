@@ -14,7 +14,6 @@ import NoteCollectionPage from "../../pages/notes/NoteCollectionPage";
 import NewNotePage from "../../pages/notes/NewNotePage";
 import NoteDetailPage from "../../pages/notes/NoteDetailPage";
 import ProfilePage from "../../pages/profile/ProfilePage";
-import ProfileDetailPage from "../../pages/profile/ProfileDetailPage";
 import NotFoundPage from "../../pages/NotFoundPage";
 import ProtectedRoute from "../router/ProtectedRoute";
 
@@ -69,14 +68,6 @@ export default function Layout() {
           element={
             <ProtectedRoute>
               <ProfilePage />
-            </ProtectedRoute>
-          }
-        />
-        <Route
-          path="/profile/:id"
-          element={
-            <ProtectedRoute>
-              <ProfileDetailPage />
             </ProtectedRoute>
           }
         />

@@ -40,7 +40,7 @@ export default function AboutPoints() {
 
       <div className="w-full px-20 flex items-center justify-between">
         <div className="w-5/12 space-y-5">
-          <h2 className="text-4xl font-semibold">Swift access!</h2>
+          <h2 className="text-4xl font-semibold">Swift integration!</h2>
           <p className="text-lg leading-8">
             Alexandria is available throughout many platforms, even a VSCode
             Extension. The extension allows you can manage your notes and
@@ -52,7 +52,7 @@ export default function AboutPoints() {
 
       <div className="w-full px-20 flex flex-row-reverse items-center justify-between">
         <div className="w-5/12 space-y-5">
-          <h2 className="text-4xl font-semibold">Safe and Share!</h2>
+          <h2 className="text-4xl font-semibold">Safe and share!</h2>
           <p className="text-lg leading-8">
             Easily collaborate with your teams through our secured share,
             including a live edit and comments! We made it easy to connect your
