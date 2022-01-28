@@ -7,9 +7,9 @@ export default function ActivityMenu() {
   return (
     <Menu as="div" className="relative inline-block text-left">
       <Menu.Button>
-        <button className="h-8 w-8 flex justify-center items-center rounded-md bg-primary-white hover:bg-gray-100 duration-200 border-2 border-primary-border">
+        <div className="h-8 w-8 flex justify-center items-center rounded-md bg-primary-white hover:bg-gray-100 duration-200 border-2 border-primary-border">
           <IoNotificationsOutline size={18} />
-        </button>
+        </div>
       </Menu.Button>
       <Transition
         as={Fragment}

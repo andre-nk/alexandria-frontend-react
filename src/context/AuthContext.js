@@ -1,6 +1,8 @@
 import { onAuthStateChanged } from "firebase/auth";
 import { createContext, useReducer, useEffect } from "react";
+
 import { projectAuth } from "../firebase/config";
+import axiosConfig from "../axios/axiosConfig";
 
 export const AuthContext = createContext();
 
@@ -37,15 +39,10 @@ export const AuthContextProvider = ({ children }) => {
       //CALL NATIVE API AND FORM A DESIRED USER STRUCT THEN PASS IT AS A PAYLOAD
       if (user !== null) {
         try {
-          const response = await fetch(
-            `http://localhost:8080/api/v1/users/${user.uid}`,
-            {
-              method: "GET",
-            }
-          );
+          const response = await axiosConfig.get(`users/${user.uid}`);
 
-          if (response.ok) {
-            const responseData = await response.json();
+          if (response.status === 200) {
+            const responseData = await response.data.data
 
             const userInstance = {
               uid: user.uid,
@@ -54,9 +51,9 @@ export const AuthContextProvider = ({ children }) => {
               provider: user.providerId,
               photoURL: user.photoURL,
               isVerified: user.emailVerified,
-              role: responseData.data.role,
-              location: responseData.data.location,
-              friends: responseData.data.friends,
+              role: responseData.role,
+              location: responseData.location,
+              friends: responseData.friends,
             };
 
             dispatch({ type: "AUTH_IS_READY", payload: userInstance });

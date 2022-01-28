@@ -13,27 +13,26 @@ import { uploadBytes, getDownloadURL, ref } from "firebase/storage";
 
 import { projectAuth, projectStorage } from "../firebase/config";
 import { useAuthContext } from "./useAuthContext";
+import axiosInstance from "../axios/axiosConfig";
 
 export const useAuth = () => {
-  const [error, setError] = useState(null);
-  const [profilePictureURL, setProfilePictureURL] = useState(null);
-  const [isResetSent, setisResetSent] = useState(false);
   const { dispatch } = useAuthContext();
+  const [error, setError] = useState(null);
+  const [success, setSuccess] = useState(null);
+  const [isResetSent, setisResetSent] = useState(false);
+  const [profilePictureURL, setProfilePictureURL] = useState(null);
 
   const registerUserAPI = async (user) => {
     //CALL NATIVE API
-    const response = await fetch("http://localhost:8080/api/v1/users", {
-      method: "POST",
-      body: JSON.stringify({
-        uid: user.uid,
-        role: "",
-        location: "",
-        friends: [],
-      }),
+    const response = await axiosInstance.post("/users", {
+      uid: user.uid,
+      role: "",
+      location: "",
+      friends: [],
     });
 
-    if (response.ok) {
-      const responseData = await response.json();
+    if (response.status === 200) {
+      const responseData = await response.data;
 
       const userInstance = {
         uid: user.uid,
@@ -42,9 +41,9 @@ export const useAuth = () => {
         provider: user.providerId,
         photoURL: user.photoURL,
         isVerified: user.emailVerified,
-        role: responseData.data.role,
-        location: responseData.data.location,
-        friends: responseData.data.friends,
+        role: responseData.role,
+        location: responseData.location,
+        friends: responseData.friends,
       };
 
       dispatch({
@@ -56,15 +55,10 @@ export const useAuth = () => {
 
   const loginUserAPI = async (user) => {
     //CALL NATIVE API
-    const response = await fetch(
-      `http://localhost:8080/api/v1/users/${user.uid}`,
-      {
-        method: "GET",
-      }
-    );
+    const response = await axiosInstance.get(`/${user.uid}`);
 
-    if (response.ok) {
-      const responseData = await response.json();
+    if (response.status === 200) {
+      const responseData = await response.data;
 
       const userInstance = {
         uid: user.uid,
@@ -73,9 +67,9 @@ export const useAuth = () => {
         provider: user.providerId,
         photoURL: user.photoURL,
         isVerified: user.emailVerified,
-        role: responseData.data.role,
-        location: responseData.data.location,
-        friends: responseData.data.friends,
+        role: responseData.role,
+        location: responseData.location,
+        friends: responseData.friends,
       };
 
       dispatch({
@@ -176,6 +170,70 @@ export const useAuth = () => {
       });
   };
 
+  const updateProfileAPI = async (user, name, role, location) => {
+    if (user.displayName !== name && projectAuth.currentUser) {
+      try {
+        await updateProfile(projectAuth.currentUser, {
+          displayName: name,
+        });
+
+        setSuccess("Your profile has been updated");
+      } catch (error) {
+        setError(error)
+      }
+    }
+
+    if (user.role !== role) {
+      let config = {
+        headers: {
+          Authorization: "Bearer " + user.uid,
+        },
+      };
+
+      try {
+        await axiosInstance.put(
+          "/users",
+          {
+            uid: user.uid,
+            role: role,
+            location: location ?? "",
+            friends: [],
+          },
+          config
+        );
+
+        setSuccess("Your profile has been updated");
+      } catch (error) {
+        setError(error)
+      }
+    }
+
+    if (user.location !== location) {
+      let config = {
+        headers: {
+          Authorization: "Bearer " + user.uid,
+        },
+      };
+
+      try {
+        await axiosInstance.put(
+          "/users",
+          {
+            uid: user.uid,
+            role: role ?? "",
+            location: location,
+            friends: [],
+          },
+          config
+        );
+
+        setSuccess("Your profile has been updated");
+      } catch (error) {
+        setError(error)
+      }
+    }
+  };
+
   const logout = async () => {
     setError(null);
     signOut(projectAuth)
@@ -191,10 +249,12 @@ export const useAuth = () => {
 
   return {
     error,
+    success,
     isResetSent,
     registerWithEmail,
     signInWithEmail,
     logout,
+    updateProfileAPI,
     resetPassword,
     registerWithGithub,
     registerWithGoogle,
