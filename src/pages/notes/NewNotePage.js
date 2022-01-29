@@ -8,6 +8,7 @@ import NoteHeaderMobile from "../../components/note/NoteHeaderMobile";
 import NoteHeaderDesktop from "../../components/note/NoteHeaderDesktop";
 import NoteToolbarDesktop from "../../components/note/NoteToolbarDesktop";
 import NoteDrawer from "../../components/note/NoteDrawer";
+import { CodeboxThemes } from "../../styles/codeboxTheme";
 
 export default function NewNotePage() {
   const params = useParams();
@@ -19,17 +20,30 @@ export default function NewNotePage() {
   const [isDrawerOpen, setDrawerIsOpen] = useState(false);
   const [isToolbarOpen, setIsToolbarOpen] = useState(false);
   const [isCommentEnabled, setIsCommentEnabled] = useState(true);
+  const [codeBoxColor, setCodeBoxColor] = useState(CodeboxThemes[0]);
+  const [oldCodeBoxColor, setOldCodeBoxColor] = useState(CodeboxThemes[0]);
 
   useEffect(() => {
-    const createNote = () => {
+    const createNote = async () => {
       if (noteInstance === null) {
-        const editor = createNoteInstance();
+        const editor = createNoteInstance(codeBoxColor, "");
         setNoteInstance(editor);
+      } else if (oldCodeBoxColor !== codeBoxColor) {
+        console.log("UseEffect fired again!", codeBoxColor);
+        noteInstance.saver.save().then(async (savedData) => {
+          await noteInstance.destroy();
+          const newEditor = createNoteInstance(
+            savedData,
+            codeBoxColor
+          );
+          setOldCodeBoxColor(codeBoxColor);
+          setNoteInstance(newEditor);
+        });
       }
     };
 
     createNote();
-  }, [createNoteInstance, noteInstance]);
+  }, [createNoteInstance, noteInstance, codeBoxColor, oldCodeBoxColor]);
 
   // const handleSave = () => {
   //   if (noteInstance) {
@@ -72,13 +86,13 @@ export default function NewNotePage() {
             noteTitle={noteTitle}
             setNoteTitle={setNoteTitle}
           />
-          <div className="flex justify-center py-10">
+          <div className="flex justify-center py-10 overflow-hidden">
             <div
               id="editorjs"
               ref={editorCore}
               className={`${
                 isToolbarOpen ? "w-full lg:w-9/12" : "lg:w-7/12"
-              } self-center duration-500 w-full px-8 py-10 bg-primary-white rounded-sm drop-shadow-xl`}
+              } overflow-hidden self-center duration-500 w-full px-8 py-10 bg-primary-white rounded-sm drop-shadow-xl`}
             ></div>
           </div>
         </div>
@@ -87,6 +101,8 @@ export default function NewNotePage() {
           isCommentEnabled={isCommentEnabled}
           setIsCommentEnabled={setIsCommentEnabled}
           setIsToolbarOpen={setIsToolbarOpen}
+          codeBoxThemes={CodeboxThemes}
+          setCodeBoxColor={setCodeBoxColor}
         />
       </div>
     </div>

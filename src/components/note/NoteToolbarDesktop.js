@@ -16,9 +16,10 @@ export default function NoteToolbarDesktop({
   setIsToolbarOpen,
   isCommentEnabled,
   setIsCommentEnabled,
+  codeBoxThemes,
+  setCodeBoxColor,
 }) {
-
-  const tags = ["react", "web", "trick", "javascript", "project", "dev"];
+  const mockTags = ["react", "web", "trick", "javascript", "project", "dev"];
 
   return (
     <div
@@ -41,19 +42,35 @@ export default function NoteToolbarDesktop({
         </button>
         <div className="flex flex-col space-y-1">
           <div className="w-full flex justify-between items-center">
-            <h2 className="text-lg font-medium">Tags</h2>
+            <h2 className="text-lg font-medium">Tags 🏷</h2>
             <div className="p-1 rounded-md bg-slate-100 hover:bg-primary-blue hover:text-white duration-200 cursor-pointer text-sm">
               <IoAdd />
             </div>
           </div>
           <div className="w-full flex flex-wrap">
-            {tags.map((item) => {
+            {mockTags.map((item) => {
               return (
                 <div className="py-1 mt-2 mr-2 px-2 rounded-md bg-slate-100 hover:bg-primary-blue hover:text-white duration-200 cursor-pointer text-sm">
                   <p>{item}</p>
                 </div>
               );
             })}
+          </div>
+          <div className="pt-6 flex flex-col space-y-2">
+            <label htmlFor="selectTheme" className="text-sm pl-1">
+              Code snippet theme: 🎨
+            </label>
+            <select
+              name="selectTheme"
+              onChange={(e) => {
+                setCodeBoxColor(codeBoxThemes[e.currentTarget.value]);
+              }}
+              className="form-select form-select-lg appearance-none w-full px-3 py-2.5 text-sm font-normal text-primary-black bg-white rounded-md border border-primary-border focus:border-primary-blue"
+            >
+              {codeBoxThemes.map((theme, index) => {
+                return <option value={index}>{theme.name}</option>;
+              })}
+            </select>
           </div>
         </div>
         <span className="h-[1px] w-full bg-primary-border"></span>

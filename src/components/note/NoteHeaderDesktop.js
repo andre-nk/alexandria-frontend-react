@@ -24,7 +24,7 @@ export default function NoteHeaderDesktop({
               console.log(noteTitle);
             }
           }}
-          className="absolute w-auto max-w-[100rem] bg-transparent outline-none text-center text-lg capitalize font-medium text-major-text"
+          className="absolute w-[50vw] bg-transparent outline-none text-center text-lg capitalize font-medium text-major-text"
         />
       )}
       <div className="w-full flex justify-between items-center">

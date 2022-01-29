@@ -10,7 +10,7 @@ import CodeBox from "@bomdi/codebox";
 import CodexEditor from "@editorjs/editorjs";
 
 export const useCreateNote = () => {
-  const createNoteInstance = () => {
+  const createNoteInstance = (currentData, codeBoxTheme) => {
     let editor = new CodexEditor({
       tools: {
         header: Header,
@@ -24,17 +24,17 @@ export const useCreateNote = () => {
         codeBox: {
           class: CodeBox,
           config: {
-            themeURL:
-              "https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@9.18.1/build/styles/dracula.min.css", // Optional
-            themeName: "atom-one-dark", // Optional
-            useDefaultTheme: "light", // Optional. This also determines the background color of the language select drop-down
+            themeURL: codeBoxTheme.url, // Optional
+            themeName: codeBoxTheme.name, // Optional
+            useDefaultTheme: "dark", // Optional. This also determines the background color of the language select drop-down
           },
         },
       },
+      data: currentData ?? {}, 
     });
 
-    return editor
+    return editor;
   };
 
-  return { createNoteInstance};
+  return { createNoteInstance };
 };
