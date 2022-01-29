@@ -1,9 +1,9 @@
-import { Link, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
+import ContentLoader from "react-content-loader";
 import { VscTerminalLinux } from "react-icons/vsc";
 import { BsWindows, BsApple } from "react-icons/bs";
 import { Fragment, useEffect, useState } from "react";
 import { IoAddOutline, IoLogoAndroid, IoMenuOutline } from "react-icons/io5";
-import ContentLoader from "react-content-loader";
 
 import { useAuthContext } from "../../hooks/useAuthContext";
 import NavLink from "./NavLink";
@@ -103,16 +103,21 @@ export default function Navbar({ isDynamic, setIsOpen, aboutSectionRef }) {
               >
                 <IoMenuOutline size={18} />
               </button>
-              <Link to="/">
-                <img alt="logo" src="/logo.png" width={40} height={40} />
-              </Link>
-              <div className="h-9 w-9 rounded-full bg-primary-border overflow-clip">
-                <img
-                  alt="profilePicture"
-                  src={user.photoURL}
-                  width={36}
-                  height={36}
-                />
+              <div className="flex space-x-6 items-center">
+                <ActivityMenu />
+                <div
+                  onClick={() => {
+                    navigate("/profile");
+                  }}
+                  className="h-9 w-9 cursor-pointer rounded-full bg-primary-border overflow-clip"
+                >
+                  <img
+                    alt="profilePicture"
+                    src={user.photoURL}
+                    width={36}
+                    height={36}
+                  />
+                </div>
               </div>
             </div>
           ) : (

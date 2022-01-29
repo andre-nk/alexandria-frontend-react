@@ -68,7 +68,7 @@ export default function ProfilePage() {
   }, [error, success, openSnackbar]);
 
   return (
-    <div className="px-20 py-8">
+    <div className="px-10 lg:px-20 py-8">
       <Helmet>
         <title>Your profile - Alexandria</title>
         <meta
@@ -88,7 +88,7 @@ export default function ProfilePage() {
         <h2 className="text-lg font-medium">Profile Page</h2>
       </div>
       <div className="py-12 w-full flex justify-center">
-        <div className="w-7/12">
+        <div className="w-full lg:w-7/12">
           <div className="w-full px-4 flex space-x-12 items-center justify-start">
             <div className="h-28 w-28 rounded-full overflow-clip relative bg-gray-300">
               <div className="absolute top-0 w-full h-full flex justify-center items-center group bg-primary-black bg-opacity-0 hover:bg-opacity-50 duration-200">
@@ -129,7 +129,7 @@ export default function ProfilePage() {
             {({ errors, touched }) => {
               return (
                 <Form className="w-full py-10 flex flex-col space-y-5">
-                  <div className="w-full px-5 flex justify-between items-center">
+                  <div className="w-full px-2 lg:px-5 flex justify-between items-center">
                     <label htmlFor="name" className="flex-[4]">
                       Display name
                     </label>
@@ -149,7 +149,7 @@ export default function ProfilePage() {
                       ) : null}
                     </div>
                   </div>
-                  <div className="w-full px-5 flex justify-between items-center">
+                  <div className="w-full px-2 lg:px-5 flex justify-between items-center">
                     <div className="flex-[4] flex">
                       Role <p className="text-minor-text pl-1">{"(.opt)"}</p>
                     </div>
@@ -169,7 +169,7 @@ export default function ProfilePage() {
                       ) : null}
                     </div>
                   </div>
-                  <div className="w-full px-5 flex justify-between items-center">
+                  <div className="w-full px-2 lg:px-5 flex justify-between items-center">
                     <div className="flex-[4] flex">
                       Location{" "}
                       <p className="text-minor-text pl-1">{"(.opt)"}</p>
@@ -190,7 +190,7 @@ export default function ProfilePage() {
                       ) : null}
                     </div>
                   </div>
-                  <div className="w-full px-5 flex justify-between items-center">
+                  <div className="w-full px-2 lg:px-5 flex justify-between items-center">
                     <label htmlFor="name" className="flex-[4]">
                       E-mail address
                     </label>
@@ -212,16 +212,16 @@ export default function ProfilePage() {
                       ) : null}
                     </div>
                   </div>
-                  <div className="w-full px-5 rounded-md duration-200 hover:bg-gray-100 flex py-4 justify-between items-center">
+                  <div className="w-full px-2 lg:px-5 rounded-md duration-200 hover:bg-gray-100 flex py-4 justify-between items-center">
                     <p>Reset password</p>
                     <IoChevronForwardOutline size={18} />{" "}
                   </div>
-                  <div className="w-full px-5 rounded-md duration-200 hover:bg-primary-red hover:bg-opacity-10 flex py-4 justify-between items-center">
+                  <div className="w-full px-2 lg:px-5 rounded-md duration-200 hover:bg-primary-red hover:bg-opacity-10 flex py-4 justify-between items-center">
                     <p className="text-primary-red">Delete account</p>
                     <IoChevronForwardOutline size={18} />{" "}
                   </div>
                   <button
-                    className="bg-primary-blue w-[20%] self-end mt-5 text-primary-bg hover:bg-active-blue rounded-md text-medium border px-4 py-3 duration-200"
+                    className="bg-primary-blue w-full lg:w-[20%] self-end mt-5 text-primary-bg hover:bg-active-blue rounded-md text-medium border px-4 py-3 duration-200"
                     type="submit"
                   >
                     Update profile

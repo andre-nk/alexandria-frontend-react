@@ -226,7 +226,7 @@ export default function RegisterPage() {
         alt="background"
         src="/ornament.svg"
         layout="fill"
-        className="z-0 object-cover absolute"
+        className="z-0 h-full object-cover absolute"
       />
     </div>
   );

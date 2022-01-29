@@ -11,7 +11,7 @@ const SubscribeSchema = Yup.object().shape({
 export default function Footer() {
   return (
     <footer className="text-gray-600 body-font z-40">
-      <div className="py-20 px-16 lg:px-20">
+      <div className="py-20 px-10 lg:px-20">
         <div className="flex flex-col-reverse lg:space-y-0 lg:flex-row justify-between items-center">
           <div className="w-full pt-16 lg:pt-0 md:w-2/3 flex">
             <div className="md:w-1/3 w-full">
@@ -87,7 +87,7 @@ export default function Footer() {
                   {({ errors, touched }) => {
                     return (
                       <Fragment>
-                        <Form className="flex w-full space-x-4">
+                        <Form className="w-full flex flex-col lg:flex-row space-y-4 lg:space-y-0 lg:space-x-4">
                           <div className="w-full">
                             <Field
                               type="text"
@@ -98,14 +98,14 @@ export default function Footer() {
                             />
                           </div>
                           <button
-                            className="bg-primary-blue px-6 min-h-full text-primary-bg hover:bg-active-blue rounded-md text-medium border duration-200"
+                            className="bg-primary-blue px-6 py-3 lg:py-0 lg:min-h-full text-primary-bg hover:bg-active-blue rounded-md text-md font-medium border duration-200"
                             type="submit"
                           >
                             Subscribe!
                           </button>
                         </Form>
                         {errors.email && touched.email ? (
-                          <p className="mt-1.5 ml-1.5 text-xs text-red-500 opacity-70">
+                          <p className="mt-2 ml-1.5 text-xs text-red-500 opacity-70">
                             *{errors.email}
                           </p>
                         ) : null}
@@ -115,7 +115,7 @@ export default function Footer() {
                 </Formik>
               </div>
             </div>
-            <span className="text-gray-500 text-sm md:text-left text-center">
+            <span className="text-gray-500 pt-4 text-sm md:text-left text-center">
               The monthly newsletter will notify you about{" "}
               <strong className="font-medium">alexandria</strong> updates and
               development stories!

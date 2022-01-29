@@ -107,7 +107,7 @@ export default function ForgotPasswordPage() {
         alt="background"
         src="/ornament.svg"
         layout="fill"
-        className="z-0 object-cover absolute"
+        className="z-0 h-full object-cover absolute"
       />
     </div>
   );

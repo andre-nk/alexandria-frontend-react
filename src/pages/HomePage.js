@@ -20,9 +20,9 @@ export default function Home({ aboutSectionRef }) {
         />
       </Helmet>
       <div className="flex flex-col justify-center items-center w-full relative h-[90vh] bg-white overflow-clip">
-        <div className=" flex flex-col mb-6 justify-center items-center h-full z-10 lg:w-7/12">
-          <div className="pb-6">
-            <img alt="logo" src="/logo-text.png" height={90.5} width={422} />
+        <div className="px-10 flex flex-col mb-6 justify-center items-center h-full z-10 lg:w-7/12">
+          <div className="pb-6 w-10/12 md:w-7/12">
+            <img alt="logo" src="/logo-text.png" />
           </div>
           <SearchBar />
           <p className="font-light text-major-text text-center">
@@ -33,7 +33,7 @@ export default function Home({ aboutSectionRef }) {
         <img
           alt="background"
           src="/ornament.svg"
-          className="object-cover absolute z-0 top-0"
+          className="object-cover h-full absolute z-0 top-0"
         />
       </div>
       {user && (

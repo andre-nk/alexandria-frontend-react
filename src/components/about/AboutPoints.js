@@ -1,7 +1,7 @@
 export default function AboutPoints() {
   return (
     <div className="flex flex-col space-y-28">
-      <div className="w-[52%] px-20 flex flex-col space-y-5">
+      <div className="w-full lg:w-[52%] px-10 lg:px-20 flex flex-col space-y-5">
         <h2 className="text-4xl font-semibold">What is Alexandria?</h2>
         <span className="text-lg leading-8">
           We are a dead-simple notetaking app for your programming-related
@@ -11,15 +11,19 @@ export default function AboutPoints() {
         </span>
         <span className="text-base leading-7 italic font-light pt-4">
           <span>
-            Alexandria is maintained by myself <strong>(@fullstack.dre)</strong> as a
-            solo-developer! <br/>
-            Connect with me <span className="underline cursor-pointer hover:text-primary-blue">down below</span> and feel free to share your thoughts!
+            Alexandria is maintained by myself <strong>(@fullstack.dre)</strong>{" "}
+            as a solo-developer! <br />
+            Connect with me{" "}
+            <span className="underline cursor-pointer hover:text-primary-blue">
+              down below
+            </span>{" "}
+            and feel free to share your thoughts!
           </span>
         </span>
       </div>
 
-      <div className="w-full flex pr-20 flex-row-reverse justify-between items-center">
-        <div className="w-5/12 space-y-5">
+      <div className="w-full flex space-y-4 px-10 lg:px-0 lg:pr-20 flex-col lg:flex-row-reverse justify-between items-center">
+        <div className="w-full lg:w-5/12 space-y-5">
           <h2 className="text-4xl font-semibold">Simply elegant editor.</h2>
           <p className="text-lg leading-8">
             Alexandria provides an elegant and easy-to-use editor just for you.
@@ -29,7 +33,7 @@ export default function AboutPoints() {
           </p>
         </div>
         <div className="w-[1rem]"></div>
-        <div className="w-[45%]">
+        <div className="w-full lg:w-[45%]">
           <img
             src="/mockup-1.png"
             alt="mockup-1.png"
@@ -38,8 +42,8 @@ export default function AboutPoints() {
         </div>
       </div>
 
-      <div className="w-full px-20 flex items-center justify-between">
-        <div className="w-5/12 space-y-5">
+      <div className="w-full flex space-y-4 px-10 lg:px-0 lg:pl-20 flex-col lg:flex-row justify-between items-center">
+        <div className="w-full lg:w-5/12 space-y-5">
           <h2 className="text-4xl font-semibold">Swift integration!</h2>
           <p className="text-lg leading-8">
             Alexandria is available throughout many platforms, even a VSCode
@@ -47,11 +51,18 @@ export default function AboutPoints() {
             quickly drop your code snippets directly to your current project!
           </p>
         </div>
-        <div className="w-5/12 bg-gray-200"></div>
+        <div className="w-[1rem]"></div>
+        <div className="w-full lg:w-[45%] rotate-180">
+          <img
+            src="/mockup-1.png"
+            alt="mockup-1.png"
+            className="w-full object-contain"
+          />
+        </div>
       </div>
 
-      <div className="w-full px-20 flex flex-row-reverse items-center justify-between">
-        <div className="w-5/12 space-y-5">
+      <div className="w-full flex space-y-4 px-10 lg:px-0 lg:pr-20 flex-col lg:flex-row-reverse justify-between items-center">
+        <div className="w-full lg:w-5/12 space-y-5">
           <h2 className="text-4xl font-semibold">Safe and share!</h2>
           <p className="text-lg leading-8">
             Easily collaborate with your teams through our secured share,
@@ -59,7 +70,14 @@ export default function AboutPoints() {
             teams and notes -- so you can discuss and move as one!
           </p>
         </div>
-        <div className="w-5/12 bg-gray-200"></div>
+        <div className="w-[1rem]"></div>
+        <div className="w-full lg:w-[45%]">
+          <img
+            src="/mockup-1.png"
+            alt="mockup-1.png"
+            className="w-full object-contain"
+          />
+        </div>
       </div>
     </div>
   );

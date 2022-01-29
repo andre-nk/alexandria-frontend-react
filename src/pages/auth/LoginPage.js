@@ -40,7 +40,6 @@ export default function LoginPage() {
           content="Log in to your Alexandria account and continue your notetaking voyage!"
         />
       </Helmet>
-
       <div className="max-w-sm px-8 lg:w-4/12 flex flex-col align-center self-center shadow-2xl rounded-2xl bg-primary-white z-10 py-12 lg:px-12">
         <div className="flex flex-col justify-center items-center space-y-4 pb-6">
           <div className="self-center flex w-full justify-center items-center space-x-2">
@@ -167,7 +166,7 @@ export default function LoginPage() {
         alt="background"
         src="/ornament.svg"
         layout="fill"
-        className="z-0 object-cover absolute"
+        className="z-0 h-full object-cover absolute"
       />
     </div>
   );

@@ -197,7 +197,7 @@ export default function AppPage() {
         />
       </Helmet>
       <div className="w-full bg-primary-bg flex justify-between">
-        <div className="w-4/12 flex pl-20 py-24 flex-col space-y-5">
+        <div className="w-full lg:w-4/12 flex px-10 lg:px-0 lg:pl-20 py-24 flex-col space-y-5">
           <h2 className="text-4xl font-semibold">Get the apps!</h2>
           <div className="flex flex-col">
             <p className="text-lg">
@@ -208,7 +208,7 @@ export default function AppPage() {
             <i>P.S. We got a VSCode Extension too! 🔥</i>
           </div>
         </div>
-        <div className="w-5/12 relative">
+        <div className="w-5/12 hidden lg:block relative">
           <img
             alt="background"
             src="/ornament-white.svg"
@@ -216,10 +216,10 @@ export default function AppPage() {
           />
         </div>
       </div>
-      <div className="w-full px-20 py-16">
+      <div className="w-full px-10 py-10 lg:px-20 lg:py-16">
         <div className="border border-gray-200 rounded-xl p-4 pb-6">
           <Tab.Group>
-            <Tab.List className="flex space-x-4">
+            <Tab.List className="flex overflow-x-auto space-x-4">
               {Object.keys(categories).map((category) => (
                 <Tab
                   key={category}
@@ -237,9 +237,9 @@ export default function AppPage() {
             </Tab.List>
             <Tab.Panels className="mt-2">
               {Object.values(categories).map((posts, idx) => (
-                <Tab.Panel key={idx} className="px-6 pt-12 py-8">
-                  <div className="w-full flex justify-evenly items-center">
-                    <div className="flex-[5]">
+                <Tab.Panel key={idx} className="px-6 pt-12 py-5">
+                  <div className="w-full flex flex-col space-y-6 lg:space-y-0 lg:flex-row justify-evenly items-center">
+                    <div className="lg:flex-[5]">
                       <img src="/mockup-macos.png" alt="macos-mockup.png" />
                     </div>
                     <div className="flex-[1] bg-gray-50"></div>
@@ -265,7 +265,7 @@ export default function AppPage() {
                         onClick={() => {
                           window.open(posts.downloadLink);
                         }}
-                        className="mt-12 rounded-md bg-primary-blue text-white px-6 py-2.5"
+                        className="mt-10 lg:mt-12 rounded-md bg-primary-blue text-white px-6 py-2.5"
                       >
                         Download
                       </button>
