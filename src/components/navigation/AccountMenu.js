@@ -11,7 +11,7 @@ export default function AccountMenu({ photoURL }) {
   return (
     <Menu as="div" className="relative inline-block text-left">
       <Menu.Button>
-        <div className="h-9 w-9 rounded-full bg-primary-border overflow-clip">
+        <div className="h-9 w-9 rounded-full mt-1.5 bg-primary-border overflow-clip">
           <img alt="profilePicture" src={photoURL} width={36} height={36} />
         </div>
       </Menu.Button>

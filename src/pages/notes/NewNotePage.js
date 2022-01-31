@@ -9,6 +9,7 @@ import NoteHeaderDesktop from "../../components/note/NoteHeaderDesktop";
 import NoteToolbarDesktop from "../../components/note/NoteToolbarDesktop";
 import NoteDrawer from "../../components/note/NoteDrawer";
 import { CodeboxThemes } from "../../styles/codeboxTheme";
+import NoteComment from "../../components/note/NoteComment";
 
 export default function NewNotePage() {
   const params = useParams();
@@ -19,7 +20,7 @@ export default function NewNotePage() {
   const [noteInstance, setNoteInstance] = useState(null);
   const [isDrawerOpen, setDrawerIsOpen] = useState(false);
   const [isToolbarOpen, setIsToolbarOpen] = useState(false);
-  const [isCommentEnabled, setIsCommentEnabled] = useState(true);
+  const [isCommentEnabled, setIsCommentEnabled] = useState(false);
   const [codeBoxColor, setCodeBoxColor] = useState(CodeboxThemes[0]);
   const [oldCodeBoxColor, setOldCodeBoxColor] = useState(CodeboxThemes[0]);
 
@@ -95,6 +96,7 @@ export default function NewNotePage() {
               } overflow-hidden self-center duration-500 w-full px-8 py-10 bg-primary-white rounded-sm drop-shadow-xl`}
             ></div>
           </div>
+          <NoteComment isToolbarOpen={isToolbarOpen} isCommentEnabled={isCommentEnabled} />
         </div>
         <NoteToolbarDesktop
           isToolbarOpen={isToolbarOpen}

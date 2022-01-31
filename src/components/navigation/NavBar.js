@@ -103,7 +103,7 @@ export default function Navbar({ isDynamic, setIsOpen, aboutSectionRef }) {
               >
                 <IoMenuOutline size={18} />
               </button>
-              <div className="flex space-x-6 items-center">
+              <div className="flex space-x-6 justify-center items-center">
                 <ActivityMenu />
                 <div
                   onClick={() => {
