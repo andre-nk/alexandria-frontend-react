@@ -2,10 +2,10 @@ import * as Yup from "yup";
 import Helmet from "react-helmet";
 import { Formik, Field, Form } from "formik";
 
-import { useAuth } from "../../hooks/useAuth";
+import { useNavigate } from "react-router-dom";
 import { useAuthContext } from "../../hooks/useAuthContext";
 import { useFormatError } from "../../hooks/useFormatError";
-import { useNavigate } from "react-router-dom";
+import { useUpdateUser } from "../../hooks/useUpdateUser";
 
 const ResetPasswordSchema = Yup.object().shape({
   email: Yup.string()
@@ -14,7 +14,7 @@ const ResetPasswordSchema = Yup.object().shape({
 });
 
 export default function ForgotPasswordPage() {
-  const { error, isResetSent, resetPassword } = useAuth();
+  const { error, isResetSent, resetPassword } = useUpdateUser();
   const { formatAuthError } = useFormatError();
   const { user } = useAuthContext();
   const navigate = useNavigate();

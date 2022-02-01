@@ -1,19 +1,45 @@
 import * as Yup from "yup";
+import { useEffect } from "react";
 import Helmet from "react-helmet";
 import { Formik, Field, Form } from "formik";
 import { useNavigate } from "react-router-dom";
-import { useSnackbar } from "react-simple-snackbar";
 import { IoChevronForwardOutline, IoPencil } from "react-icons/io5";
 
+import { useImageURL } from "../../hooks/useImageURL";
+import { useUpdateUser } from "../../hooks/useUpdateUser";
 import { useAuthContext } from "../../hooks/useAuthContext";
-import { useAuth } from "../../hooks/useAuth";
-import { useEffect } from "react";
 
 export default function ProfilePage() {
   const navigate = useNavigate();
   const { user } = useAuthContext();
-  const [openSnackbar] = useSnackbar();
-  const { updateProfileAPI, error, success } = useAuth();
+  const {
+    updateRole,
+    updateLocation,
+    updatePhotoURL,
+    updateDisplayName,
+    error,
+    success,
+  } = useUpdateUser();
+  const { isValidImage, profilePicture, profilePictureUrl, imageToURL } =
+    useImageURL();
+
+  const pickImage = () => {
+    document.getElementById("profilePicturePicker").click();
+  };
+
+  useEffect(() => {
+    const updateUserPhotoURL = async () => {
+      console.log(isValidImage);
+      if (isValidImage) {
+        let role = user.role;
+        let location = user.location;
+
+        await updatePhotoURL(profilePicture, role, location);
+      }
+    };
+
+    updateUserPhotoURL();
+  }, [isValidImage, profilePicture, updatePhotoURL, user]);
 
   const UpdateProfileSchema = Yup.object().shape({
     name: Yup.string()
@@ -28,44 +54,6 @@ export default function ProfilePage() {
       "Your location name should be less than 50 characters!"
     ),
   });
-
-  useEffect(() => {
-    if (error) {
-      openSnackbar(error.message, {
-        position: "bottom-right",
-        style: {
-          backgroundColor: "midnightblue",
-          border: "2px solid lightgreen",
-          color: "lightblue",
-          fontFamily: "sans-serif",
-          fontSize: "20px",
-          textAlign: "center",
-        },
-        closeStyle: {
-          color: "lightcoral",
-          fontSize: "16px",
-        },
-      });
-    } else if (success) {
-      console.log("Success");
-
-      openSnackbar(success, {
-        position: "bottom-right",
-        style: {
-          backgroundColor: "midnightblue",
-          border: "2px solid lightgreen",
-          color: "lightblue",
-          fontFamily: "sans-serif",
-          fontSize: "20px",
-          textAlign: "center",
-        },
-        closeStyle: {
-          color: "lightcoral",
-          fontSize: "16px",
-        },
-      });
-    }
-  }, [error, success, openSnackbar]);
 
   return (
     <div className="px-10 lg:px-20 py-8">
@@ -90,7 +78,10 @@ export default function ProfilePage() {
       <div className="py-12 w-full flex justify-center">
         <div className="w-full lg:w-7/12">
           <div className="w-full px-4 flex space-x-12 items-center justify-start">
-            <div className="h-28 w-28 rounded-full overflow-clip relative bg-gray-300">
+            <div
+              onClick={pickImage}
+              className="h-28 w-28 rounded-full overflow-clip relative bg-gray-300"
+            >
               <div className="absolute top-0 w-full h-full flex justify-center items-center group bg-primary-black bg-opacity-0 hover:bg-opacity-50 duration-200">
                 <IoPencil
                   size={24}
@@ -98,7 +89,18 @@ export default function ProfilePage() {
                   className="group-hover:opacity-100 opacity-0"
                 />
               </div>
-              <img src={user.photoURL} alt="profile-img" className="w-full" />
+              <img
+                src={profilePictureUrl ?? user.photoURL}
+                alt="profile-img"
+                className="w-full"
+              />
+              <input
+                id="profilePicturePicker"
+                type="file"
+                accept="image/*"
+                className="hidden"
+                onChange={imageToURL}
+              />
             </div>
             <div className="h-full flex flex-col space-y-1 items-start">
               <h2 className="text-[1.75rem] font-medium">{user.displayName}</h2>
@@ -118,12 +120,22 @@ export default function ProfilePage() {
           <Formik
             initialValues={{
               name: user.displayName,
-              role: user.role,
-              location: user.location,
+              role: user.role ?? "",
+              location: user.location ?? "",
             }}
             validationSchema={UpdateProfileSchema}
             onSubmit={async (values) => {
-              updateProfileAPI(user, values.name, values.role, values.location);
+              if (values.name !== user.displayName) {
+                await updateDisplayName(
+                  values.name,
+                  values.role,
+                  values.location
+                );
+              } else if (values.role !== user.role) {
+                await updateRole(values.role, values.location);
+              } else if (values.location !== user.location) {
+                await updateLocation(values.role, values.location);
+              }
             }}
           >
             {({ errors, touched }) => {

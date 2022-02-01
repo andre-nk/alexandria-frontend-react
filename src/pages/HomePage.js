@@ -33,7 +33,7 @@ export default function Home({ aboutSectionRef }) {
         <img
           alt="background"
           src="/ornament.svg"
-          className="object-cover h-full absolute z-0 top-0"
+          className="object-cover h-full w-full absolute z-0 top-0"
         />
       </div>
       {user && (

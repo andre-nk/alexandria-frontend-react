@@ -2,7 +2,6 @@ import { useState } from "react";
 import {
   createUserWithEmailAndPassword,
   signInWithEmailAndPassword,
-  sendPasswordResetEmail,
   updateProfile,
   signInWithPopup,
   GithubAuthProvider,
@@ -18,17 +17,16 @@ import axiosInstance from "../axios/axiosConfig";
 export const useAuth = () => {
   const { dispatch } = useAuthContext();
   const [error, setError] = useState(null);
-  const [success, setSuccess] = useState(null);
-  const [isResetSent, setisResetSent] = useState(false);
   const [profilePictureURL, setProfilePictureURL] = useState(null);
 
   const registerUserAPI = async (user) => {
     //CALL NATIVE API
     const response = await axiosInstance.post("/users", {
       uid: user.uid,
+      displayName: user.displayName,
+      photoURL: user.photoURL ?? "",
       role: "",
       location: "",
-      friends: [],
     });
 
     if (response.status === 200) {
@@ -120,17 +118,6 @@ export const useAuth = () => {
       });
   };
 
-  const resetPassword = async (email) => {
-    setError(null);
-    sendPasswordResetEmail(projectAuth, email)
-      .then(() => {
-        setisResetSent(true);
-      })
-      .catch((error) => {
-        setError(error.message);
-      });
-  };
-
   const signInWithEmail = async (email, password) => {
     setError(null);
     signInWithEmailAndPassword(projectAuth, email, password)
@@ -170,70 +157,6 @@ export const useAuth = () => {
       });
   };
 
-  const updateProfileAPI = async (user, name, role, location) => {
-    if (user.displayName !== name && projectAuth.currentUser) {
-      try {
-        await updateProfile(projectAuth.currentUser, {
-          displayName: name,
-        });
-
-        setSuccess("Your profile has been updated");
-      } catch (error) {
-        setError(error)
-      }
-    }
-
-    if (user.role !== role) {
-      let config = {
-        headers: {
-          Authorization: "Bearer " + user.uid,
-        },
-      };
-
-      try {
-        await axiosInstance.put(
-          "/users",
-          {
-            uid: user.uid,
-            role: role,
-            location: location ?? "",
-            friends: [],
-          },
-          config
-        );
-
-        setSuccess("Your profile has been updated");
-      } catch (error) {
-        setError(error)
-      }
-    }
-
-    if (user.location !== location) {
-      let config = {
-        headers: {
-          Authorization: "Bearer " + user.uid,
-        },
-      };
-
-      try {
-        await axiosInstance.put(
-          "/users",
-          {
-            uid: user.uid,
-            role: role ?? "",
-            location: location,
-            friends: [],
-          },
-          config
-        );
-
-        setSuccess("Your profile has been updated");
-      } catch (error) {
-        setError(error)
-      }
-    }
-  };
-
   const logout = async () => {
     setError(null);
     signOut(projectAuth)
@@ -249,13 +172,9 @@ export const useAuth = () => {
 
   return {
     error,
-    success,
-    isResetSent,
-    registerWithEmail,
-    signInWithEmail,
     logout,
-    updateProfileAPI,
-    resetPassword,
+    signInWithEmail,
+    registerWithEmail,
     registerWithGithub,
     registerWithGoogle,
   };
