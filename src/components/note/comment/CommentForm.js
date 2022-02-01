@@ -1,7 +1,7 @@
 import * as Yup from "yup";
 import { Formik, Field, Form } from "formik";
 
-import { useAuthContext } from "../../hooks/useAuthContext";
+import { useAuthContext } from "../../../hooks/useAuthContext";
 
 export default function CommentForm() {
   const { user } = useAuthContext();

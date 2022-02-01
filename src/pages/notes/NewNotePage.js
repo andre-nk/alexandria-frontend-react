@@ -6,10 +6,10 @@ import { useState, useEffect, useRef } from "react";
 import { useCreateNote } from "../../hooks/useCreateNote";
 import NoteHeaderMobile from "../../components/note/NoteHeaderMobile";
 import NoteHeaderDesktop from "../../components/note/NoteHeaderDesktop";
-import NoteToolbarDesktop from "../../components/note/NoteToolbarDesktop";
-import NoteDrawer from "../../components/note/NoteDrawer";
+import NoteToolbar from "../../components/note/toolbar/NoteToolbar";
+import NoteDrawer from "../../components/note/toolbar/NoteDrawer";
+import NoteComment from "../../components/note/comment/NoteComment"
 import { CodeboxThemes } from "../../styles/codeboxTheme";
-import NoteComment from "../../components/note/NoteComment";
 
 export default function NewNotePage() {
   const params = useParams();
@@ -20,7 +20,7 @@ export default function NewNotePage() {
   const [noteInstance, setNoteInstance] = useState(null);
   const [isDrawerOpen, setDrawerIsOpen] = useState(false);
   const [isToolbarOpen, setIsToolbarOpen] = useState(false);
-  const [isCommentEnabled, setIsCommentEnabled] = useState(false);
+  const [isCommentEnabled, setIsCommentEnabled] = useState(true);
   const [codeBoxColor, setCodeBoxColor] = useState(CodeboxThemes[0]);
   const [oldCodeBoxColor, setOldCodeBoxColor] = useState(CodeboxThemes[0]);
 
@@ -57,7 +57,7 @@ export default function NewNotePage() {
   return (
     <div>
       <Helmet>
-        <title>{noteTitle ?? "Untitled note"} - Alexandria</title>
+        <title>{noteTitle ?? title} - Alexandria</title>
       </Helmet>
       <NoteDrawer
         isOpen={isDrawerOpen}
@@ -98,7 +98,7 @@ export default function NewNotePage() {
           </div>
           <NoteComment isToolbarOpen={isToolbarOpen} isCommentEnabled={isCommentEnabled} />
         </div>
-        <NoteToolbarDesktop
+        <NoteToolbar
           isToolbarOpen={isToolbarOpen}
           isCommentEnabled={isCommentEnabled}
           setIsCommentEnabled={setIsCommentEnabled}

@@ -1,5 +1,4 @@
 import {
-  IoAdd,
   IoStarOutline,
   IoShareOutline,
   IoArchiveOutline,
@@ -8,10 +7,12 @@ import {
   IoChatboxEllipsesOutline,
   IoChevronForwardCircleOutline,
 } from "react-icons/io5";
+import { Switch } from "@headlessui/react";
 
 import NoteToolbarButton from "./NoteToolbarButton";
+import NoteTagsEditor from "./NoteTagsEditor";
 
-export default function NoteToolbarDesktop({
+export default function NoteToolbar({
   isToolbarOpen,
   setIsToolbarOpen,
   isCommentEnabled,
@@ -24,7 +25,7 @@ export default function NoteToolbarDesktop({
   return (
     <div
       className={`${isToolbarOpen ? "w-[22.5%] p-8" : "w-[0px] p-0"} 
-        duration-500 min-h-full bg-primary-white drop-shadow-xl hidden lg:block`}
+        duration-500 min-h-full bg-primary-white drop-shadow-xl hidden lg:block z-0`}
     >
       <div
         className={`${
@@ -41,21 +42,7 @@ export default function NoteToolbarDesktop({
           <p>Hide toolbar</p>
         </button>
         <div className="flex flex-col space-y-1">
-          <div className="w-full flex justify-between items-center">
-            <h2 className="text-lg font-medium">Tags 🏷</h2>
-            <div className="p-1 rounded-md bg-slate-100 hover:bg-primary-blue hover:text-white duration-200 cursor-pointer text-sm">
-              <IoAdd />
-            </div>
-          </div>
-          <div className="w-full flex flex-wrap">
-            {mockTags.map((item) => {
-              return (
-                <div className="py-1 mt-2 mr-2 px-2 rounded-md bg-slate-100 hover:bg-primary-blue hover:text-white duration-200 cursor-pointer text-sm">
-                  <p>{item}</p>
-                </div>
-              );
-            })}
-          </div>
+          <NoteTagsEditor mockTags={mockTags} />
           <div className="pt-6 flex flex-col space-y-2">
             <label htmlFor="selectTheme" className="text-sm pl-1">
               Code snippet theme: 🎨
@@ -112,23 +99,23 @@ export default function NoteToolbarDesktop({
               <IoChatboxEllipsesOutline size={16} />
               <p className="text-sm">Comment</p>
             </div>
-            <label className="flex justify-between items-center text-xl">
-              <input
-                type="checkbox"
-                className="appearance-none peer"
-                value={isCommentEnabled}
-                onChange={() => {
-                  setIsCommentEnabled(!isCommentEnabled);
-                }}
+            <Switch
+              checked={isCommentEnabled}
+              onChange={() => {
+                setIsCommentEnabled(!isCommentEnabled);
+              }}
+              className={`
+                  ${!isCommentEnabled ? "bg-slate-400" : "bg-active-blue"}
+                  relative flex items-center flex-shrink-0 h-6 w-11 rounded-full cursor-pointer transition-colors ease-in-out duration-200`}
+            >
+              <span
+                aria-hidden="true"
+                className={`${
+                  isCommentEnabled ? "translate-x-6" : "translate-x-1"
+                } pointer-events-none inline-block h-4 w-4 rounded-full bg-white shadow-lg transform transition ease-in-out duration-200`}
               />
-              <span className="w-8 h-3.5 flex items-center flex-shrink-0 bg-gray-300 rounded-full duration-300 ease-in-out peer-checked:bg-primary-blue after:w-4 after:h-4 after:bg-primary-white after:border after:border-primary-border after:rounded-full after:shadow-md after:duration-300 peer-checked:after:translate-x-4"></span>
-            </label>
+            </Switch>
           </div>
-          <NoteToolbarButton
-            buttonIcon={<IoChatboxEllipsesOutline size={16} />}
-            buttonTitle={"See comment"}
-            onClick={() => {}}
-          />
         </div>
       </div>
     </div>

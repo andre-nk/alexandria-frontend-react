@@ -19,8 +19,15 @@ import ProtectedRoute from "../router/ProtectedRoute";
 
 export default function Layout() {
   const [isDrawerOpen, setDrawerIsOpen] = useState(false);
-  const notLoggedInAboutSectionRef = useRef()
+  const notLoggedInAboutSectionRef = useRef();
   const location = useLocation();
+
+  let isFooterVisible = true;
+  if (location.pathname.includes("auth")) {
+    isFooterVisible = false;
+  } else if (location.pathname.includes("/notes/new")) {
+    isFooterVisible = false;
+  }
 
   return (
     <Fragment>
@@ -33,7 +40,10 @@ export default function Layout() {
         />
       )}
       <Routes>
-        <Route path="/" element={<Home aboutSectionRef={notLoggedInAboutSectionRef} />} />
+        <Route
+          path="/"
+          element={<Home aboutSectionRef={notLoggedInAboutSectionRef} />}
+        />
         <Route path="/auth/forgot" element={<ForgotPasswordPage />} />
         <Route path="/auth/login" element={<LoginPage />} />
         <Route path="/auth/register" element={<RegisterPage />} />
@@ -73,7 +83,7 @@ export default function Layout() {
         />
         <Route path="*" element={<NotFoundPage />} />
       </Routes>
-      {(location.pathname.indexOf("auth") < 1) && <Footer />}
+      {isFooterVisible && <Footer />}
     </Fragment>
   );
 }
