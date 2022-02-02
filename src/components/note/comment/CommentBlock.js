@@ -10,7 +10,7 @@ export default function CommentBlock({ comment }) {
             className="object-cover w-full h-full bg-gray-300"
           />
         </div>
-        <div className="flex flex-col w-[90%] space-y-1">
+        <div className="flex flex-col w-[80%] lg:w-[90%] space-y-1">
           <div className="w-full flex items-center space-x-2">
             <p className="text-md font-medium text-major-text">
               {comment.name}

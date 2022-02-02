@@ -13,6 +13,8 @@ import NoteToolbarButton from "./NoteToolbarButton";
 import NoteTagsEditor from "./NoteTagsEditor";
 
 export default function NoteToolbar({
+  tags,
+  setTags,
   isToolbarOpen,
   setIsToolbarOpen,
   isCommentEnabled,
@@ -20,8 +22,6 @@ export default function NoteToolbar({
   codeBoxThemes,
   setCodeBoxColor,
 }) {
-  const mockTags = ["react", "web", "trick", "javascript", "project", "dev"];
-
   return (
     <div
       className={`${isToolbarOpen ? "w-[22.5%] p-8" : "w-[0px] p-0"} 
@@ -42,7 +42,7 @@ export default function NoteToolbar({
           <p>Hide toolbar</p>
         </button>
         <div className="flex flex-col space-y-1">
-          <NoteTagsEditor mockTags={mockTags} />
+          <NoteTagsEditor tags={tags} setTags={setTags} />
           <div className="pt-6 flex flex-col space-y-2">
             <label htmlFor="selectTheme" className="text-sm pl-1">
               Code snippet theme: 🎨

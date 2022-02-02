@@ -1,22 +1,17 @@
-import { useNavigate } from "react-router-dom";
-
 export default function NoteHeaderMobile({
   title,
   noteTitle,
-  setNoteTitle
+  setNoteTitle,
+  handleSave,
 }) {
-  const navigate = useNavigate();
-
   return (
     <div className="flex lg:hidden relative w-full justify-center items-center">
       <div className="w-full flex justify-between items-center">
         <button
-          onClick={() => {
-            navigate("/");
-          }}
-          className="px-5 py-[0.5rem] cursor-pointer flex justify-center items-center rounded-md bg-primary-white hover:bg-gray-100 duration-200 border-2 border-primary-border"
+          onClick={handleSave}
+          className="px-5 py-[0.5rem] flex justify-center items-center rounded-md bg-primary-blue hover:bg-active-blue duration-200"
         >
-          Back
+          <p className="text-white">Save</p>
         </button>
         <input
           value={noteTitle === null ? title : noteTitle}
