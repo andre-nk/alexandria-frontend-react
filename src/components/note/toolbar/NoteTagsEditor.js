@@ -63,6 +63,7 @@ export default function NoteTagsEditor({ tags, setTags }) {
         {tags.map((item, index) => {
           return (
             <div
+              key={index}
               onClick={() => {
                 setSelectedTag(index);
               }}

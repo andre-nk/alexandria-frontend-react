@@ -16,9 +16,9 @@ export default function NoteDetailPage() {
   const params = useParams();
   const { id } = params;
   const editorCore = useRef(null);
-  const { createNoteInstance } = useCreateNote();
-  const [noteTitle, setNoteTitle] = useState(null);
   const [tags, setTags] = useState([]);
+  const [noteTitle, setNoteTitle] = useState(null);
+  const [isNoteLoaded, setIsNoteLoaded] = useState(false);
   const [noteInstance, setNoteInstance] = useState(null);
   const [isDrawerOpen, setDrawerIsOpen] = useState(false);
   const [isToolbarOpen, setIsToolbarOpen] = useState(false);
@@ -26,15 +26,37 @@ export default function NoteDetailPage() {
   const [codeBoxColor, setCodeBoxColor] = useState(CodeboxThemes[0]);
   const [oldCodeBoxColor, setOldCodeBoxColor] = useState(CodeboxThemes[0]);
 
-  const { error, success, createNote } = useNote();
+  const { createNoteInstance } = useCreateNote();
+  const { error, success, noteByID, getNoteByID, createNote } = useNote();
+
+  useEffect(() => {
+    const fetchNoteByID = async () => {
+      await getNoteByID(id);
+    };
+
+    fetchNoteByID();
+  }, []);
 
   useEffect(() => {
     const createNote = async () => {
-      if (noteInstance === null) {
-        const editor = createNoteInstance(codeBoxColor, "");
+      if (noteByID) {
+        if (noteInstance !== null && isNoteLoaded === false) {
+          setTags(noteByID.tags);
+          setIsCommentEnabled(noteByID.is_comment_enabled);
+
+          noteInstance.isReady.then(async () => {
+            await noteInstance.destroy();
+
+            let editorContentJSON = JSON.parse(noteByID.content);
+            const newEditor = createNoteInstance(editorContentJSON, "");
+            setNoteInstance(newEditor);
+            setIsNoteLoaded(true);
+          });
+        }
+      } else if (noteInstance === null) {
+        const editor = createNoteInstance("", codeBoxColor);
         setNoteInstance(editor);
       } else if (oldCodeBoxColor !== codeBoxColor) {
-        console.log("UseEffect fired again!", codeBoxColor);
         noteInstance.saver.save().then(async (savedData) => {
           await noteInstance.destroy();
           const newEditor = createNoteInstance(savedData, codeBoxColor);
@@ -45,13 +67,20 @@ export default function NoteDetailPage() {
     };
 
     createNote();
-  }, [createNoteInstance, noteInstance, codeBoxColor, oldCodeBoxColor]);
+  }, [
+    createNoteInstance,
+    isNoteLoaded,
+    noteByID,
+    noteInstance,
+    codeBoxColor,
+    oldCodeBoxColor,
+  ]);
 
   const handleSave = () => {
     if (noteInstance) {
       noteInstance.saver.save().then(async (savedData) => {
         let dataString = JSON.stringify(savedData);
-        let noteInstanceTitle = noteTitle;
+        let noteInstanceTitle = noteTitle ?? id;
         await createNote(noteInstanceTitle, tags, dataString);
       });
     }
@@ -60,7 +89,11 @@ export default function NoteDetailPage() {
   return (
     <div>
       <Helmet>
-        <title>{id} - Alexandria</title>
+        {noteByID ? (
+          <title>{noteTitle ?? noteByID.title} - Alexandria</title>
+        ) : (
+          <title>{noteTitle ?? "Untitled note"} - Alexandria</title>
+        )}
       </Helmet>
       <NoteDrawer
         isOpen={isDrawerOpen}
@@ -88,18 +121,22 @@ export default function NoteDetailPage() {
           </button>
         )}
         <div className="w-full pt-8 px-10">
-          <NoteHeaderDesktop
-            title={id}
-            noteTitle={noteTitle}
-            handleSave={handleSave}
-            setNoteTitle={setNoteTitle}
-          />
-          <NoteHeaderMobile
-            title={id}
-            handleSave={handleSave}
-            noteTitle={noteTitle}
-            setNoteTitle={setNoteTitle}
-          />
+          {noteByID && (
+            <div>
+              <NoteHeaderDesktop
+                title={noteByID.title}
+                noteTitle={noteTitle}
+                handleSave={handleSave}
+                setNoteTitle={setNoteTitle}
+              />
+              <NoteHeaderMobile
+                title={noteByID.title}
+                handleSave={handleSave}
+                noteTitle={noteTitle}
+                setNoteTitle={setNoteTitle}
+              />
+            </div>
+          )}
           <div className="flex justify-center py-10 overflow-hidden">
             <div
               id="editorjs"

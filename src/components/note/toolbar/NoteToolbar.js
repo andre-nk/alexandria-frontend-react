@@ -55,7 +55,7 @@ export default function NoteToolbar({
               className="form-select form-select-lg appearance-none w-full px-3 py-2.5 text-sm font-normal text-primary-black bg-white rounded-md border border-primary-border focus:border-primary-blue"
             >
               {codeBoxThemes.map((theme, index) => {
-                return <option value={index}>{theme.name}</option>;
+                return <option key={index} value={index}>{theme.name}</option>;
               })}
             </select>
           </div>

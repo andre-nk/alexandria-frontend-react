@@ -43,7 +43,7 @@ export default function NoteDrawer({
             <div className="w-full flex flex-wrap">
               {tags.map((item) => {
                 return (
-                  <div className="py-1 mt-2 mr-2 px-2 rounded-md bg-slate-100 hover:bg-primary-blue hover:text-white duration-200 cursor-pointer text-sm">
+                  <div key={item} className="py-1 mt-2 mr-2 px-2 rounded-md bg-slate-100 hover:bg-primary-blue hover:text-white duration-200 cursor-pointer text-sm">
                     <p>{item}</p>
                   </div>
                 );
