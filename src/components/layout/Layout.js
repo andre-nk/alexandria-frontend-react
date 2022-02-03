@@ -25,7 +25,7 @@ export default function Layout() {
   let isFooterVisible = true;
   if (location.pathname.includes("auth")) {
     isFooterVisible = false;
-  } else if (location.pathname.includes("/notes/new")) {
+  } else if (location.pathname.includes("/notes/")) {
     isFooterVisible = false;
   }
 

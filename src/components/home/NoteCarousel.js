@@ -1,19 +1,22 @@
-import { Swiper, SwiperSlide } from "swiper/react";
 import "swiper/css";
+import { Fragment } from "react";
+import { Swiper, SwiperSlide } from "swiper/react";
 
 import NoteCard from "./NoteCard";
-import { Fragment } from "react";
+import { useAuthContext } from "../../hooks/useAuthContext";
 
 export default function NotesCarousel({
+  notes,
   swiperRef,
   swiperActiveIndex,
   setSwiperActiveIndex,
   setIsSwiperEnded,
 }) {
-  const mockNotes = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10];
+  const { user } = useAuthContext();
 
   return (
     <Fragment>
+      {/* MOBILE */}
       <div className="block lg:hidden">
         <Swiper
           spaceBetween={32}
@@ -28,20 +31,23 @@ export default function NotesCarousel({
             setSwiperActiveIndex(swiper.activeIndex);
           }}
         >
-          {mockNotes.map((note) => {
+          {notes.map((note) => {
             return (
-              <SwiperSlide key={note}>
+              <SwiperSlide key={note._id}>
                 <NoteCard
-                  title={"Flutter: loop in build() method"}
-                  author={"Andreas Notokusumo"}
-                  isStarred={false}
-                  tags={["flutter", "mobile"]}
+                  _id={note._id}
+                  title={note.title}
+                  author={user.displayName}
+                  isStarred={note.is_starred}
+                  tags={note.tags}
                 />
               </SwiperSlide>
             );
           })}
         </Swiper>
       </div>
+
+      {/* DESKTOP */}
       <div className="hidden lg:block">
         <Swiper
           spaceBetween={32}
@@ -57,14 +63,15 @@ export default function NotesCarousel({
             setSwiperActiveIndex(swiper.activeIndex);
           }}
         >
-          {mockNotes.map((note) => {
+          {notes.map((note) => {
             return (
-              <SwiperSlide key={note}>
+              <SwiperSlide key={note._id}>
                 <NoteCard
-                  title={"Flutter: loop in build() method"}
-                  author={"Andreas Notokusumo"}
-                  isStarred={false}
-                  tags={["flutter", "mobile"]}
+                  _id={note._id}
+                  title={note.title}
+                  author={user.displayName}
+                  isStarred={note.is_starred}
+                  tags={note.tags}
                 />
               </SwiperSlide>
             );

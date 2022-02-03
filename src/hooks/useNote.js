@@ -6,6 +6,8 @@ export const useNote = () => {
   const { user } = useAuthContext();
   const [error, setError] = useState(null);
   const [success, setSuccess] = useState(null);
+  const [recentNotes, setRecentNotes] = useState([]);
+  const [featuredNotes, setFeaturedNotes] = useState([]);
 
   const createNote = async (title, tags, content) => {
     let noteInstance = JSON.stringify({
@@ -20,6 +22,8 @@ export const useNote = () => {
     });
 
     try {
+      setError(null);
+
       let config = {
         headers: {
           Authorization: "Bearer " + user.uid,
@@ -38,9 +42,28 @@ export const useNote = () => {
     }
   };
 
+  const getRecentNotes = async () => {
+    setError(null);
+    try {
+      const response = await axiosInstance.get(
+        `/notes?recent=true&uid=${user.uid}`
+      );
+
+      if (response.status === 200) {
+        setSuccess("Recent notes has been fetched!");
+        setRecentNotes(response.data.data);
+      }
+    } catch (error) {
+      setError(error);
+    }
+  };
+
   return {
     error,
     success,
+    recentNotes,
+    featuredNotes,
     createNote,
+    getRecentNotes
   };
 };
