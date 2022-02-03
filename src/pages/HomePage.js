@@ -8,7 +8,7 @@ import CTASection from "../components/home/CTASection";
 import AboutPoints from "../components/about/AboutPoints";
 
 export default function Home({ aboutSectionRef }) {
-  const { user } = useAuthContext();
+  const { user, isAuthReady } = useAuthContext();
 
   return (
     <Fragment>
@@ -42,7 +42,7 @@ export default function Home({ aboutSectionRef }) {
           <NotesCarouselWrapper headline={"Featured notes"} link={"/notes"} />
         </div>
       )}
-      {!user && (
+      {(!user && isAuthReady) && (
         <div className="py-16 w-full bg-white" ref={aboutSectionRef}>
           <AboutPoints />
           <CTASection />
