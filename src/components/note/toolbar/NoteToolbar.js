@@ -1,4 +1,6 @@
 import {
+  IoStar,
+  IoArchive,
   IoStarOutline,
   IoShareOutline,
   IoArchiveOutline,
@@ -15,12 +17,17 @@ import NoteTagsEditor from "./NoteTagsEditor";
 export default function NoteToolbar({
   tags,
   setTags,
+  isStarred,
+  setIsStarred,
+  isArchived,
+  setIsArchived,
   isToolbarOpen,
   setIsToolbarOpen,
   isCommentEnabled,
   setIsCommentEnabled,
   codeBoxThemes,
   setCodeBoxColor,
+  isCreateNotePage,
 }) {
   return (
     <div
@@ -55,42 +62,70 @@ export default function NoteToolbar({
               className="form-select form-select-lg appearance-none w-full px-3 py-2.5 text-sm font-normal text-primary-black bg-white rounded-md border border-primary-border focus:border-primary-blue"
             >
               {codeBoxThemes.map((theme, index) => {
-                return <option key={index} value={index}>{theme.name}</option>;
+                return (
+                  <option key={index} value={index}>
+                    {theme.name}
+                  </option>
+                );
               })}
             </select>
           </div>
         </div>
         <span className="h-[1px] w-full bg-primary-border"></span>
         <div className="flex flex-col w-full space-y-3.5">
-          <button className="w-full p-3 flex flex-col space-y-3 rounded-md hover:bg-gray-100 duration-200 border-2 border-primary-border">
-            <img alt="logo" src="/vscode.svg" width={24} height={24} />
-            <div className="w-full flex items-center justify-between">
-              <p className="text-sm">Import to VSCode</p>
-              <IoChevronForwardOutline size={16} />
-            </div>
-          </button>
-          <NoteToolbarButton
-            buttonIcon={<IoShareOutline size={18} />}
-            buttonTitle={"Share note"}
-            onClick={() => {}}
-          />
-          <NoteToolbarButton
-            buttonIcon={<IoStarOutline size={18} />}
-            buttonTitle={"Star note"}
-            onClick={() => {}}
-          />
-          <NoteToolbarButton
-            buttonIcon={<IoArchiveOutline size={18} />}
-            buttonTitle={"Archive note"}
-            onClick={() => {}}
-          />
+          {!isCreateNotePage && (
+            <button className="w-full p-3 flex flex-col space-y-3 rounded-md hover:bg-gray-100 duration-200 border-2 border-primary-border">
+              <img alt="logo" src="/vscode.svg" width={24} height={24} />
+              <div className="w-full flex items-center justify-between">
+                <p className="text-sm">Import to VSCode</p>
+                <IoChevronForwardOutline size={16} />
+              </div>
+            </button>
+          )}
+          {!isCreateNotePage && (
+            <NoteToolbarButton
+              buttonIcon={<IoShareOutline size={18} />}
+              buttonTitle={"Share note"}
+              onClick={() => {}}
+            />
+          )}
           <NoteToolbarButton
             buttonIcon={
-              <IoTrashBinOutline size={18} className="text-primary-red" />
+              isStarred ? (
+                <IoStar className="text-yellow-400" size={18} />
+              ) : (
+                <IoStarOutline size={18} />
+              )
             }
-            buttonTitle={"Delete note"}
-            onClick={() => {}}
+            buttonTitle={"Star note"}
+            onClick={() => {
+              setIsStarred(!isStarred);
+            }}
           />
+          {!isCreateNotePage && (
+            <NoteToolbarButton
+              buttonIcon={
+                isArchived ? (
+                  <IoArchive className="text-primary-blue" size={18} />
+                ) : (
+                  <IoArchiveOutline size={18} />
+                )
+              }
+              buttonTitle={"Archive note"}
+              onClick={() => {
+                setIsArchived(!isArchived);
+              }}
+            />
+          )}
+          {!isCreateNotePage && (
+            <NoteToolbarButton
+              buttonIcon={
+                <IoTrashBinOutline size={18} className="text-primary-red" />
+              }
+              buttonTitle={"Delete note"}
+              onClick={() => {}}
+            />
+          )}
         </div>
         <span className="h-[1px] w-full bg-primary-border"></span>
         <div className="flex flex-col w-full space-y-3.5">

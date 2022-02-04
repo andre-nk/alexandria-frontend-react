@@ -8,7 +8,6 @@ import NoteHeaderMobile from "../../components/note/NoteHeaderMobile";
 import NoteHeaderDesktop from "../../components/note/NoteHeaderDesktop";
 import NoteToolbar from "../../components/note/toolbar/NoteToolbar";
 import NoteDrawer from "../../components/note/toolbar/NoteDrawer";
-import NoteComment from "../../components/note/comment/NoteComment";
 import { CodeboxThemes } from "../../styles/codeboxTheme";
 import { useNote } from "../../hooks/useNote";
 
@@ -109,10 +108,6 @@ export default function NewNotePage() {
               } overflow-hidden self-center duration-500 w-full px-8 py-10 bg-primary-white rounded-sm drop-shadow-xl`}
             ></div>
           </div>
-          <NoteComment
-            isToolbarOpen={isToolbarOpen}
-            isCommentEnabled={isCommentEnabled}
-          />
         </div>
         <NoteToolbar
           tags={tags}
@@ -123,6 +118,7 @@ export default function NewNotePage() {
           setIsToolbarOpen={setIsToolbarOpen}
           codeBoxThemes={CodeboxThemes}
           setCodeBoxColor={setCodeBoxColor}
+          isCreateNotePage={true}
         />
       </div>
     </div>

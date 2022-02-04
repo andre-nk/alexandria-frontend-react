@@ -18,6 +18,8 @@ export default function NoteDetailPage() {
   const editorCore = useRef(null);
   const [tags, setTags] = useState([]);
   const [noteTitle, setNoteTitle] = useState(null);
+  const [isStarred, setIsStarred] = useState(false);
+  const [isArchived, setIsArchived] = useState(false);
   const [isNoteLoaded, setIsNoteLoaded] = useState(false);
   const [noteInstance, setNoteInstance] = useState(null);
   const [isDrawerOpen, setDrawerIsOpen] = useState(false);
@@ -27,7 +29,15 @@ export default function NoteDetailPage() {
   const [oldCodeBoxColor, setOldCodeBoxColor] = useState(CodeboxThemes[0]);
 
   const { createNoteInstance } = useCreateNote();
-  const { error, success, noteByID, getNoteByID, createNote } = useNote();
+  const {
+    error,
+    success,
+    noteByID,
+    getNoteByID,
+    starNote,
+    archiveNote,
+    updateNote,
+  } = useNote();
 
   useEffect(() => {
     const fetchNoteByID = async () => {
@@ -35,13 +45,15 @@ export default function NoteDetailPage() {
     };
 
     fetchNoteByID();
-  }, []);
+  }, [id]);
 
   useEffect(() => {
     const createNote = async () => {
       if (noteByID) {
         if (noteInstance !== null && isNoteLoaded === false) {
           setTags(noteByID.tags);
+          setIsStarred(noteByID.is_starred);
+          setIsArchived(noteByID.is_archived);
           setIsCommentEnabled(noteByID.is_comment_enabled);
 
           noteInstance.isReady.then(async () => {
@@ -56,32 +68,86 @@ export default function NoteDetailPage() {
       } else if (noteInstance === null) {
         const editor = createNoteInstance("", codeBoxColor);
         setNoteInstance(editor);
-      } else if (oldCodeBoxColor !== codeBoxColor) {
-        noteInstance.saver.save().then(async (savedData) => {
-          await noteInstance.destroy();
-          const newEditor = createNoteInstance(savedData, codeBoxColor);
-          setOldCodeBoxColor(codeBoxColor);
-          setNoteInstance(newEditor);
-        });
       }
     };
 
     createNote();
-  }, [
-    createNoteInstance,
-    isNoteLoaded,
-    noteByID,
-    noteInstance,
-    codeBoxColor,
-    oldCodeBoxColor,
-  ]);
+  }, [createNoteInstance, codeBoxColor, isNoteLoaded, noteByID, noteInstance]);
 
-  const handleSave = () => {
-    if (noteInstance) {
+  useEffect(() => {
+    const changeCodeBoxColor = async () => {
+      if (noteInstance !== null) {
+        if (oldCodeBoxColor !== codeBoxColor) {
+          console.log("Codebox Changed:", codeBoxColor);
+
+          noteInstance.saver.save().then(async (savedData) => {
+            await noteInstance.destroy();
+            const newEditor = createNoteInstance(savedData, codeBoxColor);
+            setOldCodeBoxColor(codeBoxColor);
+            setNoteInstance(newEditor);
+          });
+        }
+      }
+    };
+
+    changeCodeBoxColor();
+  }, [createNoteInstance, noteInstance, codeBoxColor, oldCodeBoxColor]);
+
+  useEffect(() => {
+    const updateNoteStar = async () => {
+      if (noteByID !== null) {
+        if (noteByID.is_starred !== isStarred) {
+          await starNote(noteByID, isStarred);
+        }
+      }
+    };
+
+    updateNoteStar();
+  }, [starNote, noteByID, isStarred]);
+
+  useEffect(() => {
+    const updateNoteArchive = async () => {
+      if (noteByID !== null) {
+        if (noteByID.is_archived !== isArchived) {
+          await archiveNote(noteByID, isArchived);
+        }
+      }
+    };
+
+    updateNoteArchive();
+  }, [archiveNote, noteByID, isArchived]);
+
+  const handleSave = async () => {
+    if (noteInstance && noteByID) {
       noteInstance.saver.save().then(async (savedData) => {
         let dataString = JSON.stringify(savedData);
-        let noteInstanceTitle = noteTitle ?? id;
-        await createNote(noteInstanceTitle, tags, dataString);
+        let noteInstance;
+
+        if (noteTitle) {
+          noteInstance = {
+            title: noteTitle,
+            tags: noteByID.tags,
+            content: dataString,
+            is_starred: noteByID.is_starred,
+            is_comment_enabled: noteByID.is_comment_enabled,
+            is_archived: noteByID.is_archived,
+            collaborators: noteByID.collaborators,
+          };
+
+          await updateNote(noteInstance, noteByID._id);
+        } else {
+          noteInstance = {
+            title: noteByID.title,
+            tags: noteByID.tags,
+            content: dataString,
+            is_starred: noteByID.is_starred,
+            is_comment_enabled: noteByID.is_comment_enabled,
+            is_archived: noteByID.is_archived,
+            collaborators: noteByID.collaborators,
+          };
+          
+          await updateNote(noteInstance, noteByID._id);
+        }
       });
     }
   };
@@ -154,6 +220,10 @@ export default function NoteDetailPage() {
         <NoteToolbar
           tags={tags}
           setTags={setTags}
+          isStarred={isStarred}
+          setIsStarred={setIsStarred}
+          isArchived={isArchived}
+          setIsArchived={setIsArchived}
           isToolbarOpen={isToolbarOpen}
           isCommentEnabled={isCommentEnabled}
           setIsCommentEnabled={setIsCommentEnabled}
