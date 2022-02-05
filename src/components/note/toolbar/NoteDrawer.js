@@ -8,7 +8,10 @@ import {
   IoChevronForwardOutline,
   IoChatboxEllipsesOutline,
 } from "react-icons/io5";
+import { Fragment } from "react";
 import { Switch } from "@headlessui/react";
+import { RWebShare } from "react-web-share";
+import { useLocation } from "react-router-dom";
 
 import NoteToolbarButton from "./NoteToolbarButton";
 import NoteTagsEditor from "./NoteTagsEditor";
@@ -27,7 +30,13 @@ export default function NoteDrawer({
   codeBoxThemes,
   setCodeBoxColor,
   isCreateNotePage,
+  handleDelete,
+  noteTitle
 }) {
+
+  const location = useLocation();
+  const currentPathname = "localhost:3000" + location.pathname;
+
   return (
     <nav
       className={`fixed z-50 top-0 ${
@@ -67,11 +76,8 @@ export default function NoteDrawer({
           </div>
           <span className="h-[1px] w-full bg-primary-border"></span>
           <div className="flex flex-col w-full space-y-3.5">
-            {!isCreateNotePage && (
-              <button
-                disabled
-                className="w-full p-3 flex disabled:opacity-30 flex-col space-y-3 rounded-md hover:bg-gray-100 duration-200 border-2 border-primary-border"
-              >
+            {!isCreateNotePage && !isArchived && (
+              <button className="w-full p-3 flex flex-col space-y-3 rounded-md hover:bg-gray-100 duration-200 border-2 border-primary-border">
                 <img alt="logo" src="/vscode.svg" width={24} height={24} />
                 <div className="w-full flex items-center justify-between">
                   <p className="text-sm">Import to VSCode</p>
@@ -79,26 +85,36 @@ export default function NoteDrawer({
                 </div>
               </button>
             )}
-            {!isCreateNotePage && (
+            {!isCreateNotePage && !isArchived && (
+              <RWebShare
+                data={{
+                  text: "Alexandria is a dead-simple notetaking app for your programming-related notes, but way more than that.",
+                  url: currentPathname,
+                  title: noteTitle,
+                }}
+              >
+                <NoteToolbarButton
+                  buttonIcon={<IoShareOutline size={18} />}
+                  buttonTitle={"Share note"}
+                  onClick={() => {}}
+                />
+              </RWebShare>
+            )}
+            {!isArchived && (
               <NoteToolbarButton
-                buttonIcon={<IoShareOutline size={18} />}
-                buttonTitle={"Share note"}
-                onClick={() => {}}
+                buttonIcon={
+                  isStarred ? (
+                    <IoStar className="text-yellow-400" size={18} />
+                  ) : (
+                    <IoStarOutline size={18} />
+                  )
+                }
+                buttonTitle={isStarred ? "Unstar note" : "Star note"}
+                onClick={() => {
+                  setIsStarred(!isStarred);
+                }}
               />
             )}
-            <NoteToolbarButton
-              buttonIcon={
-                isStarred ? (
-                  <IoStar className="text-yellow-400" size={18} />
-                ) : (
-                  <IoStarOutline size={18} />
-                )
-              }
-              buttonTitle={"Star note"}
-              onClick={() => {
-                setIsStarred(!isStarred);
-              }}
-            />
             {!isCreateNotePage && (
               <NoteToolbarButton
                 buttonIcon={
@@ -108,7 +124,7 @@ export default function NoteDrawer({
                     <IoArchiveOutline size={18} />
                   )
                 }
-                buttonTitle={"Archive note"}
+                buttonTitle={isArchived ? "Unarchive note" : "Archive note"}
                 onClick={() => {
                   setIsArchived(!isArchived);
                 }}
@@ -120,40 +136,41 @@ export default function NoteDrawer({
                   <IoTrashBinOutline size={18} className="text-primary-red" />
                 }
                 buttonTitle={"Delete note"}
-                onClick={() => {}}
+                onClick={() => {
+                  handleDelete();
+                }}
               />
             )}
           </div>
-          <span className="h-[1px] w-full bg-primary-border"></span>
-          <div className="flex flex-col w-full space-y-3.5">
-            <div className="w-full p-3 flex justify-between items-center rounded-md hover:bg-gray-100 duration-200 border-2 border-primary-border">
-              <div className="flex space-x-3 items-center">
-                <IoChatboxEllipsesOutline size={16} />
-                <p className="text-sm">Comment</p>
-              </div>
-              <Switch
-                checked={isCommentEnabled}
-                onChange={() => {
-                  setIsCommentEnabled(!isCommentEnabled);
-                }}
-                className={`
+          {!isArchived && (
+            <Fragment>
+              <span className="h-[1px] w-full bg-primary-border"></span>
+              <div className="flex flex-col w-full space-y-3.5">
+                <div className="w-full p-3 flex justify-between items-center rounded-md hover:bg-gray-100 duration-200 border-2 border-primary-border">
+                  <div className="flex space-x-3 items-center">
+                    <IoChatboxEllipsesOutline size={16} />
+                    <p className="text-sm">Comment</p>
+                  </div>
+                  <Switch
+                    checked={isCommentEnabled}
+                    onChange={() => {
+                      setIsCommentEnabled(!isCommentEnabled);
+                    }}
+                    className={`
                   ${!isCommentEnabled ? "bg-slate-400" : "bg-active-blue"}
                   relative flex items-center flex-shrink-0 h-6 w-11 rounded-full cursor-pointer transition-colors ease-in-out duration-200`}
-              >
-                <span
-                  aria-hidden="true"
-                  className={`${
-                    isCommentEnabled ? "translate-x-6" : "translate-x-1"
-                  } pointer-events-none inline-block h-4 w-4 rounded-full bg-white shadow-lg transform transition ease-in-out duration-200`}
-                />
-              </Switch>
-            </div>
-            <NoteToolbarButton
-              buttonIcon={<IoChatboxEllipsesOutline size={16} />}
-              buttonTitle={"See comment"}
-              onClick={() => {}}
-            />
-          </div>
+                  >
+                    <span
+                      aria-hidden="true"
+                      className={`${
+                        isCommentEnabled ? "translate-x-6" : "translate-x-1"
+                      } pointer-events-none inline-block h-4 w-4 rounded-full bg-white shadow-lg transform transition ease-in-out duration-200`}
+                    />
+                  </Switch>
+                </div>
+              </div>
+            </Fragment>
+          )}
         </div>
       </div>
     </nav>

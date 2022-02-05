@@ -60,23 +60,27 @@ export default function NoteTagsEditor({ tags, setTags }) {
             className="w-full py-2 my-2 mr-2 px-3 rounded-md outline-none bg-slate-100 active:border-primary-blue duration-200 cursor-pointer text-sm"
           ></input>
         )}
-        {tags.map((item, index) => {
-          return (
-            <div
-              key={index}
-              onClick={() => {
-                setSelectedTag(index);
-              }}
-              className={`${
-                selectedTag === index
-                  ? "bg-primary-blue text-white"
-                  : "bg-slate-100"
-              } py-1 mt-2 mr-2 px-2 rounded-md hover:bg-primary-blue hover:text-white duration-200 cursor-pointer text-sm`}
-            >
-              <p>{item}</p>
-            </div>
-          );
-        })}
+        {
+          tags && (
+            tags.map((item, index) => {
+              return (
+                <div
+                  key={index}
+                  onClick={() => {
+                    setSelectedTag(index);
+                  }}
+                  className={`${
+                    selectedTag === index
+                      ? "bg-primary-blue text-white"
+                      : "bg-slate-100"
+                  } py-1 mt-2 mr-2 px-2 rounded-md hover:bg-primary-blue hover:text-white duration-200 cursor-pointer text-sm`}
+                >
+                  <p>{item}</p>
+                </div>
+              );
+            })
+          )
+        }
       </div>
     </div>
   );

@@ -1,5 +1,5 @@
 import Helmet from "react-helmet";
-import { useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import { IoEllipsisVerticalSharp } from "react-icons/io5";
 import { useState, useEffect, useRef } from "react";
 
@@ -11,9 +11,11 @@ import NoteToolbar from "../../components/note/toolbar/NoteToolbar";
 import NoteComment from "../../components/note/comment/NoteComment";
 import NoteHeaderMobile from "../../components/note/NoteHeaderMobile";
 import NoteHeaderDesktop from "../../components/note/NoteHeaderDesktop";
+import NoteArchiveBanner from "../../components/note/NoteArchiveBanner";
 
 export default function NoteDetailPage() {
   const params = useParams();
+  const navigate = useNavigate();
   const { id } = params;
   const editorCore = useRef(null);
   const [tags, setTags] = useState([]);
@@ -37,6 +39,8 @@ export default function NoteDetailPage() {
     starNote,
     archiveNote,
     updateNote,
+    commentNote,
+    deleteNote,
   } = useNote();
 
   //FETCH CURRENT NOTE BY ID
@@ -101,13 +105,14 @@ export default function NoteDetailPage() {
     const updateNoteStar = async () => {
       if (noteByID !== null) {
         if (noteByID.is_starred !== isStarred) {
+          console.log("Fired");
           await starNote(noteByID, isStarred);
         }
       }
     };
 
     updateNoteStar();
-  }, [starNote, noteByID, isStarred]);
+  }, [noteByID, isStarred]);
 
   //LISTEN TO ARCHIVE STATE CHANGE
   useEffect(() => {
@@ -120,7 +125,20 @@ export default function NoteDetailPage() {
     };
 
     updateNoteArchive();
-  }, [archiveNote, noteByID, isArchived]);
+  }, [noteByID, isArchived]);
+
+  //LISTEN TO COMMENT STATE CHANGE
+  useEffect(() => {
+    const updateNoteComment = async () => {
+      if (noteByID !== null) {
+        if (noteByID.is_comment_enabled !== isCommentEnabled) {
+          await commentNote(noteByID, isCommentEnabled);
+        }
+      }
+    };
+
+    updateNoteComment();
+  }, [noteByID, isCommentEnabled]);
 
   const handleSave = async () => {
     if (noteInstance && noteByID) {
@@ -157,6 +175,17 @@ export default function NoteDetailPage() {
     }
   };
 
+  const handleDelete = async () => {
+    if (noteInstance && noteByID) {
+      await deleteNote(noteByID._id).then(() => {
+        console.log("is Success:", success);
+        if (success) {
+          navigate("/");
+        }
+      });
+    }
+  };
+
   return (
     <div>
       <Helmet>
@@ -166,18 +195,27 @@ export default function NoteDetailPage() {
           <title>{noteTitle ?? "Untitled note"} - Alexandria</title>
         )}
       </Helmet>
-      <NoteDrawer
-        isOpen={isDrawerOpen}
-        setIsOpen={setDrawerIsOpen}
-        tags={tags}
-        setTags={setTags}
-        isCommentEnabled={isCommentEnabled}
-        setIsCommentEnabled={setIsCommentEnabled}
-        codeBoxThemes={CodeboxThemes}
-        setCodeBoxColor={setCodeBoxColor}
-        isCreateNotePage={false}
-      />
+      {noteByID && (
+        <NoteDrawer
+          noteTitle={noteTitle ?? noteByID.title}
+          isCreateNotePage={false}
+          isOpen={isDrawerOpen}
+          setIsOpen={setDrawerIsOpen}
+          tags={tags}
+          setTags={setTags}
+          isCommentEnabled={isCommentEnabled}
+          setIsCommentEnabled={setIsCommentEnabled}
+          codeBoxThemes={CodeboxThemes}
+          setCodeBoxColor={setCodeBoxColor}
+          isStarred={isStarred}
+          setIsStarred={setIsStarred}
+          isArchived={isArchived}
+          setIsArchived={setIsArchived}
+          handleDelete={handleDelete}
+        />
+      )}
       <div className="min-h-screen relative flex bg-[rgb(247,247,247)]">
+        {isArchived && <NoteArchiveBanner />}
         <button
           onClick={() => {
             setDrawerIsOpen(true);
@@ -196,7 +234,7 @@ export default function NoteDetailPage() {
             <IoEllipsisVerticalSharp size={24} />
           </button>
         )}
-        <div className="w-full pt-8 px-10">
+        <div className={`w-full ${isArchived ? "pt-20" : "pt-8"} px-10`}>
           {noteByID && (
             <div>
               <NoteHeaderDesktop
@@ -227,21 +265,25 @@ export default function NoteDetailPage() {
             isCommentEnabled={isCommentEnabled}
           />
         </div>
-        <NoteToolbar
-          tags={tags}
-          setTags={setTags}
-          isStarred={isStarred}
-          setIsStarred={setIsStarred}
-          isArchived={isArchived}
-          setIsArchived={setIsArchived}
-          isToolbarOpen={isToolbarOpen}
-          isCommentEnabled={isCommentEnabled}
-          isCreateNotePage={false}
-          setIsCommentEnabled={setIsCommentEnabled}
-          setIsToolbarOpen={setIsToolbarOpen}
-          codeBoxThemes={CodeboxThemes}
-          setCodeBoxColor={setCodeBoxColor}
-        />
+        {noteByID && (
+          <NoteToolbar
+            tags={tags}
+            noteTitle={noteTitle ?? noteByID.title}
+            setTags={setTags}
+            isStarred={isStarred}
+            setIsStarred={setIsStarred}
+            isArchived={isArchived}
+            setIsArchived={setIsArchived}
+            isToolbarOpen={isToolbarOpen}
+            isCommentEnabled={isCommentEnabled}
+            isCreateNotePage={false}
+            setIsCommentEnabled={setIsCommentEnabled}
+            setIsToolbarOpen={setIsToolbarOpen}
+            codeBoxThemes={CodeboxThemes}
+            setCodeBoxColor={setCodeBoxColor}
+            handleDelete={handleDelete}
+          />
+        )}
       </div>
     </div>
   );

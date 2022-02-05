@@ -187,7 +187,7 @@ export const useNote = () => {
     dispatch({
       type: "START",
     });
-    
+
     let noteInstance = {
       title: oldNote.title,
       creator_uid: user.uid,
@@ -281,6 +281,87 @@ export const useNote = () => {
     });
   });
 
+  const commentNote = useCallback(async (oldNote, isCommentEnabled) => {
+    setSuccess(null);
+    setError(null);
+    dispatch({
+      type: "START",
+    });
+
+    let noteInstance = {
+      title: oldNote.title,
+      creator_uid: user.uid,
+      tags: oldNote.tags,
+      content: oldNote.content,
+      is_starred: oldNote.is_starred,
+      is_comment_enabled: isCommentEnabled,
+      is_archived: oldNote.is_archived,
+      collaborators: oldNote.collaborators,
+    };
+
+    try {
+      let config = {
+        headers: {
+          Authorization: "Bearer " + user.uid,
+        },
+      };
+
+      const response = await axiosInstance.put(
+        `/notes/${oldNote._id}`,
+        noteInstance,
+        config
+      );
+
+      if (response.status === 200) {
+        let successMessage = isCommentEnabled
+          ? "Note's comment has been enabled"
+          : "Note's comment has been disabled";
+        setSuccess(successMessage);
+      } else {
+        setError(response.data.data);
+      }
+    } catch (error) {
+      setError(error);
+    }
+
+    dispatch({
+      type: "STOP",
+    });
+  });
+
+  const deleteNote = useCallback(async (noteID) => {
+    setSuccess(null);
+    setError(null);
+    dispatch({
+      type: "START",
+    });
+
+    try {
+      let config = {
+        headers: {
+          Authorization: "Bearer " + user.uid,
+        },
+      };
+
+      const response = await axiosInstance.delete(
+        `/notes/${noteID}`,
+        config
+      );
+
+      if (response.status === 200) {
+        setSuccess("Note has been deleted!");
+      } else {
+        setError(response.data.data);
+      }
+    } catch (error) {
+      setError(error);
+    }
+
+    dispatch({
+      type: "STOP",
+    });
+  });
+
   return {
     error,
     success,
@@ -294,5 +375,7 @@ export const useNote = () => {
     starNote,
     archiveNote,
     updateNote,
+    commentNote,
+    deleteNote,
   };
 };

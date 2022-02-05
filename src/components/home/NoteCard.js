@@ -21,16 +21,17 @@ export default function NoteCard({ _id, title, isStarred, author, tags }) {
             </span>
           </div>
           <div className="flex flex-wrap space-x-2">
-            {tags.map((item, index) => {
-              return (
-                <div
-                  key={index}
-                  className="py-1 px-2 rounded-md bg-slate-100 hover:bg-primary-blue hover:text-white duration-200 cursor-pointer text-sm"
-                >
-                  <p>{item}</p>
-                </div>
-              );
-            })}
+            {tags &&
+              tags.map((item, index) => {
+                return (
+                  <div
+                    key={index}
+                    className="py-1 px-2 rounded-md bg-slate-100 hover:bg-primary-blue hover:text-white duration-200 cursor-pointer text-sm"
+                  >
+                    <p>{item}</p>
+                  </div>
+                );
+              })}
           </div>
         </div>
       </div>
