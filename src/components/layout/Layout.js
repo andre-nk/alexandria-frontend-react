@@ -16,6 +16,7 @@ import NoteDetailPage from "../../pages/notes/NoteDetailPage";
 import ProfilePage from "../../pages/profile/ProfilePage";
 import NotFoundPage from "../../pages/NotFoundPage";
 import ProtectedRoute from "../router/ProtectedRoute";
+import GlobalLoading from "./GlobalLoading";
 
 export default function Layout() {
   const [isDrawerOpen, setDrawerIsOpen] = useState(false);
@@ -39,6 +40,7 @@ export default function Layout() {
           aboutSectionRef={notLoggedInAboutSectionRef}
         />
       )}
+      <GlobalLoading />
       <Routes>
         <Route
           path="/"

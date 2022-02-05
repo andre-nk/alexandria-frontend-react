@@ -64,8 +64,13 @@ export default function NewNotePage() {
       <NoteDrawer
         isOpen={isDrawerOpen}
         setIsOpen={setDrawerIsOpen}
+        tags={tags}
+        setTags={setTags}
         isCommentEnabled={isCommentEnabled}
         setIsCommentEnabled={setIsCommentEnabled}
+        codeBoxThemes={CodeboxThemes}
+        setCodeBoxColor={setCodeBoxColor}
+        isCreateNotePage={true}
       />
       <div className="min-h-screen relative flex bg-[rgb(247,247,247)]">
         <button

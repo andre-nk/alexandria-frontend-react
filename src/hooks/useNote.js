@@ -1,9 +1,11 @@
 import { useAuthContext } from "./useAuthContext";
+import { useLoadingContext } from "./useLoadingContext";
 import axiosInstance from "../axios/axiosConfig";
 import { useCallback, useState } from "react";
 
 export const useNote = () => {
   const { user } = useAuthContext();
+  const { dispatch } = useLoadingContext();
   const [error, setError] = useState(null);
   const [success, setSuccess] = useState(null);
   const [noteByID, setNoteByID] = useState(null);
@@ -11,6 +13,12 @@ export const useNote = () => {
   const [featuredNotes, setFeaturedNotes] = useState([]);
 
   const createNote = async (title, tags, content) => {
+    setSuccess(null);
+    setError(null);
+    dispatch({
+      type: "START",
+    });
+
     let noteInstance = JSON.stringify({
       title: title,
       creator_uid: user.uid,
@@ -41,9 +49,14 @@ export const useNote = () => {
     } catch (error) {
       setError(error);
     }
+
+    dispatch({
+      type: "STOP",
+    });
   };
 
   const getRecentNotes = async () => {
+    setSuccess(null);
     setError(null);
     try {
       const response = await axiosInstance.get(
@@ -60,7 +73,12 @@ export const useNote = () => {
   };
 
   const getNoteByID = useCallback(async (id) => {
+    setSuccess(null);
     setError(null);
+    dispatch({
+      type: "START",
+    });
+
     try {
       let config = {
         headers: {
@@ -77,16 +95,21 @@ export const useNote = () => {
     } catch (error) {
       setError(error);
     }
+
+    dispatch({
+      type: "STOP",
+    });
   });
 
   const updateNote = async (updatedNote, noteID) => {
-    updatedNote.creator_uid = user.uid;
-
-    console.log(updatedNote);
+    setSuccess(null);
+    setError(null);
+    dispatch({
+      type: "START",
+    });
 
     try {
-      setError(null);
-
+      updatedNote.creator_uid = user.uid;
       let config = {
         headers: {
           Authorization: "Bearer " + user.uid,
@@ -107,9 +130,19 @@ export const useNote = () => {
     } catch (error) {
       setError(error);
     }
+
+    dispatch({
+      type: "STOP",
+    });
   };
 
   const updateNoteTitle = useCallback(async (oldNote, newTitle) => {
+    setSuccess(null);
+    setError(null);
+    dispatch({
+      type: "START",
+    });
+
     let noteInstance = {
       title: newTitle,
       creator_uid: user.uid,
@@ -122,8 +155,6 @@ export const useNote = () => {
     };
 
     try {
-      setError(null);
-
       let config = {
         headers: {
           Authorization: "Bearer " + user.uid,
@@ -144,9 +175,19 @@ export const useNote = () => {
     } catch (error) {
       setError(error);
     }
+
+    dispatch({
+      type: "STOP",
+    });
   });
 
   const starNote = useCallback(async (oldNote, isStarred) => {
+    setSuccess(null);
+    setError(null);
+    dispatch({
+      type: "START",
+    });
+    
     let noteInstance = {
       title: oldNote.title,
       creator_uid: user.uid,
@@ -159,8 +200,6 @@ export const useNote = () => {
     };
 
     try {
-      setError(null);
-
       let config = {
         headers: {
           Authorization: "Bearer " + user.uid,
@@ -181,12 +220,26 @@ export const useNote = () => {
       } else {
         setError(response.data.data);
       }
+
+      dispatch({
+        type: "STOP",
+      });
     } catch (error) {
       setError(error);
+
+      dispatch({
+        type: "STOP",
+      });
     }
   });
 
   const archiveNote = useCallback(async (oldNote, isArchived) => {
+    setSuccess(null);
+    setError(null);
+    dispatch({
+      type: "START",
+    });
+
     let noteInstance = {
       title: oldNote.title,
       creator_uid: user.uid,
@@ -199,8 +252,6 @@ export const useNote = () => {
     };
 
     try {
-      setError(null);
-
       let config = {
         headers: {
           Authorization: "Bearer " + user.uid,
@@ -224,6 +275,10 @@ export const useNote = () => {
     } catch (error) {
       setError(error);
     }
+
+    dispatch({
+      type: "STOP",
+    });
   });
 
   return {

@@ -1,5 +1,6 @@
 import {
-  IoAdd,
+  IoStar,
+  IoArchive,
   IoStarOutline,
   IoShareOutline,
   IoArchiveOutline,
@@ -10,15 +11,23 @@ import {
 import { Switch } from "@headlessui/react";
 
 import NoteToolbarButton from "./NoteToolbarButton";
+import NoteTagsEditor from "./NoteTagsEditor";
 
 export default function NoteDrawer({
+  tags,
+  setTags,
+  isStarred,
+  setIsStarred,
+  isArchived,
+  setIsArchived,
   isOpen,
   setIsOpen,
   isCommentEnabled,
   setIsCommentEnabled,
+  codeBoxThemes,
+  setCodeBoxColor,
+  isCreateNotePage,
 }) {
-  const tags = ["react", "web", "trick", "javascript", "project", "dev"];
-
   return (
     <nav
       className={`fixed z-50 top-0 ${
@@ -34,56 +43,86 @@ export default function NoteDrawer({
       <div className="w-9/12 md:w-7/12 p-8 bg-white transition-shadow shadow-zinc-700 drop-shadow-2xl h-screen">
         <div className={`flex flex-col space-y-7`}>
           <div className="flex flex-col space-y-1">
-            <div className="w-full flex justify-between items-center">
-              <h2 className="text-lg font-medium">Tags</h2>
-              <div className="p-1 rounded-md bg-slate-100 hover:bg-primary-blue hover:text-white duration-200 cursor-pointer text-sm">
-                <IoAdd />
-              </div>
-            </div>
-            <div className="w-full flex flex-wrap">
-              {tags.map((item) => {
-                return (
-                  <div key={item} className="py-1 mt-2 mr-2 px-2 rounded-md bg-slate-100 hover:bg-primary-blue hover:text-white duration-200 cursor-pointer text-sm">
-                    <p>{item}</p>
-                  </div>
-                );
-              })}
+            <NoteTagsEditor tags={tags} setTags={setTags} />
+            <div className="pt-6 flex flex-col space-y-2">
+              <label htmlFor="selectTheme" className="text-sm pl-1">
+                Code snippet theme: 🎨
+              </label>
+              <select
+                name="selectTheme"
+                onChange={(e) => {
+                  setCodeBoxColor(codeBoxThemes[e.currentTarget.value]);
+                }}
+                className="form-select form-select-lg appearance-none w-full px-3 py-2.5 text-sm font-normal text-primary-black bg-white rounded-md border border-primary-border focus:border-primary-blue"
+              >
+                {codeBoxThemes.map((theme, index) => {
+                  return (
+                    <option key={index} value={index}>
+                      {theme.name}
+                    </option>
+                  );
+                })}
+              </select>
             </div>
           </div>
           <span className="h-[1px] w-full bg-primary-border"></span>
           <div className="flex flex-col w-full space-y-3.5">
-            <button
-              disabled
-              className="w-full p-3 flex flex-col space-y-3 rounded-md disabled:opacity-40 duration-200 border-2 border-primary-border"
-            >
-              <img alt="logo" src="/vscode.svg" width={24} height={24} />
-              <div className="w-full flex items-center justify-between">
-                <p className="text-sm">Import to VSCode</p>
-                <IoChevronForwardOutline size={16} />
-              </div>
-            </button>
-            <NoteToolbarButton
-              buttonIcon={<IoShareOutline size={18} />}
-              buttonTitle={"Share note"}
-              onClick={() => {}}
-            />
-            <NoteToolbarButton
-              buttonIcon={<IoStarOutline size={18} />}
-              buttonTitle={"Star note"}
-              onClick={() => {}}
-            />
-            <NoteToolbarButton
-              buttonIcon={<IoArchiveOutline size={18} />}
-              buttonTitle={"Archive note"}
-              onClick={() => {}}
-            />
+            {!isCreateNotePage && (
+              <button
+                disabled
+                className="w-full p-3 flex disabled:opacity-30 flex-col space-y-3 rounded-md hover:bg-gray-100 duration-200 border-2 border-primary-border"
+              >
+                <img alt="logo" src="/vscode.svg" width={24} height={24} />
+                <div className="w-full flex items-center justify-between">
+                  <p className="text-sm">Import to VSCode</p>
+                  <IoChevronForwardOutline size={16} />
+                </div>
+              </button>
+            )}
+            {!isCreateNotePage && (
+              <NoteToolbarButton
+                buttonIcon={<IoShareOutline size={18} />}
+                buttonTitle={"Share note"}
+                onClick={() => {}}
+              />
+            )}
             <NoteToolbarButton
               buttonIcon={
-                <IoTrashBinOutline size={18} className="text-primary-red" />
+                isStarred ? (
+                  <IoStar className="text-yellow-400" size={18} />
+                ) : (
+                  <IoStarOutline size={18} />
+                )
               }
-              buttonTitle={"Delete note"}
-              onClick={() => {}}
+              buttonTitle={"Star note"}
+              onClick={() => {
+                setIsStarred(!isStarred);
+              }}
             />
+            {!isCreateNotePage && (
+              <NoteToolbarButton
+                buttonIcon={
+                  isArchived ? (
+                    <IoArchive className="text-primary-blue" size={18} />
+                  ) : (
+                    <IoArchiveOutline size={18} />
+                  )
+                }
+                buttonTitle={"Archive note"}
+                onClick={() => {
+                  setIsArchived(!isArchived);
+                }}
+              />
+            )}
+            {!isCreateNotePage && (
+              <NoteToolbarButton
+                buttonIcon={
+                  <IoTrashBinOutline size={18} className="text-primary-red" />
+                }
+                buttonTitle={"Delete note"}
+                onClick={() => {}}
+              />
+            )}
           </div>
           <span className="h-[1px] w-full bg-primary-border"></span>
           <div className="flex flex-col w-full space-y-3.5">

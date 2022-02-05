@@ -3,14 +3,14 @@ import { useParams } from "react-router-dom";
 import { IoEllipsisVerticalSharp } from "react-icons/io5";
 import { useState, useEffect, useRef } from "react";
 
+import { useNote } from "../../hooks/useNote";
+import { CodeboxThemes } from "../../styles/codeboxTheme";
 import { useCreateNote } from "../../hooks/useCreateNote";
+import NoteDrawer from "../../components/note/toolbar/NoteDrawer";
+import NoteToolbar from "../../components/note/toolbar/NoteToolbar";
+import NoteComment from "../../components/note/comment/NoteComment";
 import NoteHeaderMobile from "../../components/note/NoteHeaderMobile";
 import NoteHeaderDesktop from "../../components/note/NoteHeaderDesktop";
-import NoteToolbar from "../../components/note/toolbar/NoteToolbar";
-import NoteDrawer from "../../components/note/toolbar/NoteDrawer";
-import NoteComment from "../../components/note/comment/NoteComment";
-import { CodeboxThemes } from "../../styles/codeboxTheme";
-import { useNote } from "../../hooks/useNote";
 
 export default function NoteDetailPage() {
   const params = useParams();
@@ -20,8 +20,8 @@ export default function NoteDetailPage() {
   const [noteTitle, setNoteTitle] = useState(null);
   const [isStarred, setIsStarred] = useState(false);
   const [isArchived, setIsArchived] = useState(false);
-  const [isNoteLoaded, setIsNoteLoaded] = useState(false);
   const [noteInstance, setNoteInstance] = useState(null);
+  const [isNoteLoaded, setIsNoteLoaded] = useState(false);
   const [isDrawerOpen, setDrawerIsOpen] = useState(false);
   const [isToolbarOpen, setIsToolbarOpen] = useState(false);
   const [isCommentEnabled, setIsCommentEnabled] = useState(true);
@@ -39,6 +39,7 @@ export default function NoteDetailPage() {
     updateNote,
   } = useNote();
 
+  //FETCH CURRENT NOTE BY ID
   useEffect(() => {
     const fetchNoteByID = async () => {
       await getNoteByID(id);
@@ -47,6 +48,7 @@ export default function NoteDetailPage() {
     fetchNoteByID();
   }, [id]);
 
+  //LOAD OR CREATE NOTE INSTANCE
   useEffect(() => {
     const createNote = async () => {
       if (noteByID) {
@@ -74,6 +76,7 @@ export default function NoteDetailPage() {
     createNote();
   }, [createNoteInstance, codeBoxColor, isNoteLoaded, noteByID, noteInstance]);
 
+  //LISTEN TO CODEBOX COLOR CHANGE
   useEffect(() => {
     const changeCodeBoxColor = async () => {
       if (noteInstance !== null) {
@@ -93,6 +96,7 @@ export default function NoteDetailPage() {
     changeCodeBoxColor();
   }, [createNoteInstance, noteInstance, codeBoxColor, oldCodeBoxColor]);
 
+  //LISTEN TO STAR STATE CHANGE
   useEffect(() => {
     const updateNoteStar = async () => {
       if (noteByID !== null) {
@@ -105,6 +109,7 @@ export default function NoteDetailPage() {
     updateNoteStar();
   }, [starNote, noteByID, isStarred]);
 
+  //LISTEN TO ARCHIVE STATE CHANGE
   useEffect(() => {
     const updateNoteArchive = async () => {
       if (noteByID !== null) {
@@ -145,7 +150,7 @@ export default function NoteDetailPage() {
             is_archived: noteByID.is_archived,
             collaborators: noteByID.collaborators,
           };
-          
+
           await updateNote(noteInstance, noteByID._id);
         }
       });
@@ -164,8 +169,13 @@ export default function NoteDetailPage() {
       <NoteDrawer
         isOpen={isDrawerOpen}
         setIsOpen={setDrawerIsOpen}
+        tags={tags}
+        setTags={setTags}
         isCommentEnabled={isCommentEnabled}
         setIsCommentEnabled={setIsCommentEnabled}
+        codeBoxThemes={CodeboxThemes}
+        setCodeBoxColor={setCodeBoxColor}
+        isCreateNotePage={false}
       />
       <div className="min-h-screen relative flex bg-[rgb(247,247,247)]">
         <button
@@ -226,6 +236,7 @@ export default function NoteDetailPage() {
           setIsArchived={setIsArchived}
           isToolbarOpen={isToolbarOpen}
           isCommentEnabled={isCommentEnabled}
+          isCreateNotePage={false}
           setIsCommentEnabled={setIsCommentEnabled}
           setIsToolbarOpen={setIsToolbarOpen}
           codeBoxThemes={CodeboxThemes}
