@@ -32,7 +32,6 @@ export default function NoteDetailPage() {
 
   const { createNoteInstance } = useCreateNote();
   const {
-    error,
     success,
     noteByID,
     getNoteByID,
@@ -41,6 +40,7 @@ export default function NoteDetailPage() {
     updateNote,
     commentNote,
     deleteNote,
+    tagsNote,
   } = useNote();
 
   //FETCH CURRENT NOTE BY ID
@@ -100,45 +100,25 @@ export default function NoteDetailPage() {
     changeCodeBoxColor();
   }, [createNoteInstance, noteInstance, codeBoxColor, oldCodeBoxColor]);
 
-  //LISTEN TO STAR STATE CHANGE
-  useEffect(() => {
-    const updateNoteStar = async () => {
-      if (noteByID !== null) {
-        if (noteByID.is_starred !== isStarred) {
-          console.log("Fired");
-          await starNote(noteByID, isStarred);
-        }
-      }
-    };
+  // //LISTEN TO TAGS STATE CHANGE
+  // useEffect(() => {
+  //   console.log("New tags:", tags);
 
-    updateNoteStar();
-  }, [noteByID, isStarred]);
+  //   const updateNoteTags = async () => {
+  //     if (noteByID !== null && tags !== undefined) {
 
-  //LISTEN TO ARCHIVE STATE CHANGE
-  useEffect(() => {
-    const updateNoteArchive = async () => {
-      if (noteByID !== null) {
-        if (noteByID.is_archived !== isArchived) {
-          await archiveNote(noteByID, isArchived);
-        }
-      }
-    };
+  //       if(noteByID.tags === undefined){
+  //         noteByID.tags = [];
+  //       }
 
-    updateNoteArchive();
-  }, [noteByID, isArchived]);
+  //       if (noteByID.tags.length !== tags.length) {
+  //         await tagsNote(noteByID, tags);
+  //       }
+  //     }
+  //   };
 
-  //LISTEN TO COMMENT STATE CHANGE
-  useEffect(() => {
-    const updateNoteComment = async () => {
-      if (noteByID !== null) {
-        if (noteByID.is_comment_enabled !== isCommentEnabled) {
-          await commentNote(noteByID, isCommentEnabled);
-        }
-      }
-    };
-
-    updateNoteComment();
-  }, [noteByID, isCommentEnabled]);
+  //   updateNoteTags();
+  // }, [noteByID, tags]);
 
   const handleSave = async () => {
     if (noteInstance && noteByID) {
@@ -186,6 +166,39 @@ export default function NoteDetailPage() {
     }
   };
 
+  const handleStar = async (value) => {
+    if (noteByID !== null) {
+      await starNote(noteByID, value);
+      setIsStarred(value);
+    }
+  };
+
+  const handleArchive = async (value) => {
+    if (noteByID !== null) {
+      await archiveNote(noteByID, value);
+      setIsArchived(value);
+    }
+  };
+
+  const handleComment = async (value) => {
+    if (noteByID !== null) {
+      await commentNote(noteByID, value);
+      setIsCommentEnabled(value);
+    }
+  };
+
+  const handleTags = async (value) => {
+    if (noteByID.tags === undefined && tags === undefined) {
+      noteByID.tags = [];
+      setTags([]);
+    }
+
+    if (noteByID !== null && tags !== undefined) {
+      setTags(value);
+      await tagsNote(noteByID, value);
+    }
+  };
+
   return (
     <div>
       <Helmet>
@@ -202,15 +215,15 @@ export default function NoteDetailPage() {
           isOpen={isDrawerOpen}
           setIsOpen={setDrawerIsOpen}
           tags={tags}
-          setTags={setTags}
+          setTags={handleTags}
           isCommentEnabled={isCommentEnabled}
-          setIsCommentEnabled={setIsCommentEnabled}
+          setIsCommentEnabled={handleComment}
           codeBoxThemes={CodeboxThemes}
           setCodeBoxColor={setCodeBoxColor}
           isStarred={isStarred}
-          setIsStarred={setIsStarred}
+          setIsStarred={handleStar}
           isArchived={isArchived}
-          setIsArchived={setIsArchived}
+          setIsArchived={handleArchive}
           handleDelete={handleDelete}
         />
       )}
@@ -267,17 +280,17 @@ export default function NoteDetailPage() {
         </div>
         {noteByID && (
           <NoteToolbar
-            tags={tags}
             noteTitle={noteTitle ?? noteByID.title}
-            setTags={setTags}
+            isCreateNotePage={false}
+            tags={tags}
+            setTags={handleTags}
             isStarred={isStarred}
-            setIsStarred={setIsStarred}
+            setIsStarred={handleStar}
             isArchived={isArchived}
-            setIsArchived={setIsArchived}
+            setIsArchived={handleArchive}
             isToolbarOpen={isToolbarOpen}
             isCommentEnabled={isCommentEnabled}
-            isCreateNotePage={false}
-            setIsCommentEnabled={setIsCommentEnabled}
+            setIsCommentEnabled={handleComment}
             setIsToolbarOpen={setIsToolbarOpen}
             codeBoxThemes={CodeboxThemes}
             setCodeBoxColor={setCodeBoxColor}

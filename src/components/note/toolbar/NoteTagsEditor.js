@@ -11,6 +11,10 @@ export default function NoteTagsEditor({ tags, setTags }) {
   };
 
   const handleSave = () => {
+    if (tags === undefined){
+      tags = [];
+    }
+    
     setTags([...tags, newTagRef.current.value]);
     newTagRef.current.value = "";
   };

@@ -14,6 +14,11 @@ export const loadingReducer = (state, action) => {
         ...state,
         isLoading: false,
       };
+    default:
+      return {
+        ...state,
+        isLoading: false,
+      }
   }
 };
 
@@ -21,8 +26,6 @@ export const LoadingContextProvider = ({ children }) => {
   const [state, dispatch] = useReducer(loadingReducer, {
     isLoading: false,
   });
-
-  console.log(state);
 
   return (
     <LoadingContext.Provider value={{ ...state, dispatch }}>

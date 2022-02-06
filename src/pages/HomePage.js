@@ -2,10 +2,11 @@ import { Fragment } from "react";
 import Helmet from "react-helmet";
 
 import { useAuthContext } from "../hooks/useAuthContext";
-import NotesCarouselWrapper from "../components/home/NoteCarouselWrapper";
 import SearchBar from "../components/home/SearchBar";
 import CTASection from "../components/home/CTASection";
 import AboutPoints from "../components/about/AboutPoints";
+import RecentNoteCarousel from "../components/note/carousel/RecentNoteCarousel";
+import FeaturedNoteCarousel from "../components/note/carousel/FeaturedNoteCarousel";
 
 export default function Home({ aboutSectionRef }) {
   const { user, isAuthReady } = useAuthContext();
@@ -38,8 +39,8 @@ export default function Home({ aboutSectionRef }) {
       </div>
       {user && (
         <div className="py-16 space-y-20 w-full bg-[rgb(247,247,247)]">
-          <NotesCarouselWrapper headline={"Recent notes"} link={"/notes"} />
-          <NotesCarouselWrapper headline={"Featured notes"} link={"/notes"} />
+            <RecentNoteCarousel />
+            <FeaturedNoteCarousel />
         </div>
       )}
       {(!user && isAuthReady) && (
