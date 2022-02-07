@@ -28,6 +28,7 @@ export const useNote = () => {
       is_starred: true,
       is_comment_enabled: true,
       is_archived: false,
+      pending_collaborators: [],
       collaborators: [],
     });
 
@@ -169,6 +170,7 @@ export const useNote = () => {
       is_starred: oldNote.is_starred,
       is_comment_enabled: oldNote.is_comment_enabled,
       is_archived: oldNote.is_archived,
+      pending_collaborators: oldNote.pending_collaborators,
       collaborators: oldNote.collaborators,
     };
 
@@ -214,6 +216,7 @@ export const useNote = () => {
       is_starred: isStarred,
       is_comment_enabled: oldNote.is_comment_enabled,
       is_archived: oldNote.is_archived,
+      pending_collaborators: oldNote.pending_collaborators,
       collaborators: oldNote.collaborators,
     };
 
@@ -268,6 +271,7 @@ export const useNote = () => {
       is_starred: oldNote.is_starred,
       is_comment_enabled: oldNote.is_comment_enabled,
       is_archived: isArchived,
+      pending_collaborators: oldNote.pending_collaborators,
       collaborators: oldNote.collaborators,
     };
 
@@ -318,6 +322,7 @@ export const useNote = () => {
       is_starred: oldNote.is_starred,
       is_comment_enabled: isCommentEnabled,
       is_archived: oldNote.is_archived,
+      pending_collaborators: oldNote.pending_collaborators,
       collaborators: oldNote.collaborators,
     };
 
@@ -368,6 +373,7 @@ export const useNote = () => {
       is_starred: oldNote.is_starred,
       is_comment_enabled: oldNote.is_comment_enabled,
       is_archived: oldNote.is_archived,
+      pending_collaborators: oldNote.pending_collaborators,
       collaborators: oldNote.collaborators,
     };
 

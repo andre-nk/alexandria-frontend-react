@@ -17,6 +17,7 @@ import ProfilePage from "../../pages/profile/ProfilePage";
 import NotFoundPage from "../../pages/NotFoundPage";
 import ProtectedRoute from "../router/ProtectedRoute";
 import GlobalLoading from "./GlobalLoading";
+import GlobalModal from "./GlobalModal";
 
 export default function Layout() {
   const [isDrawerOpen, setDrawerIsOpen] = useState(false);
@@ -40,6 +41,7 @@ export default function Layout() {
           aboutSectionRef={notLoggedInAboutSectionRef}
         />
       )}
+      <GlobalModal />
       <GlobalLoading />
       <Routes>
         <Route
