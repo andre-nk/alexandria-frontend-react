@@ -13,8 +13,6 @@ export default function GlobalModal() {
     });
   };
 
-  console.log(isShow, content);
-
   return (
     <div className="z-50">
       <Transition appear show={isShow} as={Fragment}>

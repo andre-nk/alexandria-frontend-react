@@ -31,8 +31,6 @@ export const ModalContextProvider = ({ children }) => {
     isShow: false,
   });
 
-  console.log(state);
-
   return (
     <ModalContext.Provider value={{ ...state, dispatch }}>
       {children}

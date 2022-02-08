@@ -18,11 +18,6 @@ export default function NoteHeaderMobile({
           onChange={(e) => {
             setNoteTitle(e.currentTarget.value);
           }}
-          onKeyDown={(e) => {
-            if (e.key === "Enter") {
-              console.log(noteTitle);
-            }
-          }}
           className="bg-transparent outline-none text-right text-lg capitalize font-medium text-major-text"
         />
       </div>
