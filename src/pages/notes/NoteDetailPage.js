@@ -100,26 +100,6 @@ export default function NoteDetailPage() {
     changeCodeBoxColor();
   }, [createNoteInstance, noteInstance, codeBoxColor, oldCodeBoxColor]);
 
-  // //LISTEN TO TAGS STATE CHANGE
-  // useEffect(() => {
-  //   console.log("New tags:", tags);
-
-  //   const updateNoteTags = async () => {
-  //     if (noteByID !== null && tags !== undefined) {
-
-  //       if(noteByID.tags === undefined){
-  //         noteByID.tags = [];
-  //       }
-
-  //       if (noteByID.tags.length !== tags.length) {
-  //         await tagsNote(noteByID, tags);
-  //       }
-  //     }
-  //   };
-
-  //   updateNoteTags();
-  // }, [noteByID, tags]);
-
   const handleSave = async () => {
     if (noteInstance && noteByID) {
       noteInstance.saver.save().then(async (savedData) => {
@@ -225,6 +205,7 @@ export default function NoteDetailPage() {
           isArchived={isArchived}
           setIsArchived={handleArchive}
           handleDelete={handleDelete}
+          setDrawerIsOpen={setDrawerIsOpen}
         />
       )}
       <div className="min-h-screen relative flex bg-[rgb(247,247,247)]">

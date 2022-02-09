@@ -1,4 +1,3 @@
-import Header from "@editorjs/header";
 import Quote from "@editorjs/quote";
 import InlineCode from "@editorjs/inline-code";
 import Marker from "@editorjs/marker";
@@ -11,14 +10,28 @@ import CodexEditor from "@editorjs/editorjs";
 
 export const useCreateNote = () => {
   const createNoteInstance = (currentData, codeBoxTheme) => {
+    const Paragraph = require("editorjs-paragraph-with-alignment");
+    const Header = require("@editorjs/header");
+
     let editor = new CodexEditor({
       tools: {
-        header: Header,
+        paragraph: {
+          class: Paragraph,
+          inlineToolbar: true,
+        },
+        header: {
+          class: Header,
+          shortcut: "CMD+SHIFT+H",
+        },
+
         quote: Quote,
         inlineCode: InlineCode,
         marker: Marker,
         imageTool: ImageTool,
-        nestedList: NestedList,
+        list: {
+          class: NestedList,
+          inlineToolbar: true,
+        },
         checkList: Checklist,
         linkTool: LinkTool,
         codeBox: {
@@ -30,7 +43,7 @@ export const useCreateNote = () => {
           },
         },
       },
-      data: currentData ?? {}, 
+      data: currentData ?? {},
     });
 
     return editor;

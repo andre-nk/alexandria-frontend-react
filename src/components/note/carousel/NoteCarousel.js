@@ -146,10 +146,10 @@ export default function NotesCarousel({ notes, error, headline, link }) {
               alt="404.png"
             />
             <div className="flex z-10 flex-col space-y-2 justify-center items-start">
-              <h2 className="text-2xl font-medium">
+              <h2 className="text-2xl font-medium text-major-text">
                 There are no notes here...
               </h2>
-              <div className="text-base">
+              <div className="text-base text-major-text">
                 Check your archived notes, or{" "}
                 <a
                   href="/notes/new/Untitled note"

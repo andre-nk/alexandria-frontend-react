@@ -10,11 +10,11 @@ import {
 } from "react-icons/io5";
 import { Fragment } from "react";
 import { Switch } from "@headlessui/react";
-import { RWebShare } from "react-web-share";
-import { useLocation } from "react-router-dom";
 
-import NoteToolbarButton from "./NoteToolbarButton";
 import NoteTagsEditor from "./NoteTagsEditor";
+import NoteToolbarButton from "./NoteToolbarButton";
+import { useModalContext } from "../../../hooks/useModalContext";
+import NoteCollaboratorEditor from "./NoteCollaboratorEditor";
 
 export default function NoteDrawer({
   tags,
@@ -31,11 +31,17 @@ export default function NoteDrawer({
   setCodeBoxColor,
   isCreateNotePage,
   handleDelete,
-  noteTitle
+  noteTitle,
+  setDrawerIsOpen,
 }) {
-
-  const location = useLocation();
-  const currentPathname = "localhost:3000" + location.pathname;
+  const { dispatch } = useModalContext();
+  const showEditorModal = () => {
+    setDrawerIsOpen(false);
+    dispatch({
+      type: "SHOW",
+      content: <NoteCollaboratorEditor noteTitle={noteTitle} />,
+    });
+  };
 
   return (
     <nav
@@ -86,19 +92,13 @@ export default function NoteDrawer({
               </button>
             )}
             {!isCreateNotePage && !isArchived && (
-              <RWebShare
-                data={{
-                  text: "Alexandria is a dead-simple notetaking app for your programming-related notes, but way more than that.",
-                  url: currentPathname,
-                  title: noteTitle,
+              <NoteToolbarButton
+                buttonIcon={<IoShareOutline size={18} />}
+                buttonTitle={"Share note"}
+                onClick={() => {
+                  showEditorModal();
                 }}
-              >
-                <NoteToolbarButton
-                  buttonIcon={<IoShareOutline size={18} />}
-                  buttonTitle={"Share note"}
-                  onClick={() => {}}
-                />
-              </RWebShare>
+              />
             )}
             {!isArchived && (
               <NoteToolbarButton

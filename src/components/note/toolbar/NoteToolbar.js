@@ -32,12 +32,13 @@ export default function NoteToolbar({
   setCodeBoxColor,
   isCreateNotePage,
   handleDelete,
+  noteTitle
 }) {
   const { dispatch } = useModalContext();
   const showEditorModal = () => {
     dispatch({
       type: "SHOW",
-      content: <NoteCollaboratorEditor />,
+      content: <NoteCollaboratorEditor noteTitle={noteTitle} />,
     });
   };
 
@@ -95,15 +96,6 @@ export default function NoteToolbar({
             </button>
           )}
           {!isCreateNotePage && !isArchived && (
-            // <RWebShare
-            //   data={{
-            //     text: "Alexandria is a dead-simple notetaking app for your programming-related notes, but way more than that.",
-            //     url: currentPathname,
-            //     title: noteTitle,
-            //   }}
-            // >
-
-            // </RWebShare>
             <NoteToolbarButton
               buttonIcon={<IoShareOutline size={18} />}
               buttonTitle={"Share note"}
