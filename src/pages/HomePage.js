@@ -9,7 +9,7 @@ import RecentNoteCarousel from "../components/note/carousel/RecentNoteCarousel";
 import FeaturedNoteCarousel from "../components/note/carousel/FeaturedNoteCarousel";
 
 export default function Home({ aboutSectionRef }) {
-  const { user, isAuthReady } = useAuthContext();
+  const { user, authIsReady } = useAuthContext();
 
   return (
     <Fragment>
@@ -39,11 +39,11 @@ export default function Home({ aboutSectionRef }) {
       </div>
       {user && (
         <div className="py-16 space-y-20 w-full bg-[rgb(247,247,247)]">
-            <RecentNoteCarousel />
-            <FeaturedNoteCarousel />
+          <RecentNoteCarousel />
+          <FeaturedNoteCarousel />
         </div>
       )}
-      {(!user && isAuthReady) && (
+      {!user && authIsReady && (
         <div className="py-16 w-full bg-white" ref={aboutSectionRef}>
           <AboutPoints />
           <CTASection />

@@ -77,6 +77,22 @@ export const useAuth = () => {
     }
   };
 
+  const deleteUserAPI = async (userID) => {
+    console.log("Delete user API fired!");
+
+    try {
+      let config = {
+        headers: {
+          Authorization: "Bearer " + userID,
+        },
+      };
+
+      await axiosInstance.delete(`/users/${userID}`, config);
+    } catch (err) {
+      console.log(err.message);
+    }
+  };
+
   const registerWithEmail = async (name, profilePicture, email, password) => {
     setError(null);
     createUserWithEmailAndPassword(projectAuth, email, password)
@@ -157,6 +173,18 @@ export const useAuth = () => {
       });
   };
 
+  const deleteUser = async (user) => {
+    console.log("Delete user Firebase fired!");
+
+    deleteUser(user)
+      .then(async () => {
+        await deleteUserAPI(user.uid);
+      })
+      .catch((error) => {
+        console.log(error.message);
+      });
+  };
+
   const logout = async () => {
     setError(null);
     signOut(projectAuth)
@@ -177,5 +205,6 @@ export const useAuth = () => {
     registerWithEmail,
     registerWithGithub,
     registerWithGoogle,
+    deleteUser
   };
 };

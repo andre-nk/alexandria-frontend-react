@@ -14,14 +14,15 @@ export default function RecentNoteCarousel() {
     fetchNotes();
   }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
-  if (recentNotes) {
-    return (
+  return (
+    recentNotes &&
+    recentNotes.length >= 1 && (
       <NotesCarousel
         headline={"Recent notes"}
         link={"/"}
         error={error}
         notes={recentNotes}
       />
-    );
-  }
+    )
+  );
 }

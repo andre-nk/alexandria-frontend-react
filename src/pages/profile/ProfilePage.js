@@ -8,10 +8,13 @@ import { IoChevronForwardOutline, IoPencil } from "react-icons/io5";
 import { useImageURL } from "../../hooks/useImageURL";
 import { useUpdateUser } from "../../hooks/useUpdateUser";
 import { useAuthContext } from "../../hooks/useAuthContext";
+import { useModalContext } from "../../hooks/useModalContext";
+import DeleteUserModal from "../../components/profile/DeleteUserModal";
 
 export default function ProfilePage() {
   const navigate = useNavigate();
   const { user } = useAuthContext();
+  const { dispatch } = useModalContext();
   const {
     updateRole,
     updateLocation,
@@ -26,6 +29,13 @@ export default function ProfilePage() {
   const pickImage = () => {
     document.getElementById("profilePicturePicker").click();
   };
+
+  const openDeleteAccountModal = () => {
+    dispatch({
+      type: "SHOW",
+      content: <DeleteUserModal />,
+    });
+  }
 
   useEffect(() => {
     const updateUserPhotoURL = async () => {
@@ -77,10 +87,10 @@ export default function ProfilePage() {
       </div>
       <div className="py-12 w-full flex justify-center">
         <div className="w-full lg:w-7/12">
-          <div className="w-full px-4 flex space-x-12 items-center justify-start">
+          <div className="w-full flex space-x-8 items-center">
             <div
               onClick={pickImage}
-              className="h-28 w-28 rounded-full overflow-clip relative bg-gray-300"
+              className="w-16 h-16 lg:h-28 lg:w-28 rounded-full overflow-clip relative bg-gray-300"
             >
               <div className="absolute top-0 w-full h-full flex justify-center items-center group bg-primary-black bg-opacity-0 hover:bg-opacity-50 duration-200">
                 <IoPencil
@@ -102,15 +112,15 @@ export default function ProfilePage() {
                 onChange={imageToURL}
               />
             </div>
-            <div className="h-full flex flex-col space-y-1 items-start">
-              <h2 className="text-[1.75rem] font-medium">{user.displayName}</h2>
-              <span className="text-lg flex space-x-2">
+            <div className="h-full flex flex-col space-y-3 items-start">
+              <h2 className="text-2xl lg:text-[1.75rem] font-medium">{user.displayName}</h2>
+              <span className="text-md lg:text-lg flex flex-wrap space-x-1 lg:space-x-2">
                 {user.role && (
                   <u className="hover:text-primary-blue">{user.role}</u>
                 )}
                 {user.location && (
-                  <div className="flex space-x-2">
-                    <p> based in </p>
+                  <div className="flex space-x-1 lg:space-x-2">
+                    <p>{" based in"}</p>
                     <u className="hover:text-primary-blue">{user.location}</u>
                   </div>
                 )}
@@ -228,10 +238,15 @@ export default function ProfilePage() {
                     <p>Reset password</p>
                     <IoChevronForwardOutline size={18} />{" "}
                   </div>
-                  <div className="w-full px-2 lg:px-5 rounded-md duration-200 hover:bg-primary-red hover:bg-opacity-10 flex py-4 justify-between items-center">
+                  <button
+                    onClick={() => {
+                      openDeleteAccountModal();
+                    }}
+                    className="w-full px-2 lg:px-5 rounded-md duration-200 hover:bg-primary-red hover:bg-opacity-10 flex py-4 justify-between items-center"
+                  >
                     <p className="text-primary-red">Delete account</p>
                     <IoChevronForwardOutline size={18} />{" "}
-                  </div>
+                  </button>
                   <button
                     className="bg-primary-blue w-full lg:w-[20%] self-end mt-5 text-primary-bg hover:bg-active-blue rounded-md text-medium border px-4 py-3 duration-200"
                     type="submit"
