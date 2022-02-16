@@ -6,7 +6,6 @@ import { AiOutlineEye, AiOutlineEyeInvisible } from "react-icons/ai";
 
 import { useAuth } from "../../hooks/useAuth";
 import { useAuthContext } from "../../hooks/useAuthContext";
-import { useFormatError } from "../../hooks/useFormatError";
 import SocialAuthComponent from "../../components/auth/SocialAuth";
 import { useNavigate } from "react-router-dom";
 
@@ -23,7 +22,6 @@ export default function LoginPage() {
   const { error, signInWithEmail, registerWithGithub, registerWithGoogle } =
     useAuth();
   const [showPassword, setShowPassword] = useState(false);
-  const { formatAuthError } = useFormatError();
   const { user } = useAuthContext();
   const navigate = useNavigate();
 
@@ -134,7 +132,7 @@ export default function LoginPage() {
                 </button>
                 {error && (
                   <p className="mt-2 ml-1.5 text-xs text-red-500 opacity-70 normal-case">
-                    *{formatAuthError(error)}
+                    *{error}
                   </p>
                 )}
                 <span className="text-minor-text text-sm self-end mt-3 font-light duration-200 flex cursor-pointer group">

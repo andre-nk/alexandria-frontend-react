@@ -4,12 +4,10 @@ import { Dialog, Transition } from "@headlessui/react";
 
 import { useModalContext } from "../../hooks/useModalContext";
 import { useAuth } from "../../hooks/useAuth";
-import { useAuthContext } from "../../hooks/useAuthContext";
 
 export default function DeleteUserModal() {
-  const { user } = useAuthContext();
   const { dispatch } = useModalContext();
-  const { deleteUser } = useAuth();
+  const { deleteUserInstance } = useAuth();
 
   const closeModal = () => {
     dispatch({
@@ -63,7 +61,7 @@ export default function DeleteUserModal() {
           </button>
           <button
             onClick={() => {
-              deleteUser(user);
+              deleteUserInstance();
             }}
             className="bg-primary-red text-primary-bg hover:bg-active-red rounded-md text-base border px-5 py-2 duration-200"
             type="submit"

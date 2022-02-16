@@ -6,7 +6,6 @@ import { IoImageOutline } from "react-icons/io5";
 import { AiOutlineEye, AiOutlineEyeInvisible } from "react-icons/ai";
 
 import { useAuth } from "../../hooks/useAuth";
-import { useFormatError } from "../../hooks/useFormatError";
 import { useAuthContext } from "../../hooks/useAuthContext";
 import SocialAuthComponent from "../../components/auth/SocialAuth";
 import { useNavigate } from "react-router-dom";
@@ -27,7 +26,6 @@ const SignupSchema = Yup.object().shape({
 export default function RegisterPage() {
   const navigate = useNavigate();
   const { user } = useAuthContext();
-  const { formatAuthError } = useFormatError();
   const [showPassword, setShowPassword] = useState(false);
   const { isValidImage, profilePicture, profilePictureUrl, imageToURL } =
     useImageURL();
@@ -204,7 +202,7 @@ export default function RegisterPage() {
                 </button>
                 {error && (
                   <p className="mt-2 ml-1.5 text-xs text-red-500 opacity-70 normal-case">
-                    *{formatAuthError(error)}
+                    *{error}
                   </p>
                 )}
               </Form>

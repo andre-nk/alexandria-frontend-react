@@ -4,9 +4,12 @@ import {
   signInWithEmailAndPassword,
   updateProfile,
   signInWithPopup,
+  signOut,
   GithubAuthProvider,
   GoogleAuthProvider,
-  signOut,
+  EmailAuthProvider,
+  deleteUser,
+  reauthenticateWithCredential,
 } from "firebase/auth";
 import { uploadBytes, getDownloadURL, ref } from "firebase/storage";
 
@@ -17,13 +20,14 @@ import axiosInstance from "../axios/axiosConfig";
 export const useAuth = () => {
   const { dispatch } = useAuthContext();
   const [error, setError] = useState(null);
+  const [success, setSuccess] = useState(false);
   const [profilePictureURL, setProfilePictureURL] = useState(null);
 
   const registerUserAPI = async (user) => {
-    //CALL NATIVE API
     const response = await axiosInstance.post("/users", {
       uid: user.uid,
       displayName: user.displayName,
+      email: user.email,
       photoURL: user.photoURL ?? "",
       role: "",
       location: "",
@@ -41,7 +45,6 @@ export const useAuth = () => {
         isVerified: user.emailVerified,
         role: responseData.role,
         location: responseData.location,
-        friends: responseData.friends,
       };
 
       dispatch({
@@ -52,7 +55,6 @@ export const useAuth = () => {
   };
 
   const loginUserAPI = async (user) => {
-    //CALL NATIVE API
     const response = await axiosInstance.get(`/${user.uid}`);
 
     if (response.status === 200) {
@@ -67,7 +69,6 @@ export const useAuth = () => {
         isVerified: user.emailVerified,
         role: responseData.role,
         location: responseData.location,
-        friends: responseData.friends,
       };
 
       dispatch({
@@ -95,17 +96,22 @@ export const useAuth = () => {
 
   const registerWithEmail = async (name, profilePicture, email, password) => {
     setError(null);
+
     createUserWithEmailAndPassword(projectAuth, email, password)
       .then(async (res) => {
+        console.log("User created!");
+
         try {
           const profilePictureRef = ref(
             projectStorage,
             `profilePicture/${res.user.uid}.jpg`
           );
 
-          uploadBytes(profilePictureRef, profilePicture)
-            .then(() => {
-              getDownloadURL(profilePictureRef)
+          console.log(profilePictureRef);
+
+          await uploadBytes(profilePictureRef, profilePicture)
+            .then(async () => {
+              await getDownloadURL(profilePictureRef)
                 .then((url) => {
                   setProfilePictureURL(url);
                 })
@@ -117,13 +123,23 @@ export const useAuth = () => {
               setError(err.message);
             });
 
+          console.log(profilePictureURL);
+
           if (profilePictureURL) {
+            console.log(profilePictureURL);
+
             await updateProfile(res.user, {
               displayName: name,
               photoURL: profilePictureURL,
             });
 
             await registerUserAPI(res.user);
+
+            console.log("User updated!");
+          } else {
+            console.log("URL failed!");
+            setError("Account creation failed, please try again.");
+            await deleteUser(projectAuth.currentUser);
           }
         } catch (err) {
           setError(err.message);
@@ -173,16 +189,53 @@ export const useAuth = () => {
       });
   };
 
-  const deleteUser = async (user) => {
-    console.log("Delete user Firebase fired!");
+  const deleteUsingPassword = async () => {
+    const user = projectAuth.currentUser;
 
-    deleteUser(user)
+    const credential = EmailAuthProvider.credential(
+      user.email,
+      "23Zephyrnaut2004"
+    );
+
+    reauthenticateWithCredential(user, credential)
       .then(async () => {
         await deleteUserAPI(user.uid);
+
+        deleteUser(user)
+          .then(() => {
+            setSuccess(true);
+          })
+          .catch((error) => {
+            setError(error);
+            setSuccess(false);
+          });
       })
       .catch((error) => {
-        console.log(error.message);
+        setError(error);
       });
+  };
+
+  const deleteUserInstance = async () => {
+    try {
+      switch (projectAuth.currentUser.providerData[0].providerId) {
+        case "github.com":
+          console.log("Signed up using Github");
+          break;
+
+        case "google.com":
+          console.log("Signed up using Github");
+          break;
+
+        case "password":
+          deleteUsingPassword();
+          break;
+
+        default:
+          break;
+      }
+    } catch (error) {
+      setError(error);
+    }
   };
 
   const logout = async () => {
@@ -199,12 +252,13 @@ export const useAuth = () => {
   };
 
   return {
+    success,
     error,
     logout,
     signInWithEmail,
     registerWithEmail,
     registerWithGithub,
     registerWithGoogle,
-    deleteUser
+    deleteUserInstance,
   };
 };
