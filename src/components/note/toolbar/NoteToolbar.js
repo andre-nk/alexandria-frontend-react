@@ -34,9 +34,9 @@ export default function NoteToolbar({
   handleDelete,
   noteTitle
 }) {
-  const { dispatch } = useModalContext();
+  const { dispatchModalCtx } = useModalContext();
   const showEditorModal = () => {
-    dispatch({
+    dispatchModalCtx({
       type: "SHOW",
       content: <NoteCollaboratorEditor noteTitle={noteTitle} />,
     });

@@ -9,7 +9,7 @@ import { RWebShare } from "react-web-share";
 import { useLocation } from "react-router-dom";
 
 export default function NoteCollaboratorEditor({noteTitle}) {
-  const { dispatch } = useModalContext();
+  const { dispatchModalCtx } = useModalContext();
   const location = useLocation();
   const [collaboratorEmails, setCollaboratorEmails] = useState([]);
 
@@ -20,7 +20,7 @@ export default function NoteCollaboratorEditor({noteTitle}) {
   const currentPathname = "http://192.168.0.102:3000/" + location.pathname
 
   const closeModal = () => {
-    dispatch({
+    dispatchModalCtx({
       type: "CLOSE",
       content: null,
     });

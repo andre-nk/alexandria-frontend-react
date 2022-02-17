@@ -14,15 +14,9 @@ import DeleteUserModal from "../../components/profile/DeleteUserModal";
 export default function ProfilePage() {
   const navigate = useNavigate();
   const { user } = useAuthContext();
-  const { dispatch } = useModalContext();
-  const {
-    updateRole,
-    updateLocation,
-    updatePhotoURL,
-    updateDisplayName,
-    error,
-    success,
-  } = useUpdateUser();
+  const { dispatchModalCtx } = useModalContext();
+  const { updateRole, updateLocation, updatePhotoURL, updateDisplayName } =
+    useUpdateUser();
   const { isValidImage, profilePicture, profilePictureUrl, imageToURL } =
     useImageURL();
 
@@ -31,18 +25,19 @@ export default function ProfilePage() {
   };
 
   const openDeleteAccountModal = () => {
-    dispatch({
+    dispatchModalCtx({
       type: "SHOW",
       content: <DeleteUserModal />,
     });
-  }
+  };
 
   useEffect(() => {
     const updateUserPhotoURL = async () => {
-      console.log(isValidImage);
       if (isValidImage) {
         let role = user.role;
         let location = user.location;
+
+        console.log(isValidImage);
 
         await updatePhotoURL(profilePicture, role, location);
       }
@@ -113,7 +108,9 @@ export default function ProfilePage() {
               />
             </div>
             <div className="h-full flex flex-col space-y-3 items-start">
-              <h2 className="text-2xl lg:text-[1.75rem] font-medium">{user.displayName}</h2>
+              <h2 className="text-2xl lg:text-[1.75rem] font-medium">
+                {user.displayName}
+              </h2>
               <span className="text-md lg:text-lg flex flex-wrap space-x-1 lg:space-x-2">
                 {user.role && (
                   <u className="hover:text-primary-blue">{user.role}</u>
@@ -234,11 +231,16 @@ export default function ProfilePage() {
                       ) : null}
                     </div>
                   </div>
-                  <div className="w-full px-2 lg:px-5 rounded-md duration-200 hover:bg-gray-100 flex py-4 justify-between items-center">
+                  <div
+                    onClick={() => {
+                      navigate("/auth/forgot");
+                    }}
+                    className="w-full px-2 lg:px-5 rounded-md duration-200 hover:bg-gray-100 flex py-4 justify-between items-center"
+                  >
                     <p>Reset password</p>
                     <IoChevronForwardOutline size={18} />{" "}
                   </div>
-                  <button
+                  <div
                     onClick={() => {
                       openDeleteAccountModal();
                     }}
@@ -246,15 +248,13 @@ export default function ProfilePage() {
                   >
                     <p className="text-primary-red">Delete account</p>
                     <IoChevronForwardOutline size={18} />{" "}
-                  </button>
+                  </div>
                   <button
                     className="bg-primary-blue w-full lg:w-[20%] self-end mt-5 text-primary-bg hover:bg-active-blue rounded-md text-medium border px-4 py-3 duration-200"
                     type="submit"
                   >
                     Update profile
                   </button>
-                  {error && <p>{error.message}</p>}
-                  {success && <p>{success}</p>}
                 </Form>
               );
             }}

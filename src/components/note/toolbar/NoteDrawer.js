@@ -34,10 +34,10 @@ export default function NoteDrawer({
   noteTitle,
   setDrawerIsOpen,
 }) {
-  const { dispatch } = useModalContext();
+  const { dispatchModalCtx } = useModalContext();
   const showEditorModal = () => {
     setDrawerIsOpen(false);
-    dispatch({
+    dispatchModalCtx({
       type: "SHOW",
       content: <NoteCollaboratorEditor noteTitle={noteTitle} />,
     });

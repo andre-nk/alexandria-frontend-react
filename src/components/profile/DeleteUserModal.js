@@ -1,20 +1,58 @@
-import { Fragment } from "react";
+import { Fragment, useEffect, useState } from "react";
 import { IoCloseOutline, IoTrashBinOutline } from "react-icons/io5";
+import { AiOutlineGoogle } from "react-icons/ai"
+import { FaGithub } from "react-icons/fa";
 import { Dialog, Transition } from "@headlessui/react";
 
 import { useModalContext } from "../../hooks/useModalContext";
 import { useAuth } from "../../hooks/useAuth";
+import { projectAuth } from "../../firebase/config";
+import PasswordReauth from "./PasswordReauth";
 
 export default function DeleteUserModal() {
-  const { dispatch } = useModalContext();
-  const { deleteUserInstance } = useAuth();
+  const { dispatchModalCtx } = useModalContext();
+  const { deleteUsingPassword, deleteUsingGoogle, deleteUsingGithub, error } = useAuth();
+  const [userProviderID, setUserProviderID] = useState(null);
+  const [reauthPassword, setReauthPassword] = useState("");
+  const providerID = projectAuth.currentUser.providerData[0].providerId;
 
   const closeModal = () => {
-    dispatch({
+    dispatchModalCtx({
       type: "CLOSE",
       content: null,
     });
   };
+
+  const deleteUserWithPassword = async () => {
+    await deleteUsingPassword(reauthPassword);
+  };
+
+  const deleteUserWithGithub = async () => {
+    await deleteUsingGithub();
+  };
+
+  const deleteUserWithGoogle = async () => {
+    await deleteUsingGoogle();
+  };
+
+  useEffect(() => {
+    switch (providerID) {
+      case "github.com":
+        setUserProviderID("Github");
+        break;
+
+      case "google.com":
+        setUserProviderID("Google");
+        break;
+
+      case "password":
+        setUserProviderID("Password");
+        break;
+
+      default:
+        break;
+    }
+  }, [providerID]);
 
   return (
     <Transition.Child
@@ -26,7 +64,7 @@ export default function DeleteUserModal() {
       leaveFrom="opacity-100 scale-100"
       leaveTo="opacity-0 scale-95"
     >
-      <div className="inline-block w-full lg:max-w-xl p-6 pt-5 overflow-hidden text-left align-middle transition-all transform bg-white shadow-xl rounded-xl">
+      <div className="inline-block w-full lg:max-w-xl p-8 pt-7 overflow-hidden text-left align-middle transition-all transform bg-white shadow-xl rounded-xl">
         <div className="w-full flex justify-between items-center">
           <div className="flex justify-start space-x-4">
             <IoTrashBinOutline size={24} className="text-primary-red" />
@@ -49,6 +87,13 @@ export default function DeleteUserModal() {
           irreversible and will completely erase your notes, comments and other
           activities
         </p>
+        {userProviderID === "Password" && (
+          <PasswordReauth
+            setReauthPassword={setReauthPassword}
+            deleteUser={deleteUserWithPassword}
+            reauthError={error}
+          />
+        )}
         <div className="w-full flex justify-end items-center mt-2 space-x-4">
           <button
             onClick={() => {
@@ -59,15 +104,40 @@ export default function DeleteUserModal() {
           >
             Cancel
           </button>
-          <button
-            onClick={() => {
-              deleteUserInstance();
-            }}
-            className="bg-primary-red text-primary-bg hover:bg-active-red rounded-md text-base border px-5 py-2 duration-200"
-            type="submit"
-          >
-            Delete account
-          </button>
+          {userProviderID === "Password" && (
+            <button
+              onClick={() => {
+                deleteUserWithPassword();
+              }}
+              className="bg-primary-red text-primary-bg hover:bg-active-red rounded-md text-base border px-5 py-2 duration-200"
+              type="submit"
+            >
+              Delete account
+            </button>
+          )}
+          {userProviderID === "Github" && (
+            <button
+              onClick={() => {
+                deleteUserWithGithub();
+              }}
+              className="bg-primary-red text-primary-bg hover:bg-active-red flex rounded-md text-base border px-5 py-2 duration-200"
+            >
+              <FaGithub size={20} className="self-center"></FaGithub>
+              <p className="pl-2 self-center">Confirm using Github</p>
+            </button>
+          )}
+
+          {userProviderID === "Google" && (
+            <button
+              onClick={() => {
+                deleteUserWithGoogle();
+              }}
+              className="bg-primary-red text-primary-bg hover:bg-active-red flex rounded-md text-base border px-5 py-2 duration-200"
+            >
+              <AiOutlineGoogle size={20} className="self-center text-white"></AiOutlineGoogle>
+              <p className="pl-2 self-center">Confirm using Google</p>
+            </button>
+          )}
         </div>
       </div>
     </Transition.Child>

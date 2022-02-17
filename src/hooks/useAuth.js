@@ -10,17 +10,23 @@ import {
   EmailAuthProvider,
   deleteUser,
   reauthenticateWithCredential,
+  reauthenticateWithPopup,
 } from "firebase/auth";
 import { uploadBytes, getDownloadURL, ref } from "firebase/storage";
 
 import { projectAuth, projectStorage } from "../firebase/config";
 import { useAuthContext } from "./useAuthContext";
+import { useLoadingContext } from "./useLoadingContext";
 import axiosInstance from "../axios/axiosConfig";
+import { useNavigate } from "react-router-dom";
+import { useModalContext } from "./useModalContext";
 
 export const useAuth = () => {
+  const navigate = useNavigate();
   const { dispatch } = useAuthContext();
+  const { dispatchModalCtx } = useModalContext();
+  const { dispatchLoadingCtx } = useLoadingContext();
   const [error, setError] = useState(null);
-  const [success, setSuccess] = useState(false);
   const [profilePictureURL, setProfilePictureURL] = useState(null);
 
   const registerUserAPI = async (user) => {
@@ -96,6 +102,9 @@ export const useAuth = () => {
 
   const registerWithEmail = async (name, profilePicture, email, password) => {
     setError(null);
+    dispatchLoadingCtx({
+      type: "START",
+    });
 
     createUserWithEmailAndPassword(projectAuth, email, password)
       .then(async (res) => {
@@ -148,6 +157,10 @@ export const useAuth = () => {
       .catch((err) => {
         setError(err.message);
       });
+
+    dispatchLoadingCtx({
+      type: "STOP",
+    });
   };
 
   const signInWithEmail = async (email, password) => {
@@ -189,50 +202,89 @@ export const useAuth = () => {
       });
   };
 
-  const deleteUsingPassword = async () => {
+  const deleteUsingPassword = async (password) => {
+    setError(null);
     const user = projectAuth.currentUser;
 
-    const credential = EmailAuthProvider.credential(
-      user.email,
-      "23Zephyrnaut2004"
-    );
+    const credential = EmailAuthProvider.credential(user.email, password);
 
-    reauthenticateWithCredential(user, credential)
+    try {
+      await reauthenticateWithCredential(user, credential)
       .then(async () => {
+        console.log("Reauthenticated!");
         await deleteUserAPI(user.uid);
 
-        deleteUser(user)
-          .then(() => {
-            setSuccess(true);
-          })
-          .catch((error) => {
-            setError(error);
-            setSuccess(false);
-          });
+        try {
+          await deleteUserAPI(user.uid);
+          deleteUser(user);
+        } catch (error) {
+          setError(error);
+        }
+
+        dispatchModalCtx({
+          type: "CLOSE",
+          content: null,
+        });
+        navigate("/auth/login");
       })
-      .catch((error) => {
-        setError(error);
-      });
+    } catch (error) {
+      setError(error);
+    }
   };
 
-  const deleteUserInstance = async () => {
+  const deleteUsingGithub = async () => {
+    const githubProvider = new GithubAuthProvider();
+    const user = projectAuth.currentUser;
+
     try {
-      switch (projectAuth.currentUser.providerData[0].providerId) {
-        case "github.com":
-          console.log("Signed up using Github");
-          break;
+      await reauthenticateWithPopup(
+        user,
+        githubProvider
+      ).then(async () => {
+        await deleteUserAPI(user.uid);
 
-        case "google.com":
-          console.log("Signed up using Github");
-          break;
+        try {
+          await deleteUserAPI(user.uid);
+          deleteUser(user);
+        } catch (error) {
+          setError(error);
+        }
 
-        case "password":
-          deleteUsingPassword();
-          break;
+        dispatchModalCtx({
+          type: "CLOSE",
+          content: null,
+        });
+        navigate("/auth/login");
+      });
+    } catch (error) {
+      setError(error);
+    }
+  };
 
-        default:
-          break;
-      }
+  const deleteUsingGoogle = async () => {
+    const googleProvider = new GoogleAuthProvider();
+    const user = projectAuth.currentUser;
+
+    try {
+      await reauthenticateWithPopup(
+        user,
+        googleProvider
+      ).then(async () => {
+        await deleteUserAPI(user.uid);
+
+        try {
+          await deleteUserAPI(user.uid);
+          deleteUser(user);
+        } catch (error) {
+          setError(error);
+        }
+
+        dispatchModalCtx({
+          type: "CLOSE",
+          content: null,
+        });
+        navigate("/auth/login");
+      });
     } catch (error) {
       setError(error);
     }
@@ -252,13 +304,14 @@ export const useAuth = () => {
   };
 
   return {
-    success,
     error,
     logout,
     signInWithEmail,
     registerWithEmail,
     registerWithGithub,
     registerWithGoogle,
-    deleteUserInstance,
+    deleteUsingPassword,
+    deleteUsingGithub,
+    deleteUsingGoogle
   };
 };

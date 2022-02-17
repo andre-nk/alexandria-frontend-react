@@ -3,11 +3,11 @@ import { Fragment, useRef } from "react";
 import { useModalContext } from "../../hooks/useModalContext";
 
 export default function GlobalModal() {
-  const { content, isShow, dispatch } = useModalContext();
+  const { content, isShow, dispatchModalCtx } = useModalContext();
   let completeButtonRef = useRef(null);
 
   const closeModal = () => {
-    dispatch({
+    dispatchModalCtx({
       type: "CLOSE",
       content: null,
     });

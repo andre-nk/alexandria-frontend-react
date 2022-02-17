@@ -26,13 +26,13 @@ export const modalReducer = (state, action) => {
 };
 
 export const ModalContextProvider = ({ children }) => {
-  const [state, dispatch] = useReducer(modalReducer, {
+  const [state, dispatchModalCtx] = useReducer(modalReducer, {
     content: null,
     isShow: false,
   });
 
   return (
-    <ModalContext.Provider value={{ ...state, dispatch }}>
+    <ModalContext.Provider value={{ ...state, dispatchModalCtx }}>
       {children}
     </ModalContext.Provider>
   );
