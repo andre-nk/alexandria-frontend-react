@@ -61,7 +61,7 @@ export const useAuth = () => {
   };
 
   const loginUserAPI = async (user) => {
-    const response = await axiosInstance.get(`/${user.uid}`);
+    const response = await axiosInstance.get(`/users/${user.uid}`);
 
     if (response.status === 200) {
       const responseData = await response.data;
