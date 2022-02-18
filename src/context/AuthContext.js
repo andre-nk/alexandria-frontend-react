@@ -36,7 +36,6 @@ export const AuthContextProvider = ({ children }) => {
 
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(projectAuth, async (user) => {
-      //CALL NATIVE API AND FORM A DESIRED USER STRUCT THEN PASS IT AS A PAYLOAD
       if (user !== null) {
         try {
           const response = await axiosConfig.get(`users/${user.uid}`);

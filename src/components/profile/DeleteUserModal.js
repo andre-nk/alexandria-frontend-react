@@ -1,17 +1,24 @@
 import { Fragment, useEffect, useState } from "react";
 import { IoCloseOutline, IoTrashBinOutline } from "react-icons/io5";
-import { AiOutlineGoogle } from "react-icons/ai"
+import { AiOutlineGoogle } from "react-icons/ai";
 import { FaGithub } from "react-icons/fa";
 import { Dialog, Transition } from "@headlessui/react";
 
 import { useModalContext } from "../../hooks/useModalContext";
-import { useAuth } from "../../hooks/useAuth";
 import { projectAuth } from "../../firebase/config";
 import PasswordReauth from "./PasswordReauth";
+import {
+  useGithubDelete,
+  useGoogleDelete,
+  usePasswordDelete,
+} from "../../hooks/useAuth";
 
 export default function DeleteUserModal() {
   const { dispatchModalCtx } = useModalContext();
-  const { deleteUsingPassword, deleteUsingGoogle, deleteUsingGithub, error } = useAuth();
+  const { passwordDeleteMutation } = usePasswordDelete();
+  const { githubDeleteMutation } = useGithubDelete();
+  const { googleDeleteMutation } = useGoogleDelete();
+
   const [userProviderID, setUserProviderID] = useState(null);
   const [reauthPassword, setReauthPassword] = useState("");
   const providerID = projectAuth.currentUser.providerData[0].providerId;
@@ -23,16 +30,16 @@ export default function DeleteUserModal() {
     });
   };
 
-  const deleteUserWithPassword = async () => {
-    await deleteUsingPassword(reauthPassword);
+  const deleteUserWithPassword = () => {
+    passwordDeleteMutation.mutate(reauthPassword);
   };
 
   const deleteUserWithGithub = async () => {
-    await deleteUsingGithub();
+    githubDeleteMutation.mutate();
   };
 
   const deleteUserWithGoogle = async () => {
-    await deleteUsingGoogle();
+    googleDeleteMutation.mutate();
   };
 
   useEffect(() => {
@@ -91,7 +98,7 @@ export default function DeleteUserModal() {
           <PasswordReauth
             setReauthPassword={setReauthPassword}
             deleteUser={deleteUserWithPassword}
-            reauthError={error}
+            reauthError={passwordDeleteMutation.error}
           />
         )}
         <div className="w-full flex justify-end items-center mt-2 space-x-4">
@@ -134,7 +141,10 @@ export default function DeleteUserModal() {
               }}
               className="bg-primary-red text-primary-bg hover:bg-active-red flex rounded-md text-base border px-5 py-2 duration-200"
             >
-              <AiOutlineGoogle size={20} className="self-center text-white"></AiOutlineGoogle>
+              <AiOutlineGoogle
+                size={20}
+                className="self-center text-white"
+              ></AiOutlineGoogle>
               <p className="pl-2 self-center">Confirm using Google</p>
             </button>
           )}

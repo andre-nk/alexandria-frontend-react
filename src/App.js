@@ -1,14 +1,19 @@
+import { QueryClient, QueryClientProvider } from "react-query";
+import { ReactQueryDevtools } from "react-query/devtools";
 import { BrowserRouter } from "react-router-dom";
 
 import Layout from "./components/layout/Layout";
 
+const queryClient = new QueryClient();
+
 function App() {
   return (
-    <div>
+    <QueryClientProvider client={queryClient}>
       <BrowserRouter>
-        <Layout/>
+        <Layout />
+        <ReactQueryDevtools />
       </BrowserRouter>
-    </div>
+    </QueryClientProvider>
   );
 }
 

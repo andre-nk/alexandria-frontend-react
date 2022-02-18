@@ -1,10 +1,6 @@
-import { useAuth } from "../../hooks/useAuth";
-
 import DrawerLinks from "./DrawerLinks";
 
 export default function Drawer({ isOpen, setIsOpen }) {
-  const { logout } = useAuth();
-
   return (
     <nav
       className={`fixed z-50 top-0 ${
@@ -40,7 +36,7 @@ export default function Drawer({ isOpen, setIsOpen }) {
         <button
           className="bg-gray-50 hover:bg-primary-border text-primary-red w-full rounded-md text-medium border px-4 py-3 duration-200 mt-5"
           onClick={() => {
-            logout();
+            // logout();
             setIsOpen(false);
           }}
         >

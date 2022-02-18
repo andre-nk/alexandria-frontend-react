@@ -1,12 +1,12 @@
 import { Fragment } from "react";
 import { Menu, Transition } from "@headlessui/react";
 
-import { useAuth } from "../../hooks/useAuth";
 import { useNavigate } from "react-router-dom";
+import { useLogout } from "../../hooks/useAuth";
 
 export default function AccountMenu({ photoURL }) {
-  const { logout } = useAuth();
   const navigate = useNavigate();
+  const { mutate } = useLogout();
 
   return (
     <Menu as="div" className="relative inline-block text-left">
@@ -43,7 +43,9 @@ export default function AccountMenu({ photoURL }) {
             <Menu.Item>
               {({ active }) => (
                 <button
-                  onClick={logout}
+                  onClick={() => {
+                    mutate();
+                  }}
                   className={`${
                     active && "bg-primary-border"
                   } group text-primary-red flex rounded-md items-center w-full px-3 py-2.5 text-sm duration-200`}

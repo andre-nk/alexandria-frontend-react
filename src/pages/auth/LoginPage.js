@@ -4,7 +4,6 @@ import Helmet from "react-helmet";
 import { Formik, Field, Form } from "formik";
 import { AiOutlineEye, AiOutlineEyeInvisible } from "react-icons/ai";
 
-import { useAuth } from "../../hooks/useAuth";
 import { useAuthContext } from "../../hooks/useAuthContext";
 import SocialAuthComponent from "../../components/auth/SocialAuth";
 import { useNavigate } from "react-router-dom";
@@ -19,8 +18,6 @@ const SignupSchema = Yup.object().shape({
 });
 
 export default function LoginPage() {
-  const { error, signInWithEmail, registerWithGithub, registerWithGoogle } =
-    useAuth();
   const [showPassword, setShowPassword] = useState(false);
   const { user } = useAuthContext();
   const navigate = useNavigate();
@@ -68,7 +65,7 @@ export default function LoginPage() {
           }}
           validationSchema={SignupSchema}
           onSubmit={async (values) => {
-            await signInWithEmail(values.email, values.password);
+            // await signInWithEmail(values.email, values.password);
           }}
         >
           {({ errors, touched }) => {
@@ -130,11 +127,11 @@ export default function LoginPage() {
                 >
                   Log in
                 </button>
-                {error && (
+                {/* {error && (
                   <p className="mt-2 ml-1.5 text-xs text-red-500 opacity-70 normal-case">
                     *{error}
                   </p>
-                )}
+                )} */}
                 <span className="text-minor-text text-sm self-end mt-3 font-light duration-200 flex cursor-pointer group">
                   <p>Forgot your password?</p>
                   <a href="/auth/forgot">
@@ -148,10 +145,10 @@ export default function LoginPage() {
           }}
         </Formik>
         <div className="mt-2 flex flex-col justify-center">
-          <SocialAuthComponent
+          {/* <SocialAuthComponent
             github={registerWithGithub}
             google={registerWithGoogle}
-          />
+          /> */}
           <span className="text-minor-text hover:text-major-text text-md self-center font-light duration-200 flex cursor-pointer">
             <p>Doesn't have an account?</p>
             <a href="/auth/register">

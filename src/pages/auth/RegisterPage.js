@@ -5,11 +5,15 @@ import { Formik, Field, Form } from "formik";
 import { IoImageOutline } from "react-icons/io5";
 import { AiOutlineEye, AiOutlineEyeInvisible } from "react-icons/ai";
 
-import { useAuth } from "../../hooks/useAuth";
 import { useAuthContext } from "../../hooks/useAuthContext";
 import SocialAuthComponent from "../../components/auth/SocialAuth";
 import { useNavigate } from "react-router-dom";
 import { useImageURL } from "../../hooks/useImageURL";
+import {
+  useEmailRegister,
+  useGoogleRegister,
+  useGithubRegister,
+} from "../../hooks/useAuth";
 
 const SignupSchema = Yup.object().shape({
   name: Yup.string()
@@ -26,11 +30,12 @@ const SignupSchema = Yup.object().shape({
 export default function RegisterPage() {
   const navigate = useNavigate();
   const { user } = useAuthContext();
+  const { emailRegisterMutation } = useEmailRegister();
+  const { googleRegisterMutation } = useGoogleRegister();
+  const { githubRegisterMutation } = useGithubRegister();
   const [showPassword, setShowPassword] = useState(false);
   const { isValidImage, profilePicture, profilePictureUrl, imageToURL } =
     useImageURL();
-  const { error, registerWithEmail, registerWithGithub, registerWithGoogle } =
-    useAuth();
 
   if (user !== null) {
     navigate("/");
@@ -118,13 +123,13 @@ export default function RegisterPage() {
             password: "",
           }}
           validationSchema={SignupSchema}
-          onSubmit={async (values) => {
-            await registerWithEmail(
-              values.name,
-              profilePicture,
-              values.email,
-              values.password
-            );
+          onSubmit={(values) => {
+            emailRegisterMutation.mutate({
+              name: values.name,
+              profilePicture: profilePicture,
+              email: values.email,
+              password: values.password,
+            });
           }}
         >
           {({ errors, touched }) => {
@@ -200,9 +205,14 @@ export default function RegisterPage() {
                 >
                   Create your account
                 </button>
-                {error && (
+                {(emailRegisterMutation.error ||
+                  githubRegisterMutation.error ||
+                  googleRegisterMutation.error) && (
                   <p className="mt-2 ml-1.5 text-xs text-red-500 opacity-70 normal-case">
-                    *{error}
+                    *
+                    {emailRegisterMutation.error.message ||
+                      githubRegisterMutation.error.message ||
+                      googleRegisterMutation.error.message}
                   </p>
                 )}
               </Form>
@@ -210,8 +220,12 @@ export default function RegisterPage() {
           }}
         </Formik>
         <SocialAuthComponent
-          github={registerWithGithub}
-          google={registerWithGoogle}
+          github={() => {
+            githubRegisterMutation.mutate();
+          }}
+          google={() => {
+            googleRegisterMutation.mutate();
+          }}
         />
         <span className="text-minor-text hover:text-major-text text-md self-center font-light duration-200 flex cursor-pointer">
           <p>Already have an account?</p>
