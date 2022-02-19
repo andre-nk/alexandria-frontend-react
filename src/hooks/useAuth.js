@@ -1,4 +1,3 @@
-import { useState } from "react";
 import {
   createUserWithEmailAndPassword,
   signInWithEmailAndPassword,
@@ -121,7 +120,11 @@ export const useEmailRegister = () => {
               photoURL: url,
             });
 
-            await registerUserAPI(res.user);
+            const userInstance = await registerUserAPI(res.user);
+            dispatch({
+              type: "LOGIN",
+              payload: userInstance,
+            });
           } else {
             throw new Error("Photo upload failed, please try again!");
           }
@@ -140,13 +143,6 @@ export const useEmailRegister = () => {
         dispatchLoadingCtx({
           type: "STOP",
         });
-
-        console.log(data);
-
-        dispatch({
-          type: "LOGIN",
-          payload: data,
-        });
       },
     }
   );
@@ -158,20 +154,16 @@ export const useSignIn = () => {
   const { dispatch } = useAuthContext();
 
   const signInMutation = useMutation(
-    async (email, password) => {
+    async ({ email, password }) => {
       return signInWithEmailAndPassword(projectAuth, email, password).then(
         async (res) => {
-          loginUserAPI(res.user);
+          const userInstance = await loginUserAPI(res.user);
+          dispatch({
+            type: "LOGIN",
+            payload: userInstance,
+          });
         }
       );
-    },
-    {
-      onSuccess: (data) => {
-        dispatch({
-          type: "LOGIN",
-          payload: data,
-        });
-      },
     }
   );
 

@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react";
+import imageCompression from "browser-image-compression";
 
 export const useImageURL = () => {
   const [isValidImage, setIsValidImage] = useState(false);
@@ -17,21 +18,32 @@ export const useImageURL = () => {
     fileReader.readAsDataURL(profilePicture);
   }, [profilePicture]);
 
-  const imageToURL = (event) => {
+  const imageToURL = async (event) => {
     let pickedFile;
     if (event.target.files && event.target.files.length === 1) {
       pickedFile = event.target.files[0];
-      setProfilePicture(pickedFile);
-      setIsValidImage(true);
+
+      const options = {
+        maxSizeMB: 0.25,
+        useWebWorker: true,
+      };
+
+      try {
+        const compressedFile = await imageCompression(pickedFile, options);
+        setProfilePicture(compressedFile);
+        setIsValidImage(true);
+      } catch (error) {
+        setIsValidImage(false);
+      }
     } else {
       setIsValidImage(false);
     }
   };
 
   return {
-      isValidImage,
-      profilePicture,
-      profilePictureUrl,
-      imageToURL
-  }
+    isValidImage,
+    profilePicture,
+    profilePictureUrl,
+    imageToURL,
+  };
 };

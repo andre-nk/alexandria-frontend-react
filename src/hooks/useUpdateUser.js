@@ -1,4 +1,3 @@
-import { useState } from "react";
 import { sendPasswordResetEmail, updateProfile } from "firebase/auth";
 import { uploadBytes, getDownloadURL, ref } from "firebase/storage";
 
@@ -9,8 +8,7 @@ import { useMutation } from "react-query";
 
 export const useResetPassword = () => {
   const resetPasswordMutation = useMutation((email) => {
-    console.log("Fired!");
-    // sendPasswordResetEmail(projectAuth, email);
+    sendPasswordResetEmail(projectAuth, email);
   });
 
   return { resetPasswordMutation };
@@ -52,7 +50,6 @@ export const useUpdatePhoto = () => {
                   },
                 }
               );
-              
             } catch (err) {
               throw new Error(err);
             }

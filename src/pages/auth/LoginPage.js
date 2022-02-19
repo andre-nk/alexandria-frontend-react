@@ -4,9 +4,14 @@ import Helmet from "react-helmet";
 import { Formik, Field, Form } from "formik";
 import { AiOutlineEye, AiOutlineEyeInvisible } from "react-icons/ai";
 
-import { useAuthContext } from "../../hooks/useAuthContext";
 import SocialAuthComponent from "../../components/auth/SocialAuth";
+import { useAuthContext } from "../../hooks/useAuthContext";
 import { useNavigate } from "react-router-dom";
+import {
+  useGithubRegister,
+  useGoogleRegister,
+  useSignIn,
+} from "../../hooks/useAuth";
 
 const SignupSchema = Yup.object().shape({
   email: Yup.string()
@@ -20,6 +25,9 @@ const SignupSchema = Yup.object().shape({
 export default function LoginPage() {
   const [showPassword, setShowPassword] = useState(false);
   const { user } = useAuthContext();
+  const { signInMutation } = useSignIn();
+  const { googleRegisterMutation } = useGoogleRegister();
+  const { githubRegisterMutation } = useGithubRegister();
   const navigate = useNavigate();
 
   if (user !== null) {
@@ -64,8 +72,11 @@ export default function LoginPage() {
             password: "",
           }}
           validationSchema={SignupSchema}
-          onSubmit={async (values) => {
-            // await signInWithEmail(values.email, values.password);
+          onSubmit={(values) => {
+            signInMutation.mutate({
+              email: values.email,
+              password: values.password,
+            });
           }}
         >
           {({ errors, touched }) => {
@@ -127,11 +138,16 @@ export default function LoginPage() {
                 >
                   Log in
                 </button>
-                {/* {error && (
+                {(signInMutation.error ||
+                  githubRegisterMutation.error ||
+                  googleRegisterMutation.error) && (
                   <p className="mt-2 ml-1.5 text-xs text-red-500 opacity-70 normal-case">
-                    *{error}
+                    *
+                    {signInMutation.error.message ||
+                      githubRegisterMutation.error.message ||
+                      googleRegisterMutation.error.message}
                   </p>
-                )} */}
+                )}
                 <span className="text-minor-text text-sm self-end mt-3 font-light duration-200 flex cursor-pointer group">
                   <p>Forgot your password?</p>
                   <a href="/auth/forgot">
@@ -145,10 +161,14 @@ export default function LoginPage() {
           }}
         </Formik>
         <div className="mt-2 flex flex-col justify-center">
-          {/* <SocialAuthComponent
-            github={registerWithGithub}
-            google={registerWithGoogle}
-          /> */}
+          <SocialAuthComponent
+            github={() => {
+              githubRegisterMutation.mutate();
+            }}
+            google={() => {
+              googleRegisterMutation.mutate();
+            }}
+          />
           <span className="text-minor-text hover:text-major-text text-md self-center font-light duration-200 flex cursor-pointer">
             <p>Doesn't have an account?</p>
             <a href="/auth/register">

@@ -50,6 +50,7 @@ export default function NoteDetailPage() {
     };
 
     fetchNoteByID();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [id]);
 
   //LOAD OR CREATE NOTE INSTANCE

@@ -5,6 +5,7 @@ import { Formik, Field, Form } from "formik";
 import { useNavigate } from "react-router-dom";
 import { useAuthContext } from "../../hooks/useAuthContext";
 import { useFormatError } from "../../hooks/useFormatError";
+import { useResetPassword } from "../../hooks/useUpdateUser";
 
 const ResetPasswordSchema = Yup.object().shape({
   email: Yup.string()
@@ -13,7 +14,7 @@ const ResetPasswordSchema = Yup.object().shape({
 });
 
 export default function ForgotPasswordPage() {
-  // const { error, isResetSent, resetPassword } = useUpdateUser();
+  const { resetPasswordMutation } = useResetPassword();
   const { formatAuthError } = useFormatError();
   const { user } = useAuthContext();
   const navigate = useNavigate();
@@ -54,7 +55,7 @@ export default function ForgotPasswordPage() {
           }}
           validationSchema={ResetPasswordSchema}
           onSubmit={async (values) => {
-            // await resetPassword(values.email);
+            resetPasswordMutation.mutate(values.email)
           }}
         >
           {({ errors, touched }) => {
@@ -80,12 +81,12 @@ export default function ForgotPasswordPage() {
                 >
                   Reset password
                 </button>
-                {/* {error && (
+                {resetPasswordMutation.error && (
                   <p className="mt-2 ml-1.5 text-xs text-red-500 opacity-70 normal-case">
-                    *{formatAuthError(error)}
+                    *{formatAuthError(resetPasswordMutation.error.message)}
                   </p>
-                )} */}
-                {/* {isResetSent && (
+                )}
+                {resetPasswordMutation.isSuccess && (
                   <div className="flex flex-col space-y-2 mt-4 justify-center rounded-md items-center px-4 py-3.5 bg-primary-bg border border-primary-border">
                     <p className="text-xs text-primary-green normal-case text-center">
                       The reset password e-mail has been sent!
@@ -96,7 +97,7 @@ export default function ForgotPasswordPage() {
                       </p>
                     </a>
                   </div>
-                )} */}
+                )}
               </Form>
             );
           }}

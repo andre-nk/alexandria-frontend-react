@@ -25,7 +25,7 @@ export default function NewNotePage() {
   const [codeBoxColor, setCodeBoxColor] = useState(CodeboxThemes[0]);
   const [oldCodeBoxColor, setOldCodeBoxColor] = useState(CodeboxThemes[0]);
 
-  const { error, success, createNote } = useNote();
+  const { createNote } = useNote();
 
   useEffect(() => {
     const createNote = async () => {

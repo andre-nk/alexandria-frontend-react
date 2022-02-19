@@ -10,6 +10,7 @@ import { useAuthContext } from "../../hooks/useAuthContext";
 import { useModalContext } from "../../hooks/useModalContext";
 import DeleteUserModal from "../../components/profile/DeleteUserModal";
 import {
+  useResetPassword,
   useUpdateLocation,
   useUpdateName,
   useUpdatePhoto,
@@ -23,6 +24,7 @@ export default function ProfilePage() {
   const { updatePhotoMutation } = useUpdatePhoto();
   const { updateNameMutation } = useUpdateName();
   const { updateRoleMutation } = useUpdateRole();
+  const { resetPasswordMutation } = useResetPassword();
   const { updateLocationMutation } = useUpdateLocation();
   const { isValidImage, profilePicture, profilePictureUrl, imageToURL } =
     useImageURL();
@@ -45,6 +47,7 @@ export default function ProfilePage() {
 
       updatePhotoMutation.mutate({ profilePicture, role, location });
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isValidImage, profilePicture, user]);
 
   const UpdateProfileSchema = Yup.object().shape({
@@ -240,7 +243,7 @@ export default function ProfilePage() {
                   </div>
                   <div
                     onClick={() => {
-                      navigate("/auth/forgot");
+                      resetPasswordMutation.mutate();
                     }}
                     className="w-full px-2 lg:px-5 rounded-md duration-200 hover:bg-gray-100 flex py-4 justify-between items-center"
                   >
