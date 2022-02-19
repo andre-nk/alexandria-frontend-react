@@ -5,173 +5,160 @@ import { uploadBytes, getDownloadURL, ref } from "firebase/storage";
 import { projectAuth, projectStorage } from "../firebase/config";
 import { useAuthContext } from "./useAuthContext";
 import axiosInstance from "../axios/axiosConfig";
+import { useMutation } from "react-query";
 
-export const useUpdateUser = () => {
+export const useResetPassword = () => {
+  const resetPasswordMutation = useMutation((email) => {
+    console.log("Fired!");
+    // sendPasswordResetEmail(projectAuth, email);
+  });
+
+  return { resetPasswordMutation };
+};
+
+export const useUpdatePhoto = () => {
   const { user } = useAuthContext();
 
-  const [error, setError] = useState(null);
-  const [success, setSuccess] = useState(null);
-  const [isResetSent, setisResetSent] = useState(false);
-  const [profilePictureURL, setProfilePictureURL] = useState(null);
-
-  const resetPassword = async (email) => {
-    setError(null);
-    sendPasswordResetEmail(projectAuth, email)
-      .then(() => {
-        setisResetSent(true);
-      })
-      .catch((error) => {
-        setError(error.message);
-      });
-  };
-
-  const updatePhotoURL = async (profilePicture, role, location) => {
-    try {
+  const updatePhotoMutation = useMutation(
+    async ({ profilePicture, role, location }) => {
       const profilePictureRef = ref(
         projectStorage,
         `profilePicture/${projectAuth.currentUser.uid}.jpg`
       );
 
-      uploadBytes(profilePictureRef, profilePicture)
-        .then(() => {
-          getDownloadURL(profilePictureRef)
-            .then((url) => {
-              setProfilePictureURL(url);
-            })
-            .catch((err) => {
-              setError(err.message);
+      await uploadBytes(profilePictureRef, profilePicture)
+        .then(async () => {
+          const url = await getDownloadURL(profilePictureRef);
+
+          if (url) {
+            await updateProfile(projectAuth.currentUser, {
+              photoURL: url,
             });
+
+            try {
+              await axiosInstance.put(
+                "/users",
+                {
+                  uid: user.uid,
+                  email: user.email,
+                  displayName: user.displayName,
+                  photoURL: url,
+                  role: role,
+                  location: location,
+                },
+                {
+                  headers: {
+                    Authorization: "Bearer " + user.uid,
+                  },
+                }
+              );
+              
+            } catch (err) {
+              throw new Error(err);
+            }
+          } else {
+            throw new Error("Photo upload failed, please try again!");
+          }
         })
         .catch((err) => {
-          setError(err.message);
+          throw new Error(err);
+        });
+    }
+  );
+
+  return { updatePhotoMutation };
+};
+
+export const useUpdateName = () => {
+  const { user } = useAuthContext();
+
+  const updateNameMutation = useMutation(
+    async ({ displayName, role, location }) => {
+      try {
+        updateProfile(projectAuth.currentUser, {
+          displayName: displayName,
+          photoURL: user.photoURL,
         });
 
-      if (profilePictureURL) {
-        await updateProfile(projectAuth.currentUser, {
-          photoURL: profilePictureURL,
-        });
+        await axiosInstance.put(
+          "/users",
+          {
+            uid: user.uid,
+            email: user.email,
+            displayName: displayName,
+            photoURL: user.photoURL,
+            role: role,
+            location: location,
+          },
+          {
+            headers: {
+              Authorization: "Bearer " + user.uid,
+            },
+          }
+        );
+      } catch (err) {
+        throw new Error(err);
+      }
+    }
+  );
 
-        let config = {
+  return { updateNameMutation };
+};
+
+export const useUpdateRole = () => {
+  const { user } = useAuthContext();
+
+  const updateRoleMutation = useMutation(async ({ role, location }) => {
+    try {
+      await axiosInstance.put(
+        "/users",
+        {
+          uid: user.uid,
+          email: user.email,
+          displayName: user.displayName,
+          photoURL: user.photoURL,
+          role: role,
+          location: location,
+        },
+        {
           headers: {
             Authorization: "Bearer " + user.uid,
           },
-        };
-
-        try {
-          await axiosInstance.put(
-            "/users",
-            {
-              uid: user.uid,
-              displayName: user.displayName,
-              photoURL: profilePictureURL,
-              role: role,
-              location: location,
-            },
-            config
-          );
-
-          setSuccess("Your profile has been updated");
-        } catch (error) {
-          setError(error);
         }
-      }
+      );
     } catch (err) {
-      setError(err.message);
+      throw new Error(err);
     }
-  };
+  });
 
-  const updateDisplayName = async (displayName, role, location) => {
+  return { updateRoleMutation };
+};
+
+export const useUpdateLocation = () => {
+  const { user } = useAuthContext();
+
+  const updateLocationMutation = useMutation(async ({ role, location }) => {
     try {
-      await updateProfile(projectAuth.currentUser, {
-        displayName: displayName,
-        photoURL: user.photoURL
-      });
-
-      let config = {
-        headers: {
-          Authorization: "Bearer " + user.uid,
-        },
-      };
-
       await axiosInstance.put(
         "/users",
         {
           uid: user.uid,
-          displayName: displayName,
-          photoURL: user.photoURL,
-          role: role,
-          location: location,
-        },
-        config
-      );
-
-      setSuccess("Your profile has been updated");
-    } catch (error) {
-      console.log(error);
-      setError(error);
-    }
-  };
-
-  const updateRole = async (role, location) => {
-    try {
-      let config = {
-        headers: {
-          Authorization: "Bearer " + user.uid,
-        },
-      };
-
-      await axiosInstance.put(
-        "/users",
-        {
-          uid: user.uid,
+          email: user.email,
           displayName: user.displayName,
           photoURL: user.photoURL,
           role: role,
           location: location,
         },
-        config
-      );
-
-      setSuccess("Your profile has been updated");
-    } catch (error) {
-      setError(error);
-    }
-  };
-
-  const updateLocation = async (role, location) => {
-    let config = {
-      headers: {
-        Authorization: "Bearer " + user.uid,
-      },
-    };
-
-    try {
-      await axiosInstance.put(
-        "/users",
         {
-          uid: user.uid,
-          displayName: user.displayName,
-          photoURL: user.photoURL,
-          role: role,
-          location: location,
-        },
-        config
+          headers: {
+            Authorization: "Bearer " + user.uid,
+          },
+        }
       );
-
-      setSuccess("Your profile has been updated");
-    } catch (error) {
-      setError(error);
+    } catch (err) {
+      throw new Error(err);
     }
-  };
+  });
 
-  return {
-    error,
-    success,
-    isResetSent,
-    resetPassword,
-    updateRole,
-    updateLocation,
-    updatePhotoURL,
-    updateDisplayName,
-  };
+  return { updateLocationMutation };
 };

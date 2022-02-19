@@ -22,7 +22,7 @@ import { useNavigate } from "react-router-dom";
 import { useModalContext } from "./useModalContext";
 import { useMutation } from "react-query";
 
-export const registerUserAPI = async (user) => {
+const registerUserAPI = async (user) => {
   const response = await axiosInstance.post("/users", {
     uid: user.uid,
     displayName: user.displayName,
@@ -50,7 +50,7 @@ export const registerUserAPI = async (user) => {
   }
 };
 
-export const loginUserAPI = async (user) => {
+const loginUserAPI = async (user) => {
   const response = await axiosInstance.get(`/users/${user.uid}`);
 
   if (response.status === 200) {
@@ -71,7 +71,7 @@ export const loginUserAPI = async (user) => {
   }
 };
 
-export const deleteUserAPI = async (userID) => {
+const deleteUserAPI = async (userID) => {
   console.log("Delete user API fired!");
 
   try {
@@ -89,7 +89,6 @@ export const deleteUserAPI = async (userID) => {
 
 export const useEmailRegister = () => {
   const { dispatchLoadingCtx } = useLoadingContext();
-  const [profilePictureURL, setProfilePictureURL] = useState(null);
   const { dispatch } = useAuthContext();
 
   const emailRegisterMutation = useMutation(
@@ -105,32 +104,31 @@ export const useEmailRegister = () => {
 
       const profilePictureRef = ref(
         projectStorage,
-        `profilePicture/${res.user.uid}.jpg`
+        `profilePicture/${projectAuth.currentUser.uid}.jpg`
       );
-      console.log(profilePictureRef);
 
-      await uploadBytes(profilePictureRef, profilePicture).then(async () => {
-        await getDownloadURL(profilePictureRef).then((url) => {
-          setProfilePictureURL(url);
+      await uploadBytes(profilePictureRef, profilePicture)
+        .then(async () => {
+          const url = await getDownloadURL(profilePictureRef);
+
+          if (url) {
+            await updateProfile(projectAuth.currentUser, {
+              photoURL: url,
+            });
+
+            await updateProfile(res.user, {
+              displayName: name,
+              photoURL: url,
+            });
+
+            await registerUserAPI(res.user);
+          } else {
+            throw new Error("Photo upload failed, please try again!");
+          }
+        })
+        .catch((err) => {
+          throw new Error(err);
         });
-      });
-      console.log(profilePictureURL);
-
-      if (profilePictureURL) {
-        console.log(profilePictureURL);
-
-        await updateProfile(res.user, {
-          displayName: name,
-          photoURL: profilePictureURL,
-        });
-
-        await registerUserAPI(res.user);
-
-        console.log("User updated!");
-      } else {
-        await deleteUser(projectAuth.currentUser);
-        throw new Error("URL failed!");
-      }
     },
     {
       onMutate: () => {
@@ -235,27 +233,25 @@ export const usePasswordDelete = () => {
   const user = projectAuth.currentUser;
   const { dispatchModalCtx } = useModalContext();
 
-  const passwordDeleteMutation = useMutation(
-    (password) => {
-      const credential = EmailAuthProvider.credential(user.email, password);
+  const passwordDeleteMutation = useMutation((password) => {
+    const credential = EmailAuthProvider.credential(user.email, password);
 
-      reauthenticateWithCredential(user, credential)
-        .then(async () => {
-          console.log("Reauthenticated!");
-          await deleteUserAPI(user.uid);
-          await deleteUser(user);
+    reauthenticateWithCredential(user, credential)
+      .then(async () => {
+        console.log("Reauthenticated!");
+        await deleteUserAPI(user.uid);
+        await deleteUser(user);
 
-          navigate("/auth/login");
-          dispatchModalCtx({
-            type: "CLOSE",
-            content: null,
-          });
-        })
-        .catch((error) => {
-          throw new Error(error);
+        navigate("/auth/login");
+        dispatchModalCtx({
+          type: "CLOSE",
+          content: null,
         });
-    }
-  );
+      })
+      .catch((error) => {
+        throw new Error(error);
+      });
+  });
 
   return { passwordDeleteMutation };
 };

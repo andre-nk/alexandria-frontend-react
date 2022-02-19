@@ -6,17 +6,24 @@ import { useNavigate } from "react-router-dom";
 import { IoChevronForwardOutline, IoPencil } from "react-icons/io5";
 
 import { useImageURL } from "../../hooks/useImageURL";
-import { useUpdateUser } from "../../hooks/useUpdateUser";
 import { useAuthContext } from "../../hooks/useAuthContext";
 import { useModalContext } from "../../hooks/useModalContext";
 import DeleteUserModal from "../../components/profile/DeleteUserModal";
+import {
+  useUpdateLocation,
+  useUpdateName,
+  useUpdatePhoto,
+  useUpdateRole,
+} from "../../hooks/useUpdateUser";
 
 export default function ProfilePage() {
   const navigate = useNavigate();
   const { user } = useAuthContext();
   const { dispatchModalCtx } = useModalContext();
-  const { updateRole, updateLocation, updatePhotoURL, updateDisplayName } =
-    useUpdateUser();
+  const { updatePhotoMutation } = useUpdatePhoto();
+  const { updateNameMutation } = useUpdateName();
+  const { updateRoleMutation } = useUpdateRole();
+  const { updateLocationMutation } = useUpdateLocation();
   const { isValidImage, profilePicture, profilePictureUrl, imageToURL } =
     useImageURL();
 
@@ -32,19 +39,13 @@ export default function ProfilePage() {
   };
 
   useEffect(() => {
-    const updateUserPhotoURL = async () => {
-      if (isValidImage) {
-        let role = user.role;
-        let location = user.location;
+    if (isValidImage) {
+      let role = user.role;
+      let location = user.location;
 
-        console.log(isValidImage);
-
-        await updatePhotoURL(profilePicture, role, location);
-      }
-    };
-
-    updateUserPhotoURL();
-  }, [isValidImage, profilePicture, updatePhotoURL, user]);
+      updatePhotoMutation.mutate({ profilePicture, role, location });
+    }
+  }, [isValidImage, profilePicture, user]);
 
   const UpdateProfileSchema = Yup.object().shape({
     name: Yup.string()
@@ -131,17 +132,23 @@ export default function ProfilePage() {
               location: user.location ?? "",
             }}
             validationSchema={UpdateProfileSchema}
-            onSubmit={async (values) => {
+            onSubmit={(values) => {
               if (values.name !== user.displayName) {
-                await updateDisplayName(
-                  values.name,
-                  values.role,
-                  values.location
-                );
+                updateNameMutation.mutate({
+                  displayName: values.name,
+                  role: values.role,
+                  location: values.location,
+                });
               } else if (values.role !== user.role) {
-                await updateRole(values.role, values.location);
+                updateRoleMutation.mutate({
+                  role: values.role,
+                  location: values.location,
+                });
               } else if (values.location !== user.location) {
-                await updateLocation(values.role, values.location);
+                updateLocationMutation.mutate({
+                  role: values.role,
+                  location: values.location,
+                });
               }
             }}
           >
