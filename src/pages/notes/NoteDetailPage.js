@@ -3,7 +3,15 @@ import { useNavigate, useParams } from "react-router-dom";
 import { IoEllipsisVerticalSharp } from "react-icons/io5";
 import { useState, useEffect, useRef } from "react";
 
-import { useNote } from "../../hooks/useNote";
+import {
+  useNoteByID,
+  useUpdateNote,
+  useDeleteNote,
+  useStarNote,
+  useArchiveNote,
+  useCommentNote,
+  useTagsNote,
+} from "../../hooks/useNote";
 import { CodeboxThemes } from "../../styles/codeboxTheme";
 import { useCreateNote } from "../../hooks/useCreateNote";
 import NoteDrawer from "../../components/note/toolbar/NoteDrawer";
@@ -31,42 +39,28 @@ export default function NoteDetailPage() {
   const [oldCodeBoxColor, setOldCodeBoxColor] = useState(CodeboxThemes[0]);
 
   const { createNoteInstance } = useCreateNote();
-  const {
-    success,
-    noteByID,
-    getNoteByID,
-    starNote,
-    archiveNote,
-    updateNote,
-    commentNote,
-    deleteNote,
-    tagsNote,
-  } = useNote();
-
-  //FETCH CURRENT NOTE BY ID
-  useEffect(() => {
-    const fetchNoteByID = async () => {
-      await getNoteByID(id);
-    };
-
-    fetchNoteByID();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [id]);
+  const { noteByIDQuery } = useNoteByID(id);
+  const { updateNoteMutation } = useUpdateNote();
+  const { deleteNoteMutation } = useDeleteNote();
+  const { starNoteMutation } = useStarNote();
+  const { archiveNoteMutation } = useArchiveNote();
+  const { commentNoteMutation } = useCommentNote();
+  const { tagsNoteMutation } = useTagsNote();
 
   //LOAD OR CREATE NOTE INSTANCE
   useEffect(() => {
     const createNote = async () => {
-      if (noteByID) {
+      if (noteByIDQuery.data) {
         if (noteInstance !== null && isNoteLoaded === false) {
-          setTags(noteByID.tags);
-          setIsStarred(noteByID.is_starred);
-          setIsArchived(noteByID.is_archived);
-          setIsCommentEnabled(noteByID.is_comment_enabled);
+          setTags(noteByIDQuery.data.tags);
+          setIsStarred(noteByIDQuery.data.is_starred);
+          setIsArchived(noteByIDQuery.data.is_archived);
+          setIsCommentEnabled(noteByIDQuery.data.is_comment_enabled);
 
           noteInstance.isReady.then(async () => {
             await noteInstance.destroy();
 
-            let editorContentJSON = JSON.parse(noteByID.content);
+            let editorContentJSON = JSON.parse(noteByIDQuery.data.content);
             const newEditor = createNoteInstance(editorContentJSON, "");
             setNoteInstance(newEditor);
             setIsNoteLoaded(true);
@@ -79,7 +73,13 @@ export default function NoteDetailPage() {
     };
 
     createNote();
-  }, [createNoteInstance, codeBoxColor, isNoteLoaded, noteByID, noteInstance]);
+  }, [
+    createNoteInstance,
+    codeBoxColor,
+    isNoteLoaded,
+    noteByIDQuery.data,
+    noteInstance,
+  ]);
 
   //LISTEN TO CODEBOX COLOR CHANGE
   useEffect(() => {
@@ -101,97 +101,120 @@ export default function NoteDetailPage() {
     changeCodeBoxColor();
   }, [createNoteInstance, noteInstance, codeBoxColor, oldCodeBoxColor]);
 
-  const handleSave = async () => {
-    if (noteInstance && noteByID) {
+  const handleSave = () => {
+    if (noteInstance && noteByIDQuery.data) {
       noteInstance.saver.save().then(async (savedData) => {
         let dataString = JSON.stringify(savedData);
+        let defaultTags = [];
         let noteInstance;
 
         if (noteTitle) {
           noteInstance = {
             title: noteTitle,
-            tags: noteByID.tags,
+            tags: noteByIDQuery.data.tags ?? defaultTags,
             content: dataString,
-            is_starred: noteByID.is_starred,
-            is_comment_enabled: noteByID.is_comment_enabled,
-            is_archived: noteByID.is_archived,
-            collaborators: noteByID.collaborators,
+            is_starred: noteByIDQuery.data.is_starred,
+            is_comment_enabled: noteByIDQuery.data.is_comment_enabled,
+            is_archived: noteByIDQuery.data.is_archived,
+            collaborators: noteByIDQuery.data.collaborators,
           };
 
-          await updateNote(noteInstance, noteByID._id);
+          updateNoteMutation.mutate({
+            updatedNote: noteInstance,
+            noteID: noteByIDQuery.data._id,
+          });
         } else {
           noteInstance = {
-            title: noteByID.title,
-            tags: noteByID.tags,
+            title: noteByIDQuery.data.title,
+            tags: noteByIDQuery.data.tags ?? defaultTags,
             content: dataString,
-            is_starred: noteByID.is_starred,
-            is_comment_enabled: noteByID.is_comment_enabled,
-            is_archived: noteByID.is_archived,
-            collaborators: noteByID.collaborators,
+            is_starred: noteByIDQuery.data.is_starred,
+            is_comment_enabled: noteByIDQuery.data.is_comment_enabled,
+            is_archived: noteByIDQuery.data.is_archived,
+            collaborators: noteByIDQuery.data.collaborators,
           };
 
-          await updateNote(noteInstance, noteByID._id);
+          updateNoteMutation.mutate({
+            updatedNote: noteInstance,
+            noteID: noteByIDQuery.data._id,
+          });
         }
       });
     }
   };
 
-  const handleDelete = async () => {
-    if (noteInstance && noteByID) {
-      await deleteNote(noteByID._id).then(() => {
-        console.log("is Success:", success);
-        if (success) {
-          navigate("/");
-        }
+  const handleDelete = () => {
+    if (noteInstance && noteByIDQuery.data) {
+      deleteNoteMutation.mutate({
+        noteID: noteByIDQuery.data._id,
       });
+
+      navigate("/");
     }
   };
 
-  const handleStar = async (value) => {
-    if (noteByID !== null) {
-      await starNote(noteByID, value);
+  const handleStar = (value) => {
+    if (noteByIDQuery.data !== null) {
+      starNoteMutation.mutate({
+        oldNote: noteByIDQuery.data,
+        isStarred: value,
+      });
+
       setIsStarred(value);
     }
   };
 
-  const handleArchive = async (value) => {
-    if (noteByID !== null) {
-      await archiveNote(noteByID, value);
+  const handleArchive = (value) => {
+    if (noteByIDQuery.data !== null) {
+      archiveNoteMutation.mutate({
+        oldNote: noteByIDQuery.data,
+        isArchived: value,
+      });
+
       setIsArchived(value);
     }
   };
 
-  const handleComment = async (value) => {
-    if (noteByID !== null) {
-      await commentNote(noteByID, value);
+  const handleComment = (value) => {
+    if (noteByIDQuery.data !== null) {
+      commentNoteMutation.mutate({
+        oldNote: noteByIDQuery.data,
+        isCommentEnabled: value,
+      });
+
       setIsCommentEnabled(value);
     }
   };
 
-  const handleTags = async (value) => {
-    if (noteByID.tags === undefined && tags === undefined) {
-      noteByID.tags = [];
+  const handleTags = (value) => {
+    if (noteByIDQuery.data.tags === undefined && tags === undefined) {
+      noteByIDQuery.data.tags = [];
       setTags([]);
     }
 
-    if (noteByID !== null && tags !== undefined) {
+    if (noteByIDQuery.data !== null && tags !== undefined) {
+      tagsNoteMutation.mutate({
+        oldNote: noteByIDQuery.data,
+        tags: value,
+      });
       setTags(value);
-      await tagsNote(noteByID, value);
     }
   };
+
+  console.log(noteByIDQuery);
 
   return (
     <div>
       <Helmet>
-        {noteByID ? (
-          <title>{noteTitle ?? noteByID.title} - Alexandria</title>
+        {noteByIDQuery.data ? (
+          <title>{noteTitle ?? noteByIDQuery.data.title} - Alexandria</title>
         ) : (
           <title>{noteTitle ?? "Untitled note"} - Alexandria</title>
         )}
       </Helmet>
-      {noteByID && (
+      {noteByIDQuery.data && (
         <NoteDrawer
-          noteTitle={noteTitle ?? noteByID.title}
+          noteTitle={noteTitle ?? noteByIDQuery.data.title}
           isCreateNotePage={false}
           isOpen={isDrawerOpen}
           setIsOpen={setDrawerIsOpen}
@@ -230,16 +253,16 @@ export default function NoteDetailPage() {
           </button>
         )}
         <div className={`w-full ${isArchived ? "pt-20" : "pt-8"} px-10`}>
-          {noteByID && (
+          {noteByIDQuery.data && (
             <div>
               <NoteHeaderDesktop
-                title={noteByID.title}
+                title={noteByIDQuery.data.title}
                 noteTitle={noteTitle}
                 handleSave={handleSave}
                 setNoteTitle={setNoteTitle}
               />
               <NoteHeaderMobile
-                title={noteByID.title}
+                title={noteByIDQuery.data.title}
                 handleSave={handleSave}
                 noteTitle={noteTitle}
                 setNoteTitle={setNoteTitle}
@@ -260,9 +283,9 @@ export default function NoteDetailPage() {
             isCommentEnabled={isCommentEnabled}
           />
         </div>
-        {noteByID && (
+        {noteByIDQuery.data && (
           <NoteToolbar
-            noteTitle={noteTitle ?? noteByID.title}
+            noteTitle={noteTitle ?? noteByIDQuery.data.title}
             isCreateNotePage={false}
             tags={tags}
             setTags={handleTags}

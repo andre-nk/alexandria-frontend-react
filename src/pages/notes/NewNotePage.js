@@ -9,23 +9,25 @@ import NoteHeaderDesktop from "../../components/note/NoteHeaderDesktop";
 import NoteToolbar from "../../components/note/toolbar/NoteToolbar";
 import NoteDrawer from "../../components/note/toolbar/NoteDrawer";
 import { CodeboxThemes } from "../../styles/codeboxTheme";
-import { useNote } from "../../hooks/useNote";
+import { useNewNote } from "../../hooks/useNote";
 
 export default function NewNotePage() {
   const params = useParams();
   const { title } = params;
+
   const editorCore = useRef(null);
+
   const { createNoteInstance } = useCreateNote();
-  const [noteTitle, setNoteTitle] = useState(null);
+  const { createNoteMutation } = useNewNote();
+
   const [tags, setTags] = useState([]);
+  const [noteTitle, setNoteTitle] = useState(null);
   const [noteInstance, setNoteInstance] = useState(null);
   const [isDrawerOpen, setDrawerIsOpen] = useState(false);
   const [isToolbarOpen, setIsToolbarOpen] = useState(false);
   const [isCommentEnabled, setIsCommentEnabled] = useState(true);
   const [codeBoxColor, setCodeBoxColor] = useState(CodeboxThemes[0]);
   const [oldCodeBoxColor, setOldCodeBoxColor] = useState(CodeboxThemes[0]);
-
-  const { createNote } = useNote();
 
   useEffect(() => {
     const createNote = async () => {
@@ -49,9 +51,13 @@ export default function NewNotePage() {
   const handleSave = () => {
     if (noteInstance) {
       noteInstance.saver.save().then(async (savedData) => {
-        let dataString = JSON.stringify(savedData);
+        let content = JSON.stringify(savedData);
         let noteInstanceTitle = noteTitle ?? title;
-        await createNote(noteInstanceTitle, tags, dataString);
+        createNoteMutation.mutate({
+          noteInstanceTitle,
+          tags,
+          content
+        })
       });
     }
   };

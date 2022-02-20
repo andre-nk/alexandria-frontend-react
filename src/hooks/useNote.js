@@ -1,103 +1,94 @@
-import { useState } from "react";
-
 import { useAuthContext } from "./useAuthContext";
-import { useLoadingContext } from "./useLoadingContext";
 import axiosInstance from "../axios/axiosConfig";
+import { useMutation, useQuery } from "react-query";
 
-export const useNote = () => {
+export const useNewNote = () => {
   const { user } = useAuthContext();
-  const { dispatch } = useLoadingContext();
-  const [error, setError] = useState(null);
-  const [success, setSuccess] = useState(null);
-  const [noteByID, setNoteByID] = useState(null);
-  const [recentNotes, setRecentNotes] = useState([]);
-  const [featuredNotes, setFeaturedNotes] = useState([]);
 
-  const createNote = async (title, tags, content) => {
-    setSuccess(null);
-    setError(null);
-    dispatch({
-      type: "START",
-    });
+  const createNoteMutation = useMutation(
+    async ({ noteInstanceTitle, tags, content }) => {
+      let noteInstance = JSON.stringify({
+        title: noteInstanceTitle,
+        creator_uid: user.uid,
+        tags: tags,
+        content: content,
+        is_starred: true,
+        is_comment_enabled: true,
+        is_archived: false,
+        pending_collaborators: [],
+        collaborators: [],
+      });
 
-    let noteInstance = JSON.stringify({
-      title: title,
-      creator_uid: user.uid,
-      tags: tags,
-      content: content,
-      is_starred: true,
-      is_comment_enabled: true,
-      is_archived: false,
-      pending_collaborators: [],
-      collaborators: [],
-    });
-
-    try {
-      setError(null);
-
-      let config = {
+      const response = await axiosInstance.post("/notes", noteInstance, {
         headers: {
           Authorization: "Bearer " + user.uid,
         },
-      };
+      });
 
-      const response = await axiosInstance.post("/notes", noteInstance, config);
-
-      if (response.status === 200) {
-        setSuccess("Note has been created");
-      } else {
-        setError(response.data.data);
+      if (response.status !== 200) {
+        throw new Error(response.data.message);
       }
-    } catch (error) {
-      setError(error);
     }
+  );
 
-    dispatch({
-      type: "STOP",
-    });
-  };
+  return { createNoteMutation };
+};
 
-  const getRecentNotes = async () => {
-    setSuccess(null);
-    setError(null);
+export const useRecentNotes = () => {
+  const { user } = useAuthContext();
+
+  const fetchRecentNotes = async () => {
     try {
       const response = await axiosInstance.get(
         `/notes?recent=true&uid=${user.uid}`
       );
 
-      if (response.status === 200) {
-        setSuccess("Recent notes has been fetched!");
-        setRecentNotes(response.data.data);
+      if (response.status !== 200) {
+        throw new Error(response.data.message);
       }
-    } catch (error) {
-      setError(error);
+
+      return response.data.data;
+    } catch (err) {
+      throw new Error(err.message);
     }
   };
 
-  const getFeaturedNotes = async () => {
-    setSuccess(null);
-    setError(null);
+  const recentNotesQuery = useQuery("recentNotes", fetchRecentNotes, {
+    staleTime: 5000,
+  });
+  return { recentNotesQuery };
+};
+
+export const useFeaturedNotes = () => {
+  const { user } = useAuthContext();
+
+  const fetchFeaturedNotes = async () => {
     try {
       const response = await axiosInstance.get(
         `/notes?featured=true&uid=${user.uid}`
       );
 
-      if (response.status === 200) {
-        setSuccess("Featured notes has been fetched!");
-        setFeaturedNotes(response.data.data);
+      if (response.status !== 200) {
+        throw new Error(response.data.message);
       }
-    } catch (error) {
-      setError(error);
+
+      return response.data.data;
+    } catch (err) {
+      throw new Error(err.message);
     }
   };
 
-  const getNoteByID = async (id) => {
-    setSuccess(null);
-    setError(null);
-    dispatch({
-      type: "START",
-    });
+  const featuredNotesQuery = useQuery("featuredNotes", fetchFeaturedNotes, {
+    staleTime: 5000,
+  });
 
+  return { featuredNotesQuery };
+};
+
+export const useNoteByID = (id) => {
+  const { user } = useAuthContext();
+
+  const fetchNoteByID = async (id) => {
     try {
       let config = {
         headers: {
@@ -107,312 +98,254 @@ export const useNote = () => {
 
       const response = await axiosInstance.get(`/notes/${id}`, config);
 
-      if (response.status === 200) {
-        setSuccess("Note has been fetched!");
-        setNoteByID(response.data.data);
+      if (response.status !== 200) {
+        throw new Error(response.data.message);
       }
-    } catch (error) {
-      setError(error);
+      return response.data.data;
+    } catch (err) {
+      throw new Error(err.message);
     }
-
-    dispatch({
-      type: "STOP",
-    });
   };
 
-  const updateNote = async (updatedNote, noteID) => {
-    setSuccess(null);
-    setError(null);
-    dispatch({
-      type: "START",
-    });
+  const noteByIDQuery = useQuery(
+    ["noteByID", id],
+    async () => {
+      const data = await fetchNoteByID(id);
+      return data;
+    },
+    {
+      staleTime: 5000,
+    }
+  );
 
+  return { noteByIDQuery };
+};
+
+export const useUpdateNote = () => {
+  const { user } = useAuthContext();
+
+  const updateNoteMutation = useMutation(async ({ updatedNote, noteID }) => {
     try {
       updatedNote.creator_uid = user.uid;
-      let config = {
-        headers: {
-          Authorization: "Bearer " + user.uid,
-        },
-      };
+      console.log(updatedNote);
 
       const response = await axiosInstance.put(
         `/notes/${noteID}`,
         updatedNote,
-        config
+        {
+          headers: {
+            Authorization: "Bearer " + user.uid,
+          },
+        }
       );
 
-      if (response.status === 200) {
-        setSuccess("User has been updated!");
-      } else {
-        setError(response.data.data);
+      if (response.status !== 200) {
+        throw new Error(response.data.message);
       }
-    } catch (error) {
-      setError(error);
+    } catch (err) {
+      throw new Error(err.message);
     }
+  });
 
-    dispatch({
-      type: "STOP",
-    });
-  };
+  return { updateNoteMutation };
+};
 
-  const updateNoteTitle = async (oldNote, newTitle) => {
-    setSuccess(null);
-    setError(null);
-    dispatch({
-      type: "START",
-    });
+export const useTitleNote = () => {
+  const { user } = useAuthContext();
 
-    let noteInstance = {
-      title: newTitle,
-      creator_uid: user.uid,
-      tags: oldNote.tags,
-      content: oldNote.content,
-      is_starred: oldNote.is_starred,
-      is_comment_enabled: oldNote.is_comment_enabled,
-      is_archived: oldNote.is_archived,
-      pending_collaborators: oldNote.pending_collaborators,
-      collaborators: oldNote.collaborators,
-    };
-
+  const titleNoteMutation = useMutation(async ({ oldNote, newTitle }) => {
     try {
-      let config = {
-        headers: {
-          Authorization: "Bearer " + user.uid,
-        },
+      let noteInstance = {
+        title: newTitle,
+        creator_uid: user.uid,
+        tags: oldNote.tags,
+        content: oldNote.content,
+        is_starred: oldNote.is_starred,
+        is_comment_enabled: oldNote.is_comment_enabled,
+        is_archived: oldNote.is_archived,
+        pending_collaborators: oldNote.pending_collaborators,
+        collaborators: oldNote.collaborators,
       };
 
       const response = await axiosInstance.put(
         `/notes/${oldNote._id}`,
         noteInstance,
-        config
+        {
+          headers: {
+            Authorization: "Bearer " + user.uid,
+          },
+        }
       );
 
-      if (response.status === 200) {
-        setSuccess("Note's title has been updated");
-      } else {
-        setError(response.data.data);
+      if (response.status !== 200) {
+        throw new Error(response.data.message);
       }
-    } catch (error) {
-      setError(error);
+    } catch (err) {
+      throw new Error(err.message);
     }
+  });
 
-    dispatch({
-      type: "STOP",
-    });
-  };
+  return { titleNoteMutation };
+};
 
-  const starNote = async (oldNote, isStarred) => {
-    setSuccess(null);
-    setError(null);
-    dispatch({
-      type: "START",
-    });
+export const useStarNote = () => {
+  const { user } = useAuthContext();
 
-    let noteInstance = {
-      title: oldNote.title,
-      creator_uid: user.uid,
-      tags: oldNote.tags ?? [],
-      content: oldNote.content,
-      is_starred: isStarred,
-      is_comment_enabled: oldNote.is_comment_enabled,
-      is_archived: oldNote.is_archived,
-      pending_collaborators: oldNote.pending_collaborators,
-      collaborators: oldNote.collaborators,
-    };
-
-    console.log("Star:", noteInstance);
-
+  const starNoteMutation = useMutation(async ({ oldNote, isStarred }) => {
     try {
-      let config = {
-        headers: {
-          Authorization: "Bearer " + user.uid,
-        },
+      let noteInstance = {
+        title: oldNote.title,
+        creator_uid: user.uid,
+        tags: oldNote.tags ?? [],
+        content: oldNote.content,
+        is_starred: isStarred,
+        is_comment_enabled: oldNote.is_comment_enabled,
+        is_archived: oldNote.is_archived,
+        pending_collaborators: oldNote.pending_collaborators,
+        collaborators: oldNote.collaborators,
       };
 
       const response = await axiosInstance.put(
         `/notes/${oldNote._id}`,
         noteInstance,
-        config
+        {
+          headers: {
+            Authorization: "Bearer " + user.uid,
+          },
+        }
       );
 
-      if (response.status === 200) {
-        let successMessage = isStarred
-          ? "Note has been starred"
-          : "Note has been unstarred";
-        setSuccess(successMessage);
-      } else {
-        setError(response.data.data);
+      if (response.status !== 200) {
+        throw new Error(response.data.message);
       }
-
-      dispatch({
-        type: "STOP",
-      });
-    } catch (error) {
-      setError(error);
-
-      dispatch({
-        type: "STOP",
-      });
+    } catch (err) {
+      throw new Error(err.message);
     }
-  };
+  });
 
-  const archiveNote = async (oldNote, isArchived) => {
-    setSuccess(null);
-    setError(null);
-    dispatch({
-      type: "START",
-    });
+  return { starNoteMutation };
+};
 
-    let noteInstance = {
-      title: oldNote.title,
-      creator_uid: user.uid,
-      tags: oldNote.tags ?? [],
-      content: oldNote.content,
-      is_starred: oldNote.is_starred,
-      is_comment_enabled: oldNote.is_comment_enabled,
-      is_archived: isArchived,
-      pending_collaborators: oldNote.pending_collaborators,
-      collaborators: oldNote.collaborators,
-    };
+export const useArchiveNote = () => {
+  const { user } = useAuthContext();
 
-    console.log("Archive:", noteInstance);
-
+  const archiveNoteMutation = useMutation(async ({ oldNote, isArchived }) => {
     try {
-      let config = {
-        headers: {
-          Authorization: "Bearer " + user.uid,
-        },
+      let noteInstance = {
+        title: oldNote.title,
+        creator_uid: user.uid,
+        tags: oldNote.tags ?? [],
+        content: oldNote.content,
+        is_starred: oldNote.is_starred,
+        is_comment_enabled: oldNote.is_comment_enabled,
+        is_archived: isArchived,
+        pending_collaborators: oldNote.pending_collaborators,
+        collaborators: oldNote.collaborators,
       };
 
       const response = await axiosInstance.put(
         `/notes/${oldNote._id}`,
         noteInstance,
-        config
+        {
+          headers: {
+            Authorization: "Bearer " + user.uid,
+          },
+        }
       );
 
-      if (response.status === 200) {
-        let successMessage = isArchived
-          ? "Note has been archived"
-          : "Note has been unarchived";
-        setSuccess(successMessage);
-      } else {
-        setError(response.data.data);
+      if (response.status !== 200) {
+        throw new Error(response.data.message);
       }
-    } catch (error) {
-      setError(error);
+    } catch (err) {
+      throw new Error(err.message);
     }
+  });
 
-    dispatch({
-      type: "STOP",
-    });
-  };
+  return { archiveNoteMutation };
+};
 
-  const commentNote = async (oldNote, isCommentEnabled) => {
-    setSuccess(null);
-    setError(null);
-    dispatch({
-      type: "START",
-    });
+export const useCommentNote = () => {
+  const { user } = useAuthContext();
 
-    let noteInstance = {
-      title: oldNote.title,
-      creator_uid: user.uid,
-      tags: oldNote.tags ?? [],
-      content: oldNote.content,
-      is_starred: oldNote.is_starred,
-      is_comment_enabled: isCommentEnabled,
-      is_archived: oldNote.is_archived,
-      pending_collaborators: oldNote.pending_collaborators,
-      collaborators: oldNote.collaborators,
-    };
+  const commentNoteMutation = useMutation(
+    async ({ oldNote, isCommentEnabled }) => {
+      try {
+        let noteInstance = {
+          title: oldNote.title,
+          creator_uid: user.uid,
+          tags: oldNote.tags ?? [],
+          content: oldNote.content,
+          is_starred: oldNote.is_starred,
+          is_comment_enabled: isCommentEnabled,
+          is_archived: oldNote.is_archived,
+          pending_collaborators: oldNote.pending_collaborators,
+          collaborators: oldNote.collaborators,
+        };
 
-    console.log("Comment: ", noteInstance);
+        const response = await axiosInstance.put(
+          `/notes/${oldNote._id}`,
+          noteInstance,
+          {
+            headers: {
+              Authorization: "Bearer " + user.uid,
+            },
+          }
+        );
 
+        if (response.status !== 200) {
+          throw new Error(response.data.message);
+        }
+      } catch (err) {
+        throw new Error(err.message);
+      }
+    }
+  );
+
+  return { commentNoteMutation };
+};
+
+export const useTagsNote = () => {
+  const { user } = useAuthContext();
+
+  const tagsNoteMutation = useMutation(async ({ oldNote, newTags }) => {
     try {
-      let config = {
-        headers: {
-          Authorization: "Bearer " + user.uid,
-        },
+      let noteInstance = {
+        title: oldNote.title,
+        creator_uid: user.uid,
+        tags: newTags ?? [],
+        content: oldNote.content,
+        is_starred: oldNote.is_starred,
+        is_comment_enabled: oldNote.is_comment_enabled,
+        is_archived: oldNote.is_archived,
+        pending_collaborators: oldNote.pending_collaborators,
+        collaborators: oldNote.collaborators,
       };
 
       const response = await axiosInstance.put(
         `/notes/${oldNote._id}`,
         noteInstance,
-        config
+        {
+          headers: {
+            Authorization: "Bearer " + user.uid,
+          },
+        }
       );
 
-      if (response.status === 200) {
-        let successMessage = isCommentEnabled
-          ? "Note's comment has been enabled"
-          : "Note's comment has been disabled";
-        setSuccess(successMessage);
-      } else {
-        setError(response.data.data);
+      if (response.status !== 200) {
+        throw new Error(response.data.message);
       }
-    } catch (error) {
-      setError(error);
+    } catch (err) {
+      throw new Error(err.message);
     }
+  });
 
-    dispatch({
-      type: "STOP",
-    });
-  };
+  return { tagsNoteMutation };
+};
 
-  const tagsNote = async (oldNote, newTags) => {
-    setSuccess(null);
-    setError(null);
-    dispatch({
-      type: "START",
-    });
+export const useDeleteNote = () => {
+  const { user } = useAuthContext();
 
-    let noteInstance = {
-      title: oldNote.title,
-      creator_uid: user.uid,
-      tags: newTags ?? [],
-      content: oldNote.content,
-      is_starred: oldNote.is_starred,
-      is_comment_enabled: oldNote.is_comment_enabled,
-      is_archived: oldNote.is_archived,
-      pending_collaborators: oldNote.pending_collaborators,
-      collaborators: oldNote.collaborators,
-    };
-
-    console.log("Tags:", noteInstance);
-
-    try {
-      let config = {
-        headers: {
-          Authorization: "Bearer " + user.uid,
-        },
-      };
-
-      const response = await axiosInstance.put(
-        `/notes/${oldNote._id}`,
-        noteInstance,
-        config
-      );
-
-      if (response.status === 200) {
-        setSuccess("Note's tags has been updated");
-      } else {
-        setError(response.data.data);
-      }
-    } catch (error) {
-      setError(error);
-    }
-
-    dispatch({
-      type: "STOP",
-    });
-  };
-
-  const deleteNote = async (noteID) => {
-    setSuccess(null);
-    setError(null);
-    dispatch({
-      type: "START",
-    });
-
+  const deleteNoteMutation = useMutation(async ({ noteID }) => {
     try {
       let config = {
         headers: {
@@ -422,36 +355,13 @@ export const useNote = () => {
 
       const response = await axiosInstance.delete(`/notes/${noteID}`, config);
 
-      if (response.status === 200) {
-        setSuccess("Note has been deleted!");
-      } else {
-        setError(response.data.data);
+      if (response.status !== 200) {
+        throw new Error(response.data.message);
       }
-    } catch (error) {
-      setError(error);
+    } catch (err) {
+      throw new Error(err.message);
     }
+  });
 
-    dispatch({
-      type: "STOP",
-    });
-  };
-
-  return {
-    error,
-    success,
-    recentNotes,
-    featuredNotes,
-    noteByID,
-    createNote,
-    getNoteByID,
-    getRecentNotes,
-    getFeaturedNotes,
-    updateNote,
-    deleteNote,
-    updateNoteTitle,
-    tagsNote,
-    starNote,
-    archiveNote,
-    commentNote
-  };
+  return { deleteNoteMutation };
 };

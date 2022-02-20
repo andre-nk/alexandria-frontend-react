@@ -1,27 +1,17 @@
-import { useEffect } from "react";
+import { useFeaturedNotes } from "../../../hooks/useNote";
 
-import { useNote } from "../../../hooks/useNote";
 import NotesCarousel from "./NoteCarousel";
 
 export default function FeaturedNoteCarousel() {
-  const { error, featuredNotes, getFeaturedNotes } = useNote();
-
-  useEffect(() => {
-    const fetchNotes = async () => {
-      await getFeaturedNotes();
-    };
-
-    fetchNotes();
-  }, []); // eslint-disable-line react-hooks/exhaustive-deps
+  const { featuredNotesQuery } = useFeaturedNotes();
 
   return (
-    featuredNotes &&
-    featuredNotes.length >= 1 && (
+    featuredNotesQuery.isSuccess && (
       <NotesCarousel
         headline={"Featured notes"}
         link={"/"}
-        error={error}
-        notes={featuredNotes}
+        error={featuredNotesQuery.error}
+        notes={featuredNotesQuery.data ?? []}
       />
     )
   );

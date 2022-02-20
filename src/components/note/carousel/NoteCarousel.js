@@ -60,80 +60,78 @@ export default function NotesCarousel({ notes, error, headline, link }) {
           </div>
           <div className="flex w-full pt-4 px-6">
             <div className="px-4 w-full">
-              {!error && (
-                <Fragment>
-                  {/* MOBILE */}
-                  <div className="block lg:hidden">
-                    <Swiper
-                      spaceBetween={32}
-                      ref={swiperRef}
-                      onReachEnd={() => {
-                        setIsSwiperEnded(true);
-                      }}
-                      onActiveIndexChange={(swiper) => {
-                        if (swiperActiveIndex > swiper.activeIndex) {
-                          setIsSwiperEnded(false);
-                        }
-                        setSwiperActiveIndex(swiper.activeIndex);
-                      }}
-                    >
-                      {notes.map((note) => {
-                        if (note.is_archived) {
-                          return <div key={note._id}></div>;
-                        }
+              <Fragment>
+                {/* MOBILE */}
+                <div className="block lg:hidden">
+                  <Swiper
+                    spaceBetween={32}
+                    ref={swiperRef}
+                    onReachEnd={() => {
+                      setIsSwiperEnded(true);
+                    }}
+                    onActiveIndexChange={(swiper) => {
+                      if (swiperActiveIndex > swiper.activeIndex) {
+                        setIsSwiperEnded(false);
+                      }
+                      setSwiperActiveIndex(swiper.activeIndex);
+                    }}
+                  >
+                    {notes.map((note) => {
+                      if (note.is_archived) {
+                        return <div key={note._id}></div>;
+                      }
 
-                        return (
-                          <SwiperSlide key={note._id}>
-                            <NoteCard
-                              _id={note._id}
-                              title={note.title}
-                              author={user.displayName}
-                              isStarred={note.is_starred}
-                              tags={note.tags}
-                            />
-                          </SwiperSlide>
-                        );
-                      })}
-                    </Swiper>
-                  </div>
+                      return (
+                        <SwiperSlide key={note._id}>
+                          <NoteCard
+                            _id={note._id}
+                            title={note.title}
+                            author={user.displayName}
+                            isStarred={note.is_starred}
+                            tags={note.tags}
+                          />
+                        </SwiperSlide>
+                      );
+                    })}
+                  </Swiper>
+                </div>
 
-                  {/* DESKTOP */}
-                  <div className="hidden lg:block">
-                    <Swiper
-                      spaceBetween={32}
-                      slidesPerView={3}
-                      ref={swiperRef}
-                      onReachEnd={() => {
-                        setIsSwiperEnded(true);
-                      }}
-                      onActiveIndexChange={(swiper) => {
-                        if (swiperActiveIndex > swiper.activeIndex) {
-                          setIsSwiperEnded(false);
-                        }
-                        setSwiperActiveIndex(swiper.activeIndex);
-                      }}
-                    >
-                      {notes.map((note) => {
-                        if (note.is_archived) {
-                          return <div key={note._id}></div>;
-                        }
+                {/* DESKTOP */}
+                <div className="hidden lg:block">
+                  <Swiper
+                    spaceBetween={32}
+                    slidesPerView={3}
+                    ref={swiperRef}
+                    onReachEnd={() => {
+                      setIsSwiperEnded(true);
+                    }}
+                    onActiveIndexChange={(swiper) => {
+                      if (swiperActiveIndex > swiper.activeIndex) {
+                        setIsSwiperEnded(false);
+                      }
+                      setSwiperActiveIndex(swiper.activeIndex);
+                    }}
+                  >
+                    {notes.map((note) => {
+                      if (note.is_archived) {
+                        return <div key={note._id}></div>;
+                      }
 
-                        return (
-                          <SwiperSlide key={note._id}>
-                            <NoteCard
-                              _id={note._id}
-                              title={note.title}
-                              author={user.displayName}
-                              isStarred={note.is_starred}
-                              tags={note.tags}
-                            />
-                          </SwiperSlide>
-                        );
-                      })}
-                    </Swiper>
-                  </div>
-                </Fragment>
-              )}
+                      return (
+                        <SwiperSlide key={note._id}>
+                          <NoteCard
+                            _id={note._id}
+                            title={note.title}
+                            author={user.displayName}
+                            isStarred={note.is_starred}
+                            tags={note.tags}
+                          />
+                        </SwiperSlide>
+                      );
+                    })}
+                  </Swiper>
+                </div>
+              </Fragment>
             </div>
           </div>
         </div>
