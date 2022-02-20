@@ -7,23 +7,39 @@ import { Dialog, Transition } from "@headlessui/react";
 import { useModalContext } from "../../../hooks/useModalContext";
 import { RWebShare } from "react-web-share";
 import { useLocation } from "react-router-dom";
+import { useAccountByEmail } from "../../../hooks/useAccount";
 
-export default function NoteCollaboratorEditor({noteTitle}) {
-  const { dispatchModalCtx } = useModalContext();
+export default function NoteCollaboratorEditor({ noteTitle }) {
   const location = useLocation();
+  const { dispatchModalCtx } = useModalContext();
+  const { error, setError, fetchAccountByEmail } = useAccountByEmail();
   const [collaboratorEmails, setCollaboratorEmails] = useState([]);
 
   const InviteSchema = Yup.object().shape({
     email: Yup.string().email("Invalid e-mail address"),
   });
 
-  const currentPathname = "http://192.168.0.102:3000/" + location.pathname
+  const currentPathname = "http://192.168.0.102:3000/" + location.pathname;
 
   const closeModal = () => {
     dispatchModalCtx({
       type: "CLOSE",
       content: null,
     });
+  };
+
+  const submitEmail = async (email) => {
+    const response = await fetchAccountByEmail(email);
+    if (response.status === 200) {
+      if (!collaboratorEmails.includes(response.data.data.email)) {
+        setCollaboratorEmails([
+          ...collaboratorEmails,
+          response.data.data.email,
+        ]);
+      } else {
+        setError("This e-mail has been added. Try another!");
+      }
+    }
   };
 
   return (
@@ -56,8 +72,8 @@ export default function NoteCollaboratorEditor({noteTitle}) {
             email: "",
           }}
           validationSchema={InviteSchema}
-          onSubmit={async (values) => {
-            setCollaboratorEmails([...collaboratorEmails, values.email]);
+          onSubmit={(values) => {
+            submitEmail(values.email);
           }}
         >
           {({ errors, touched }) => {
@@ -82,7 +98,9 @@ export default function NoteCollaboratorEditor({noteTitle}) {
                       <IoAdd size={24} />
                     </button>
                   </div>
-                  {errors.email && touched.email ? (
+                  {error ? (
+                    <p className="text-xs text-red-500 opacity-70">*{error}</p>
+                  ) : errors.email && touched.email ? (
                     <p className="text-xs text-red-500 opacity-70">
                       *{errors.email}
                     </p>
@@ -124,9 +142,7 @@ export default function NoteCollaboratorEditor({noteTitle}) {
               title: noteTitle,
             }}
           >
-            <button
-              className="bg-white hover:bg-primary-bg text-major-text rounded-md text-base border p-2.5 duration-200"
-            >
+            <button className="bg-white hover:bg-primary-bg text-major-text rounded-md text-base border p-2.5 duration-200">
               <IoLinkOutline size={24} />
             </button>
           </RWebShare>

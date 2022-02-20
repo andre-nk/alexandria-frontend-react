@@ -201,8 +201,6 @@ export default function NoteDetailPage() {
     }
   };
 
-  console.log(noteByIDQuery);
-
   return (
     <div>
       <Helmet>
