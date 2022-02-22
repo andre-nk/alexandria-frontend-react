@@ -12,7 +12,7 @@ export const useNewNote = () => {
         creator_uid: user.uid,
         tags: tags,
         content: content,
-        is_starred: true,
+        is_starred: false,
         is_comment_enabled: true,
         is_archived: false,
         pending_collaborators: [],

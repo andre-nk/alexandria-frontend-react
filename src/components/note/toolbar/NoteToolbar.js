@@ -11,11 +11,11 @@ import {
 } from "react-icons/io5";
 import { Fragment } from "react";
 import { Switch } from "@headlessui/react";
+import { useLocation } from "react-router-dom";
 
 import NoteToolbarButton from "./NoteToolbarButton";
 import NoteTagsEditor from "./NoteTagsEditor";
-import { useModalContext } from "../../../hooks/useModalContext";
-import NoteCollaboratorEditor from "./NoteCollaboratorEditor";
+import { RWebShare } from "react-web-share";
 
 export default function NoteToolbar({
   tags,
@@ -32,15 +32,18 @@ export default function NoteToolbar({
   setCodeBoxColor,
   isCreateNotePage,
   handleDelete,
-  noteTitle
+  noteTitle,
 }) {
-  const { dispatchModalCtx } = useModalContext();
-  const showEditorModal = () => {
-    dispatchModalCtx({
-      type: "SHOW",
-      content: <NoteCollaboratorEditor noteTitle={noteTitle} />,
-    });
-  };
+  // const { dispatchModalCtx } = useModalContext();
+  // const showEditorModal = () => {
+  //   dispatchModalCtx({
+  //     type: "SHOW",
+  //     content: <NoteCollaboratorEditor noteTitle={noteTitle} />,
+  //   });
+  // };
+
+  const location = useLocation();
+  const currentPathname = "http://192.168.0.102:3000/" + location.pathname;
 
   return (
     <div
@@ -84,42 +87,50 @@ export default function NoteToolbar({
             </select>
           </div>
         </div>
-        <span className="h-[1px] w-full bg-primary-border"></span>
-        <div className="flex flex-col w-full space-y-3.5">
-          {!isCreateNotePage && !isArchived && (
-            <button className="w-full p-3 flex flex-col space-y-3 rounded-md hover:bg-gray-100 duration-200 border-2 border-primary-border">
-              <img alt="logo" src="/vscode.svg" width={24} height={24} />
-              <div className="w-full flex items-center justify-between">
-                <p className="text-sm">Import to VSCode</p>
-                <IoChevronForwardOutline size={16} />
-              </div>
-            </button>
-          )}
-          {!isCreateNotePage && !isArchived && (
-            <NoteToolbarButton
-              buttonIcon={<IoShareOutline size={18} />}
-              buttonTitle={"Share note"}
-              onClick={() => {
-                showEditorModal();
-              }}
-            />
-          )}
-          {!isArchived && (
-            <NoteToolbarButton
-              buttonIcon={
-                isStarred ? (
-                  <IoStar className="text-yellow-400" size={18} />
-                ) : (
-                  <IoStarOutline size={18} />
-                )
-              }
-              buttonTitle={isStarred ? "Unstar note" : "Star note"}
-              onClick={() => {
-                setIsStarred(!isStarred);
-              }}
-            />
-          )}
-          {!isCreateNotePage && (
+        {!isCreateNotePage && (
+          <span className="h-[1px] w-full bg-primary-border"></span>
+        )}
+        {!isCreateNotePage && (
+          <div className="flex flex-col w-full space-y-3.5">
+            {!isArchived && (
+              <button className="w-full p-3 flex flex-col space-y-3 rounded-md hover:bg-gray-100 duration-200 border-2 border-primary-border">
+                <img alt="logo" src="/vscode.svg" width={24} height={24} />
+                <div className="w-full flex items-center justify-between">
+                  <p className="text-sm">Import to VSCode</p>
+                  <IoChevronForwardOutline size={16} />
+                </div>
+              </button>
+            )}
+            {!isArchived && (
+              <RWebShare
+                data={{
+                  text: "Alexandria is a dead-simple notetaking app for your programming-related notes, but way more than that.",
+                  url: currentPathname,
+                  title: noteTitle,
+                }}
+              >
+                <NoteToolbarButton
+                  buttonIcon={<IoShareOutline size={18} />}
+                  buttonTitle={"Share note"}
+                  onClick={() => {}}
+                />
+              </RWebShare>
+            )}
+            {!isArchived && (
+              <NoteToolbarButton
+                buttonIcon={
+                  isStarred ? (
+                    <IoStar className="text-yellow-400" size={18} />
+                  ) : (
+                    <IoStarOutline size={18} />
+                  )
+                }
+                buttonTitle={isStarred ? "Unstar note" : "Star note"}
+                onClick={() => {
+                  setIsStarred(!isStarred);
+                }}
+              />
+            )}
             <NoteToolbarButton
               buttonIcon={
                 isArchived ? (
@@ -133,8 +144,6 @@ export default function NoteToolbar({
                 setIsArchived(!isArchived);
               }}
             />
-          )}
-          {!isCreateNotePage && (
             <NoteToolbarButton
               buttonIcon={
                 <IoTrashBinOutline size={18} className="text-primary-red" />
@@ -144,8 +153,8 @@ export default function NoteToolbar({
                 handleDelete();
               }}
             />
-          )}
-        </div>
+          </div>
+        )}
         {!isArchived && (
           <Fragment>
             <span className="h-[1px] w-full bg-primary-border"></span>
