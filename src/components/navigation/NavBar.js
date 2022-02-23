@@ -8,7 +8,6 @@ import { IoAddOutline, IoLogoAndroid, IoMenuOutline } from "react-icons/io5";
 import { useAuthContext } from "../../hooks/useAuthContext";
 import NavLink from "./NavLink";
 import AccountMenu from "./AccountMenu";
-import ActivityMenu from "./ActivityMenu";
 
 export default function Navbar({ isDynamic, setIsOpen, aboutSectionRef }) {
   const { user, authIsReady } = useAuthContext();
@@ -104,7 +103,6 @@ export default function Navbar({ isDynamic, setIsOpen, aboutSectionRef }) {
                 <IoMenuOutline size={18} />
               </button>
               <div className="flex space-x-6 justify-center items-center">
-                <ActivityMenu />
                 <div
                   onClick={() => {
                     navigate("/profile");
@@ -175,7 +173,6 @@ export default function Navbar({ isDynamic, setIsOpen, aboutSectionRef }) {
               <NavLink pathname="/notes" title="Collection" />
               <div className="flex justify-between items-center space-x-6">
                 <div className="flex justify-between items-center space-x-4">
-                  <ActivityMenu />
                   <button
                     onClick={() => {
                       navigate("/notes/new/Untitled%20Note");

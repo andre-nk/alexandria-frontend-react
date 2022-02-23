@@ -56,6 +56,7 @@ export const useRecentNotes = () => {
   const recentNotesQuery = useQuery("recentNotes", fetchRecentNotes, {
     staleTime: 5000,
   });
+
   return { recentNotesQuery };
 };
 

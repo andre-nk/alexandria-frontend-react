@@ -1,24 +1,16 @@
+import { useGetNoteComments } from "../../../hooks/useComment";
 import CommentBlock from "./CommentBlock";
 import CommentForm from "./CommentForm";
 
-export default function NoteComment({ isToolbarOpen, isCommentEnabled }) {
-  const mockComments = [
-    {
-      name: "Andreas 1",
-      content: "So, wdyt guys?",
-    },
-    {
-      name: "Andreas 2",
-      content: "So, wdyt guys?",
-    },
-    {
-      name: "Andreas 3",
-      content: "So, wdyt guys?",
-    },
-  ];
+export default function NoteComment({
+  noteID,
+  isToolbarOpen,
+  isCommentEnabled,
+}) {
+  const { noteCommentsQuery } = useGetNoteComments(noteID);
 
   return (
-    isCommentEnabled && (
+    isCommentEnabled && noteCommentsQuery.isSuccess && (
       <div className="flex justify-center py-8 overflow-hidden">
         <div
           className={`${
@@ -26,9 +18,9 @@ export default function NoteComment({ isToolbarOpen, isCommentEnabled }) {
           } overflow-hidden self-center duration-500`}
         >
           <h2 className="text-xl font-medium text-major-text">Comments</h2>
-          <CommentForm />
+          <CommentForm noteID={noteID} />
           <div className="flex flex-col space-y-8">
-            {mockComments.map((comment, index) => {
+            {noteCommentsQuery.data && noteCommentsQuery.data.map((comment, index) => {
               return (
                 <div key={index}>
                   <CommentBlock comment={comment} />

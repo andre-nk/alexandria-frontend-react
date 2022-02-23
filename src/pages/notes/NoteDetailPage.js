@@ -276,10 +276,13 @@ export default function NoteDetailPage() {
               } overflow-hidden self-center duration-500 w-full px-8 py-10 bg-primary-white rounded-sm drop-shadow-xl`}
             ></div>
           </div>
-          <NoteComment
-            isToolbarOpen={isToolbarOpen}
-            isCommentEnabled={isCommentEnabled}
-          />
+          {noteByIDQuery.data && (
+            <NoteComment
+              noteID={noteByIDQuery.data._id}
+              isToolbarOpen={isToolbarOpen}
+              isCommentEnabled={isCommentEnabled}
+            />
+          )}
         </div>
         {noteByIDQuery.data && (
           <NoteToolbar

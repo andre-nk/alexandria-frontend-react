@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { useQuery } from "react-query";
 
 import axiosInstance from "../axios/axiosConfig";
 import { useAuthContext } from "../hooks/useAuthContext";
@@ -30,4 +31,32 @@ export const useAccountByEmail = () => {
     setError,
     fetchAccountByEmail,
   };
+};
+
+export const useAccountByUID = (uid) => {
+  const fetchUserByUID = async (uid) => {
+    try {
+      const response = await axiosInstance.get(`/users/${uid}`);
+
+      if (response.status !== 200) {
+        throw new Error(response.data.message);
+      }
+      return response.data.data;
+    } catch (err) {
+      throw new Error(err.message);
+    }
+  };
+
+  const userByUIDQuery = useQuery(
+    ["fetchUser", uid],
+    async () => {
+      const response = await fetchUserByUID(uid);
+      return response;
+    },
+    {
+      staleTime: 5000,
+    }
+  );
+
+  return { userByUIDQuery };
 };

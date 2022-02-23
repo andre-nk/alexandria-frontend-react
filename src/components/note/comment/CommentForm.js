@@ -2,9 +2,11 @@ import * as Yup from "yup";
 import { Formik, Field, Form } from "formik";
 
 import { useAuthContext } from "../../../hooks/useAuthContext";
+import { useCreateComment } from "../../../hooks/useComment";
 
-export default function CommentForm() {
+export default function CommentForm({ noteID }) {
   const { user } = useAuthContext();
+  const { createCommentMutation } = useCreateComment();
 
   const NewCommentSchema = Yup.object().shape({
     comment: Yup.string()
@@ -21,7 +23,10 @@ export default function CommentForm() {
           }}
           validationSchema={NewCommentSchema}
           onSubmit={async (values) => {
-            console.log(values);
+            createCommentMutation.mutate({
+              noteID,
+              content: values.comment
+            });
           }}
         >
           {({ errors, touched }) => {
