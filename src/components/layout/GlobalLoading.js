@@ -3,6 +3,8 @@ import { useLoadingContext } from "../../hooks/useLoadingContext";
 export default function GlobalLoading() {
   const { isLoading } = useLoadingContext();
 
+  console.log(isLoading);
+
   return (
     isLoading && (
       <div className={`w-full ${isLoading ? "h-1" : "h-0"} duration-75`}>

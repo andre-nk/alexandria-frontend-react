@@ -1,12 +1,18 @@
 import { useAuthContext } from "./useAuthContext";
 import axiosInstance from "../axios/axiosConfig";
 import { useMutation, useQuery } from "react-query";
+import { useLoadingContext } from "./useLoadingContext";
 
 export const useNewNote = () => {
   const { user } = useAuthContext();
+  const { dispatchLoadingCtx } = useLoadingContext();
 
   const createNoteMutation = useMutation(
     async ({ noteInstanceTitle, tags, content }) => {
+      dispatchLoadingCtx({
+        type: "START"
+      });
+
       let noteInstance = JSON.stringify({
         title: noteInstanceTitle,
         creator_uid: user.uid,
@@ -28,6 +34,10 @@ export const useNewNote = () => {
       if (response.status !== 200) {
         throw new Error(response.data.message);
       }
+
+      dispatchLoadingCtx({
+        type: "STOP"
+      });
     }
   );
 
@@ -124,11 +134,15 @@ export const useNoteByID = (id) => {
 
 export const useUpdateNote = () => {
   const { user } = useAuthContext();
+  const { dispatchLoadingCtx } = useLoadingContext();
 
   const updateNoteMutation = useMutation(async ({ updatedNote, noteID }) => {
     try {
+      dispatchLoadingCtx({
+        type: "START"
+      });
+
       updatedNote.creator_uid = user.uid;
-      console.log(updatedNote);
 
       const response = await axiosInstance.put(
         `/notes/${noteID}`,
@@ -143,6 +157,10 @@ export const useUpdateNote = () => {
       if (response.status !== 200) {
         throw new Error(response.data.message);
       }
+
+      dispatchLoadingCtx({
+        type: "STOP"
+      });
     } catch (err) {
       throw new Error(err.message);
     }
@@ -345,9 +363,14 @@ export const useTagsNote = () => {
 
 export const useDeleteNote = () => {
   const { user } = useAuthContext();
+  const { dispatchLoadingCtx } = useLoadingContext();
 
   const deleteNoteMutation = useMutation(async ({ noteID }) => {
     try {
+      dispatchLoadingCtx({
+        type: "START"
+      });
+      
       let config = {
         headers: {
           Authorization: "Bearer " + user.uid,
@@ -359,6 +382,10 @@ export const useDeleteNote = () => {
       if (response.status !== 200) {
         throw new Error(response.data.message);
       }
+
+      dispatchLoadingCtx({
+        type: "STOP"
+      });
     } catch (err) {
       throw new Error(err.message);
     }

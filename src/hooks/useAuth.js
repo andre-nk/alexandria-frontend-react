@@ -92,6 +92,10 @@ export const useEmailRegister = () => {
 
   const emailRegisterMutation = useMutation(
     async ({ name, profilePicture, email, password }) => {
+      dispatchLoadingCtx({
+        type: "START",
+      });
+
       console.log(name, profilePicture, email, password);
 
       const res = await createUserWithEmailAndPassword(
@@ -121,6 +125,11 @@ export const useEmailRegister = () => {
             });
 
             const userInstance = await registerUserAPI(res.user);
+
+            dispatchLoadingCtx({
+              type: "STOP",
+            });
+
             dispatch({
               type: "LOGIN",
               payload: userInstance,
@@ -132,18 +141,6 @@ export const useEmailRegister = () => {
         .catch((err) => {
           throw new Error(err);
         });
-    },
-    {
-      onMutate: () => {
-        dispatchLoadingCtx({
-          type: "START",
-        });
-      },
-      onSuccess: (data) => {
-        dispatchLoadingCtx({
-          type: "STOP",
-        });
-      },
     }
   );
 
@@ -153,19 +150,17 @@ export const useEmailRegister = () => {
 export const useSignIn = () => {
   const { dispatch } = useAuthContext();
 
-  const signInMutation = useMutation(
-    async ({ email, password }) => {
-      return signInWithEmailAndPassword(projectAuth, email, password).then(
-        async (res) => {
-          const userInstance = await loginUserAPI(res.user);
-          dispatch({
-            type: "LOGIN",
-            payload: userInstance,
-          });
-        }
-      );
-    }
-  );
+  const signInMutation = useMutation(async ({ email, password }) => {
+    return signInWithEmailAndPassword(projectAuth, email, password).then(
+      async (res) => {
+        const userInstance = await loginUserAPI(res.user);
+        dispatch({
+          type: "LOGIN",
+          payload: userInstance,
+        });
+      }
+    );
+  });
 
   return { signInMutation };
 };
