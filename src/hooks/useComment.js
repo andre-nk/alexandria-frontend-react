@@ -27,6 +27,27 @@ export const useCreateComment = () => {
   return { createCommentMutation };
 };
 
+export const useDeleteComment = () => {
+  const { user } = useAuthContext();
+
+  const deleteCommentMutation = useMutation(async ({ noteID, commentID }) => {
+    const response = await axiosInstance.delete(
+      `/notes/${noteID}/comments/${commentID}`,
+      {
+        headers: {
+          Authorization: "Bearer " + user.uid,
+        },
+      }
+    );
+
+    if (response.status !== 200) {
+      throw new Error(response.data.message);
+    }
+  });
+
+  return { deleteCommentMutation };
+};
+
 export const useGetNoteComments = (id) => {
   const fetchNoteComments = async () => {
     try {

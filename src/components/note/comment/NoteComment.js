@@ -23,7 +23,7 @@ export default function NoteComment({
             {noteCommentsQuery.data && noteCommentsQuery.data.map((comment, index) => {
               return (
                 <div key={index}>
-                  <CommentBlock comment={comment} />
+                  <CommentBlock noteID={noteID} comment={comment} />
                 </div>
               );
             })}

@@ -10,6 +10,8 @@ export default function RecentNoteCarousel() {
     localError = true;
   }
 
+  console.log(recentNotesQuery.error === null);
+
   return (
     recentNotesQuery.isSuccess && (
       <NotesCarousel

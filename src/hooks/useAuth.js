@@ -148,12 +148,22 @@ export const useEmailRegister = () => {
 };
 
 export const useSignIn = () => {
+  const { dispatchLoadingCtx } = useLoadingContext();
   const { dispatch } = useAuthContext();
 
   const signInMutation = useMutation(async ({ email, password }) => {
+    dispatchLoadingCtx({
+      type: "START",
+    });
+
     return signInWithEmailAndPassword(projectAuth, email, password).then(
       async (res) => {
         const userInstance = await loginUserAPI(res.user);
+
+        dispatchLoadingCtx({
+          type: "STOP",
+        });
+
         dispatch({
           type: "LOGIN",
           payload: userInstance,
@@ -166,13 +176,23 @@ export const useSignIn = () => {
 };
 
 export const useGithubRegister = () => {
+  const { dispatchLoadingCtx } = useLoadingContext();
   const { dispatch } = useAuthContext();
 
   const githubRegisterMutation = useMutation(
-    () => {
+    async () => {
+      dispatchLoadingCtx({
+        type: "START",
+      });
+
       return signInWithPopup(projectAuth, new GithubAuthProvider()).then(
         async (res) => {
           GithubAuthProvider.credentialFromResult(res);
+
+          dispatchLoadingCtx({
+            type: "STOP",
+          });
+
           await registerUserAPI(res.user);
         }
       );
@@ -191,13 +211,23 @@ export const useGithubRegister = () => {
 };
 
 export const useGoogleRegister = () => {
+  const { dispatchLoadingCtx } = useLoadingContext();
   const { dispatch } = useAuthContext();
 
   const googleRegisterMutation = useMutation(
-    () => {
+    async () => {
+      dispatchLoadingCtx({
+        type: "START",
+      });
+
       return signInWithPopup(projectAuth, new GoogleAuthProvider()).then(
         async (res) => {
           GoogleAuthProvider.credentialFromResult(res);
+
+          dispatchLoadingCtx({
+            type: "STOP",
+          });
+
           await registerUserAPI(res.user);
         }
       );
@@ -219,8 +249,13 @@ export const usePasswordDelete = () => {
   const navigate = useNavigate();
   const user = projectAuth.currentUser;
   const { dispatchModalCtx } = useModalContext();
+  const { dispatchLoadingCtx } = useLoadingContext();
 
   const passwordDeleteMutation = useMutation((password) => {
+    dispatchLoadingCtx({
+      type: "START",
+    });
+
     const credential = EmailAuthProvider.credential(user.email, password);
 
     reauthenticateWithCredential(user, credential)
@@ -230,6 +265,11 @@ export const usePasswordDelete = () => {
         await deleteUser(user);
 
         navigate("/auth/login");
+
+        dispatchLoadingCtx({
+          type: "STOP",
+        });
+
         dispatchModalCtx({
           type: "CLOSE",
           content: null,
@@ -247,23 +287,31 @@ export const useGithubDelete = () => {
   const navigate = useNavigate();
   const githubProvider = new GithubAuthProvider();
   const { dispatchModalCtx } = useModalContext();
+  const { dispatchLoadingCtx } = useLoadingContext();
+
   const user = projectAuth.currentUser;
 
   const githubDeleteMutation = useMutation(
     () => {
+      dispatchLoadingCtx({
+        type: "START",
+      });
+
       reauthenticateWithPopup(user, githubProvider).then(async () => {
         await deleteUserAPI(user.uid);
         await deleteUser(user);
-      });
-    },
-    {
-      onSuccess: () => {
+
+        dispatchLoadingCtx({
+          type: "START",
+        });
+
         dispatchModalCtx({
           type: "CLOSE",
           content: null,
         });
+
         navigate("/auth/login");
-      },
+      });
     }
   );
 
@@ -274,24 +322,33 @@ export const useGoogleDelete = () => {
   const navigate = useNavigate();
   const googleProvider = new GoogleAuthProvider();
   const { dispatchModalCtx } = useModalContext();
+  const { dispatchLoadingCtx } = useLoadingContext();
   const user = projectAuth.currentUser;
 
   const googleDeleteMutation = useMutation(
     () => {
+      dispatchLoadingCtx({
+        type: "START",
+        content: null,
+      });
+
       reauthenticateWithPopup(user, googleProvider).then(async () => {
         await deleteUserAPI(user.uid);
         await deleteUser(user);
       });
+
+      dispatchLoadingCtx({
+        type: "STOP",
+        content: null,
+      });
+
+      dispatchModalCtx({
+        type: "CLOSE",
+        content: null,
+      });
+
+      navigate("/auth/login");
     },
-    {
-      onSuccess: () => {
-        dispatchModalCtx({
-          type: "CLOSE",
-          content: null,
-        });
-        navigate("/auth/login");
-      },
-    }
   );
 
   return googleDeleteMutation;
@@ -299,6 +356,7 @@ export const useGoogleDelete = () => {
 
 export const useLogout = () => {
   const { dispatch } = useAuthContext();
+
   const { mutate } = useMutation(
     () => {
       return signOut(projectAuth);
