@@ -6,7 +6,7 @@ export const useModalContext = () => {
 
   if (!context) {
     throw Error(
-      "useModakContext must be invoked inside an LoadingContextProvider"
+      "useModalContext must be invoked inside an ModalContextProvider"
     );
   }
 

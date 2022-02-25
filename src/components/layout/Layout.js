@@ -1,4 +1,4 @@
-import { Fragment, useState, useRef } from "react";
+import { Fragment, useState, useRef, useEffect } from "react";
 import { Routes, Route, useLocation } from "react-router-dom";
 
 import Navbar from "../navigation/NavBar";
@@ -18,11 +18,15 @@ import NotFoundPage from "../../pages/NotFoundPage";
 import ProtectedRoute from "../router/ProtectedRoute";
 import GlobalLoading from "./GlobalLoading";
 import GlobalModal from "./GlobalModal";
+import { useSnackbarContext } from "../../hooks/useSnackbarContext";
+import GlobalSnackbar from "./GlobalSnackbar";
 
 export default function Layout() {
   const [isDrawerOpen, setDrawerIsOpen] = useState(false);
   const notLoggedInAboutSectionRef = useRef();
   const location = useLocation();
+
+  const { dispatchSnackbarCtx } = useSnackbarContext();
 
   let isFooterVisible = true;
   if (location.pathname.includes("auth")) {
@@ -30,6 +34,17 @@ export default function Layout() {
   } else if (location.pathname.includes("/notes/")) {
     isFooterVisible = false;
   }
+
+  useEffect(() => {
+    dispatchSnackbarCtx({
+      type: "ADD",
+      content: {
+        id: "1",
+        type: "Success",
+        content: "Breaking Bad"
+      },
+    });
+  }, []);
 
   return (
     <Fragment>
@@ -41,6 +56,7 @@ export default function Layout() {
           aboutSectionRef={notLoggedInAboutSectionRef}
         />
       )}
+      <GlobalSnackbar />
       <GlobalModal />
       <GlobalLoading />
       <Routes>

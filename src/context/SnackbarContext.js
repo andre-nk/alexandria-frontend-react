@@ -1,11 +1,38 @@
-import { createContext } from "react";
+import { createContext, useReducer, useEffect } from "react";
 
 export const SnackbarContext = createContext();
 
-export const snackbarReducer = (state, action) => {};
+export const snackbarReducer = (state, action) => {
+  switch (action.type) {
+    case "ADD":
+      return {
+        snackbars: [...state.snackbars, action.content],
+      };
+    case "DEL": 
+      return {
+        snackbars: state.snackbars.filter((snackbar) => snackbar.id !== action.snackbarID)
+      }
+    default:
+      return {
+        snackbars: [...state.snackbars, action.content],
+      };
+  }
+};
 
 export const SnackbarContextProvider = ({ children }) => {
-  const [state, dispatch] = useReducer(snackbarReducer, {
-      
+  const [state, dispatchSnackbarCtx] = useReducer(snackbarReducer, {
+    snackbars: [],
   });
+
+  // useEffect(() => {
+  //   setTimeout(() => {
+  //     console.log("Snackbar deleted:", state.snackbars[state.snackbars.length - 1]);
+  //   }, 5000)
+  // }, [state]);
+
+  return (
+    <SnackbarContext.Provider value={{ ...state, dispatchSnackbarCtx }}>
+      {children}
+    </SnackbarContext.Provider>
+  );
 };
