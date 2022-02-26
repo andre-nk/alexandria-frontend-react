@@ -2,15 +2,17 @@ import { useAuthContext } from "./useAuthContext";
 import axiosInstance from "../axios/axiosConfig";
 import { useMutation, useQuery } from "react-query";
 import { useLoadingContext } from "./useLoadingContext";
+import { useSnackbarContext } from "./useSnackbarContext";
 
 export const useNewNote = () => {
   const { user } = useAuthContext();
   const { dispatchLoadingCtx } = useLoadingContext();
+  const { dispatchSnackbarCtx } = useSnackbarContext();
 
   const createNoteMutation = useMutation(
     async ({ noteInstanceTitle, tags, content }) => {
       dispatchLoadingCtx({
-        type: "START"
+        type: "START",
       });
 
       let noteInstance = JSON.stringify({
@@ -32,11 +34,27 @@ export const useNewNote = () => {
       });
 
       if (response.status !== 200) {
-        throw new Error(response.data.message);
+        dispatchSnackbarCtx({
+          type: "ADD",
+          content: {
+            id: Math.random().toString(),
+            type: "Error",
+            content: response.data.message,
+          },
+        });
       }
 
       dispatchLoadingCtx({
-        type: "STOP"
+        type: "STOP",
+      });
+
+      dispatchSnackbarCtx({
+        type: "ADD",
+        content: {
+          id: Math.random().toString(),
+          type: "Success",
+          content: "Note created!",
+        },
       });
     }
   );
@@ -139,7 +157,7 @@ export const useUpdateNote = () => {
   const updateNoteMutation = useMutation(async ({ updatedNote, noteID }) => {
     try {
       dispatchLoadingCtx({
-        type: "START"
+        type: "START",
       });
 
       updatedNote.creator_uid = user.uid;
@@ -159,7 +177,7 @@ export const useUpdateNote = () => {
       }
 
       dispatchLoadingCtx({
-        type: "STOP"
+        type: "STOP",
       });
     } catch (err) {
       throw new Error(err.message);
@@ -364,13 +382,14 @@ export const useTagsNote = () => {
 export const useDeleteNote = () => {
   const { user } = useAuthContext();
   const { dispatchLoadingCtx } = useLoadingContext();
+  const { dispatchSnackbarCtx } = useSnackbarContext();
 
   const deleteNoteMutation = useMutation(async ({ noteID }) => {
     try {
       dispatchLoadingCtx({
-        type: "START"
+        type: "START",
       });
-      
+
       let config = {
         headers: {
           Authorization: "Bearer " + user.uid,
@@ -380,14 +399,37 @@ export const useDeleteNote = () => {
       const response = await axiosInstance.delete(`/notes/${noteID}`, config);
 
       if (response.status !== 200) {
-        throw new Error(response.data.message);
+        dispatchSnackbarCtx({
+          type: "ADD",
+          content: {
+            id: Math.random().toString(),
+            type: "Error",
+            content: response.data.message,
+          },
+        });
       }
 
       dispatchLoadingCtx({
-        type: "STOP"
+        type: "STOP",
+      });
+
+      dispatchSnackbarCtx({
+        type: "ADD",
+        content: {
+          id: Math.random().toString(),
+          type: "Success",
+          content: "Note has been deleted!",
+        },
       });
     } catch (err) {
-      throw new Error(err.message);
+      dispatchSnackbarCtx({
+        type: "ADD",
+        content: {
+          id: Math.random().toString(),
+          type: "Error",
+          content: err.message,
+        },
+      });
     }
   });
 

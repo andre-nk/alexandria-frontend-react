@@ -1,4 +1,4 @@
-import { createContext, useReducer, useEffect } from "react";
+import { createContext, useReducer } from "react";
 
 export const SnackbarContext = createContext();
 
@@ -29,6 +29,8 @@ export const SnackbarContextProvider = ({ children }) => {
   //     console.log("Snackbar deleted:", state.snackbars[state.snackbars.length - 1]);
   //   }, 5000)
   // }, [state]);
+
+  console.log(state);
 
   return (
     <SnackbarContext.Provider value={{ ...state, dispatchSnackbarCtx }}>

@@ -1,10 +1,12 @@
 import moment from "moment-mini";
 import { IoTrashOutline } from "react-icons/io5";
 import { useAccountByUID } from "../../../hooks/useAccount";
+import { useAuthContext } from "../../../hooks/useAuthContext";
 import { useDeleteComment } from "../../../hooks/useComment";
 
 export default function CommentBlock({ noteID, comment }) {
   const { deleteCommentMutation } = useDeleteComment();
+  const { user } = useAuthContext();
   const { userByUIDQuery } = useAccountByUID(comment.creator_uid);
 
   const commentDate = moment(comment.created_at).fromNow();
@@ -33,15 +35,20 @@ export default function CommentBlock({ noteID, comment }) {
               {comment.content}
             </p>
           </div>
-          <button
-            onClick={() => {
-              deleteCommentMutation.mutate({ noteID, commentID: comment._id });
-            }}
-            className="p-1 flex items-center justify-center space-x-2 text-minor-text hover:text-primary-red"
-          >
-            <IoTrashOutline size={16} />
-            <p className="text-xs">Delete</p>
-          </button>
+          {comment.creator_uid === user.uid && (
+            <button
+              onClick={() => {
+                deleteCommentMutation.mutate({
+                  noteID,
+                  commentID: comment._id,
+                });
+              }}
+              className="p-1 flex items-center justify-center space-x-2 text-minor-text hover:text-primary-red"
+            >
+              <IoTrashOutline size={16} />
+              <p className="text-xs">Delete</p>
+            </button>
+          )}
         </div>
       </div>
     )
